@@ -16,12 +16,13 @@ import { AuditLog } from './audit-log.entity';
 @Entity('users')
 @Unique(['github_id'])
 @Unique(['username'])
+@Unique(['email'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: 'bigint', unique: true })
-  github_id!: number;
+  @Column({ type: 'bigint', unique: true, nullable: true })
+  github_id: number | null = null;
 
   @Column({ type: 'varchar', length: 255, unique: true })
   username!: string;
@@ -32,8 +33,11 @@ export class User {
   @Column({ type: 'varchar', length: 512, nullable: true })
   avatar_url: string | null = null;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
   email: string | null = null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true, select: false })
+  password_hash: string | null = null;
 
   @Column({ type: 'text', nullable: true })
   bio: string | null = null;

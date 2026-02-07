@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
 import { UserRepository } from '../../repositories';
+import { User } from '../../entities';
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
@@ -8,17 +9,17 @@ export class SessionSerializer extends PassportSerializer {
     super();
   }
 
-  serializeUser(user: any, done: (err: Error | null, id?: string) => void) {
+  serializeUser(user: User, done: (err: Error | null, id?: string) => void) {
     done(null, user.id.toString());
   }
 
   async deserializeUser(
     id: string,
-    done: (err: Error | null, user?: any) => void,
+    done: (err: Error | null, user?: User | null) => void,
   ) {
     try {
       const user = await this.userRepository.findOne({
-        where: { id: parseInt(id, 10) },
+        where: { id },
       });
       done(null, user);
     } catch (error) {

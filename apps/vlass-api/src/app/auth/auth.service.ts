@@ -1,15 +1,28 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import Strategy from 'passport-github';
 import { UserRepository } from '../repositories';
 import { CreateUserDto } from '../dto';
+import { User } from '../entities';
+import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from './dto/login.dto';
+
+export interface JwtPayload {
+  sub: string;
+  email: string | null;
+  username: string;
+}
 
 @Injectable()
 export class AuthService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 
   /**
    * Validate or create a user from GitHub OAuth profile
    */
-  async validateOrCreateUser(profile: any) {
+  async validateOrCreateUser(profile: Strategy.Profile): Promise<User> {
     const {
       id: github_id,
       login: username,
@@ -59,8 +72,31 @@ export class AuthService {
   /**
    * Get current user from session
    */
-  async getCurrentUser(userId: number) {
+  async getCurrentUser(userId: string): Promise<User | null> {
     if (!userId) return null;
     return this.userRepository.findOne({ where: { id: userId } });
+  }
+
+  async loginWithCredentials(credentials: LoginDto): Promise<User> {
+    const email = credentials.email.trim().toLowerCase();
+    const password = credentials.password;
+
+    const user = await this.userRepository.findByEmailAndPassword(email, password);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    return user;
+  }
+
+  signToken(user: User): string {
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+      username: user.username,
+    };
+
+    return this.jwtService.sign(payload);
   }
 }

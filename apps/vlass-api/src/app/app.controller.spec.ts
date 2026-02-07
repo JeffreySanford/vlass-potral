@@ -4,20 +4,20 @@ import { AppService } from './app.service';
 
 describe('AppController', () => {
   let controller: AppController;
-  let mockAppService: any;
+  let mockAppService: Record<string, jest.Mock>;
 
-  const mockUser: any = {
+  const mockUser = {
     id: '1',
     username: 'testuser',
     email: 'test@example.com',
     github_id: 123,
-    full_name: 'Test User',
+    display_name: 'Test User',
     created_at: new Date(),
     updated_at: new Date(),
     deleted_at: null,
   };
 
-  const mockPost: any = {
+  const mockPost = {
     id: '1',
     title: 'Test Post',
     content: 'Test content',
@@ -31,8 +31,8 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     mockAppService = {
-      getData: () => ({ message: 'VLASS Portal API' }),
-      getHealthStatus: () => Promise.resolve({
+      getData: jest.fn().mockReturnValue({ message: 'VLASS Portal API' }),
+      getHealthStatus: jest.fn().mockResolvedValue({
         status: 'ok',
         timestamp: new Date().toISOString(),
         database: 'connected',
@@ -179,13 +179,13 @@ describe('AppController', () => {
     describe('createPost', () => {
       it('should create a new post', async () => {
         const createPostDto = { title: 'New Post', content: 'Content', user_id: '1' };
-        const mockRequest = { user: { id: 1 } };
+        const mockRequest = { user: { id: '1' } };
         const result = await controller.createPost(mockRequest, createPostDto);
         
         expect(result).toEqual(mockPost);
         expect(mockAppService.createPost).toHaveBeenCalledWith({
           ...createPostDto,
-          user_id: 1,
+          user_id: '1',
         });
       });
     });

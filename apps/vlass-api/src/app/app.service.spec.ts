@@ -1,29 +1,45 @@
 import { AppService } from './app.service';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { User, Post, PostStatus } from './entities';
+import { UserRepository, PostRepository } from './repositories';
+import { CreateUserDto, CreatePostDto, UpdateUserDto } from './dto';
 
 describe('AppService', () => {
   let service: AppService;
-  let mockDataSource: any;
-  let mockUserRepository: any;
-  let mockPostRepository: any;
+  let mockDataSource: Pick<DataSource, 'isInitialized'>;
+  let mockUserRepository: jest.Mocked<UserRepository>;
+  let mockPostRepository: jest.Mocked<PostRepository>;
 
-  const mockUser: any = {
+  const mockUser: User = {
     id: '1',
     username: 'testuser',
     email: 'test@example.com',
     github_id: 123,
-    full_name: 'Test User',
+    display_name: 'Test User',
+    avatar_url: null,
+    bio: null,
+    github_profile_url: null,
+    posts: [],
+    revisions: [],
+    comments: [],
+    auditLogs: [],
     created_at: new Date(),
     updated_at: new Date(),
     deleted_at: null,
   };
 
-  const mockPost: any = {
+  const mockPost: Post = {
     id: '1',
     title: 'Test Post',
+    description: null,
     content: 'Test content',
     user_id: '1',
-    status: 'DRAFT',
+    status: PostStatus.DRAFT,
+    user: mockUser,
+    revisions: [],
+    comments: [],
+    snapshots: [],
     created_at: new Date(),
     updated_at: new Date(),
     published_at: null,
@@ -39,9 +55,14 @@ describe('AppService', () => {
       findAll: jest.fn().mockResolvedValue([mockUser]),
       findById: jest.fn().mockResolvedValue(mockUser),
       findByUsername: jest.fn().mockResolvedValue(null),
+      findByGithubId: jest.fn(),
+      findByGitHubId: jest.fn(),
+      findOne: jest.fn(),
       create: jest.fn().mockResolvedValue(mockUser),
+      save: jest.fn(),
       update: jest.fn().mockResolvedValue(mockUser),
       softDelete: jest.fn().mockResolvedValue(true),
+      hardDelete: jest.fn(),
     };
 
     mockPostRepository = {
@@ -51,13 +72,18 @@ describe('AppService', () => {
       findByUser: jest.fn().mockResolvedValue([mockPost]),
       create: jest.fn().mockResolvedValue(mockPost),
       update: jest.fn().mockResolvedValue(mockPost),
-      publish: jest.fn().mockResolvedValue({ ...mockPost, status: 'PUBLISHED' }),
+      publish: jest.fn().mockResolvedValue({ ...mockPost, status: PostStatus.PUBLISHED }),
       unpublish: jest.fn().mockResolvedValue(mockPost),
       softDelete: jest.fn().mockResolvedValue(true),
+      hardDelete: jest.fn(),
     };
 
     // Manually instantiate service to avoid circular dependency in NestJS module system
-    service = new AppService(mockDataSource, mockUserRepository, mockPostRepository);
+    service = new AppService(
+      mockDataSource as DataSource,
+      mockUserRepository,
+      mockPostRepository,
+    );
   });
 
   it('should be defined', () => {
@@ -108,28 +134,32 @@ describe('AppService', () => {
     describe('createUser', () => {
       it('should create a new user', async () => {
         const createUserDto = { username: 'testuser', email: 'test@example.com' };
-        const result = await service.createUser(createUserDto);
+        const result = await service.createUser(createUserDto as CreateUserDto);
         expect(result).toEqual(mockUser);
       });
 
       it('should throw BadRequestException when username exists', async () => {
         mockUserRepository.findByUsername.mockResolvedValue(mockUser);
         const createUserDto = { username: 'testuser', email: 'test@example.com' };
-        await expect(service.createUser(createUserDto)).rejects.toThrow(BadRequestException);
+        await expect(service.createUser(createUserDto as CreateUserDto)).rejects.toThrow(
+          BadRequestException,
+        );
       });
     });
 
     describe('updateUser', () => {
       it('should update a user', async () => {
         const updateUserDto = { full_name: 'Updated User' };
-        const result = await service.updateUser('1', updateUserDto);
+        const result = await service.updateUser('1', updateUserDto as UpdateUserDto);
         expect(result).toEqual(mockUser);
       });
 
       it('should throw NotFoundException when user not found', async () => {
         mockUserRepository.findById.mockResolvedValue(null);
         const updateUserDto = { full_name: 'Updated User' };
-        await expect(service.updateUser('999', updateUserDto)).rejects.toThrow(NotFoundException);
+        await expect(service.updateUser('999', updateUserDto as UpdateUserDto)).rejects.toThrow(
+          NotFoundException,
+        );
       });
     });
 
@@ -176,7 +206,7 @@ describe('AppService', () => {
     describe('createPost', () => {
       it('should create a new post', async () => {
         const createPostDto = { title: 'Test', content: 'Test content', user_id: '1' };
-        const result = await service.createPost(createPostDto);
+        const result = await service.createPost(createPostDto as CreatePostDto);
         expect(result).toEqual(mockPost);
       });
     });
@@ -184,7 +214,7 @@ describe('AppService', () => {
     describe('publishPost', () => {
       it('should publish a post', async () => {
         const result = await service.publishPost('1');
-        expect(result.status).toBe('PUBLISHED');
+        expect(result.status).toBe(PostStatus.PUBLISHED);
       });
 
       it('should throw NotFoundException when post not found', async () => {

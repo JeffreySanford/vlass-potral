@@ -1,6 +1,8 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { CreateUserDto, UpdateUserDto, CreatePostDto, UpdatePostDto } from './dto';
+import { User, Post } from './entities';
+import { UserRepository, PostRepository } from './repositories';
 
 @Injectable()
 export class AppService {
@@ -8,8 +10,8 @@ export class AppService {
 
   constructor(
     private readonly dataSource: DataSource,
-    private readonly userRepository: any,
-    private readonly postRepository: any,
+    private readonly userRepository: UserRepository,
+    private readonly postRepository: PostRepository,
   ) {}
 
   getData(): { message: string } {
@@ -43,11 +45,11 @@ export class AppService {
   }
 
   // User endpoints
-  async getAllUsers(): Promise<any[]> {
+  async getAllUsers(): Promise<User[]> {
     return this.userRepository.findAll();
   }
 
-  async getUserById(id: string): Promise<any> {
+  async getUserById(id: string): Promise<User> {
     const user = await this.userRepository.findById(id);
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -55,7 +57,7 @@ export class AppService {
     return user;
   }
 
-  async getUserByUsername(username: string): Promise<any> {
+  async getUserByUsername(username: string): Promise<User> {
     const user = await this.userRepository.findByUsername(username);
     if (!user) {
       throw new NotFoundException(`User with username ${username} not found`);
@@ -63,7 +65,7 @@ export class AppService {
     return user;
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<any> {
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
     const existingUser = await this.userRepository.findByUsername(createUserDto.username);
     if (existingUser) {
       throw new BadRequestException(`Username ${createUserDto.username} already exists`);
@@ -71,7 +73,7 @@ export class AppService {
     return this.userRepository.create(createUserDto);
   }
 
-  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<any> {
+  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.userRepository.findById(id);
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -92,15 +94,15 @@ export class AppService {
   }
 
   // Post endpoints
-  async getAllPosts(): Promise<any[]> {
+  async getAllPosts(): Promise<Post[]> {
     return this.postRepository.findAll();
   }
 
-  async getPublishedPosts(): Promise<any[]> {
+  async getPublishedPosts(): Promise<Post[]> {
     return this.postRepository.findPublished();
   }
 
-  async getPostById(id: string): Promise<any> {
+  async getPostById(id: string): Promise<Post> {
     const post = await this.postRepository.findById(id);
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
@@ -108,19 +110,19 @@ export class AppService {
     return post;
   }
 
-  async getPostsByUser(userId: string): Promise<any[]> {
+  async getPostsByUser(userId: string): Promise<Post[]> {
     // Verify user exists
     await this.getUserById(userId);
     return this.postRepository.findByUser(userId);
   }
 
-  async createPost(createPostDto: CreatePostDto): Promise<any> {
+  async createPost(createPostDto: CreatePostDto): Promise<Post> {
     // Verify user exists
     await this.getUserById(createPostDto.user_id);
     return this.postRepository.create(createPostDto);
   }
 
-  async updatePost(id: string, updatePostDto: UpdatePostDto): Promise<any> {
+  async updatePost(id: string, updatePostDto: UpdatePostDto): Promise<Post> {
     const post = await this.postRepository.findById(id);
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
@@ -132,7 +134,7 @@ export class AppService {
     return updatedPost;
   }
 
-  async publishPost(id: string): Promise<any> {
+  async publishPost(id: string): Promise<Post> {
     const post = await this.postRepository.findById(id);
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
@@ -144,7 +146,7 @@ export class AppService {
     return publishedPost;
   }
 
-  async unpublishPost(id: string): Promise<any> {
+  async unpublishPost(id: string): Promise<Post> {
     const post = await this.postRepository.findById(id);
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);

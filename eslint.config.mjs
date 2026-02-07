@@ -44,10 +44,4 @@ export default [
     // Override or add rules here
     rules: {},
   },
-  {
-    files: ['apps/vlass-api/**/*.ts'],
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-    },
-  },
 ];

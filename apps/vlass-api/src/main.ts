@@ -5,9 +5,40 @@
 
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { AppModule } from './app/app.module';
 import session from 'express-session';
-import * as passport from 'passport';
+import * as passportImport from 'passport';
+
+const envCandidates = [
+  resolve(process.cwd(), '.env.local'),
+  resolve(process.cwd(), '.env'),
+  resolve(process.cwd(), '../../.env.local'),
+  resolve(process.cwd(), '../../.env'),
+];
+const envPath = envCandidates.find((path) => existsSync(path));
+
+if (envPath) {
+  const envFile = readFileSync(envPath, 'utf8');
+  for (const rawLine of envFile.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#')) {
+      continue;
+    }
+    const separator = line.indexOf('=');
+    if (separator <= 0) {
+      continue;
+    }
+    const key = line.slice(0, separator).trim();
+    const value = line.slice(separator + 1).trim().replace(/^['"]|['"]$/g, '');
+    process.env[key] = value;
+  }
+}
+
+const passport =
+  (passportImport as unknown as { default?: typeof passportImport }).default ??
+  passportImport;
 
 async function bootstrap() {
   try {

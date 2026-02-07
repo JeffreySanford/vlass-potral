@@ -1,15 +1,63 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
+  let authService: { loginWithCredentials: jest.Mock; signToken: jest.Mock };
 
   beforeEach(async () => {
+    authService = {
+      loginWithCredentials: jest.fn(),
+      signToken: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
+      providers: [
+        {
+          provide: AuthService,
+          useValue: authService,
+        },
+      ],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
+  });
+
+  describe('login', () => {
+    it('should return bearer token and user profile', async () => {
+      const user = {
+        id: 'user-id',
+        username: 'testuser',
+        email: 'test@vlass.local',
+        display_name: 'Test User',
+        created_at: new Date(),
+      };
+      authService.loginWithCredentials.mockResolvedValue(user);
+      authService.signToken.mockReturnValue('jwt-token');
+
+      const result = await controller.login({
+        email: 'test@vlass.local',
+        password: 'Password123!',
+      });
+
+      expect(authService.loginWithCredentials).toHaveBeenCalledWith({
+        email: 'test@vlass.local',
+        password: 'Password123!',
+      });
+      expect(result).toEqual({
+        access_token: 'jwt-token',
+        token_type: 'Bearer',
+        user: {
+          id: 'user-id',
+          username: 'testuser',
+          email: 'test@vlass.local',
+          display_name: 'Test User',
+          created_at: expect.any(Date),
+        },
+      });
+    });
   });
 
   describe('getCurrentUser', () => {
@@ -19,7 +67,7 @@ describe('AuthController', () => {
           id: 1,
           username: 'testuser',
           email: 'test@github.com',
-          full_name: 'Test User',
+          display_name: 'Test User',
           github_id: '12345',
           created_at: new Date(),
         },
@@ -33,7 +81,7 @@ describe('AuthController', () => {
           id: 1,
           username: 'testuser',
           email: 'test@github.com',
-          full_name: 'Test User',
+          display_name: 'Test User',
           github_id: '12345',
           created_at: expect.any(Date),
         },

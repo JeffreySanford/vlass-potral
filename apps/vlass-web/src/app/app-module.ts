@@ -5,6 +5,7 @@ import {
   withEventReplay,
 } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { App } from './app';
 import { appRoutes } from './app.routes';
@@ -21,6 +22,7 @@ import { MaterialModule } from './shared/material/material.module';
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),
+    provideHttpClient(withFetch()),
   ],
   bootstrap: [App],
 })

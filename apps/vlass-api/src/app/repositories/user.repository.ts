@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull } from 'typeorm';
+import { Repository, IsNull, FindOneOptions } from 'typeorm';
 import { User } from '../entities/user.entity';
 
 @Injectable()
@@ -24,6 +24,22 @@ export class UserRepository {
     return this.repo.findOneBy({ username, deleted_at: IsNull() });
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    return this.repo.findOneBy({ email, deleted_at: IsNull() });
+  }
+
+  async findByEmailAndPassword(email: string, password: string): Promise<User | null> {
+    return this.repo
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email })
+      .andWhere('user.deleted_at IS NULL')
+      .andWhere('user.password_hash IS NOT NULL')
+      .andWhere('user.password_hash = crypt(:password, user.password_hash)', {
+        password,
+      })
+      .getOne();
+  }
+
   async findByGithubId(githubId: number): Promise<User | null> {
     return this.repo.findOneBy({ github_id: githubId, deleted_at: IsNull() });
   }
@@ -32,7 +48,7 @@ export class UserRepository {
     return this.findByGithubId(githubId);
   }
 
-  async findOne(options: any): Promise<User | null> {
+  async findOne(options: FindOneOptions<User>): Promise<User | null> {
     return this.repo.findOne(options);
   }
 

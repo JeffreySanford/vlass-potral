@@ -5,7 +5,7 @@
     </mat-card-header>
     <mat-card-content>
       <p class="subtitle">Continue to your VLASS workspace.</p>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="on">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
           <input
@@ -13,6 +13,7 @@
             type="email"
             formControlName="email"
             placeholder="your@email.com"
+            autocomplete="email"
           />
           @if (f['email'].hasError('required')) {
             <mat-error>Email is required</mat-error>
@@ -29,6 +30,7 @@
             type="password"
             formControlName="password"
             placeholder="Password"
+            autocomplete="current-password"
           />
           @if (f['password'].hasError('required')) {
             <mat-error>Password is required</mat-error>

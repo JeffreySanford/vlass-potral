@@ -1,21 +1,31 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database.module';
-import { UserRepository, PostRepository } from './repositories';
 import { AuthModule } from './auth/auth.module';
+
+const envCandidates = [
+  resolve(process.cwd(), '.env.local'),
+  resolve(process.cwd(), '.env'),
+  resolve(process.cwd(), '../../.env.local'),
+  resolve(process.cwd(), '../../.env'),
+].filter((path) => existsSync(path));
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: process.env.NODE_ENV === 'production' ? '.env' : '.env.local',
+      envFilePath: envCandidates.length > 0 ? envCandidates : undefined,
+      // In local dev, prefer file-based env to avoid shell/session overrides.
+      ignoreEnvVars: process.env.NODE_ENV !== 'production',
     }),
     DatabaseModule,
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, UserRepository, PostRepository],
+  providers: [AppService],
 })
 export class AppModule {}

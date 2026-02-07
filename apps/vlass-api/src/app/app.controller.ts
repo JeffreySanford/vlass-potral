@@ -1,7 +1,11 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
+import type { Request as ExpressRequest } from 'express';
 import { AppService } from './app.service';
 import { CreateUserDto, UpdateUserDto, CreatePostDto, UpdatePostDto } from './dto';
 import { AuthenticatedGuard } from './auth/guards/authenticated.guard';
+import { User } from './entities';
+
+type RequestWithUser = ExpressRequest & { user: User };
 
 @Controller()
 export class AppController {
@@ -56,7 +60,7 @@ export class AppController {
 
   @Post('api/posts')
   @UseGuards(AuthenticatedGuard)
-  createPost(@Request() req: any, @Body() createPostDto: CreatePostDto) {
+  createPost(@Request() req: RequestWithUser, @Body() createPostDto: CreatePostDto) {
     return this.appService.createPost({
       ...createPostDto,
       user_id: req.user.id,

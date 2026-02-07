@@ -1,6 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthApiService } from '../auth-api.service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +19,9 @@ export class LoginComponent {
 
   private formBuilder = inject(FormBuilder);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private authApiService = inject(AuthApiService);
+  private platformId = inject(PLATFORM_ID);
 
   constructor() {
     this.loginForm = this.formBuilder.group({
@@ -28,7 +34,7 @@ export class LoginComponent {
     return this.loginForm.controls;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.submitted = true;
     this.error = '';
 
@@ -38,14 +44,29 @@ export class LoginComponent {
 
     this.loading = true;
 
-    // TODO: Replace with actual API call to POST /auth/login
-    // After successful auth, redirect to /landing
-    console.log('Login attempt:', this.loginForm.value);
-    this.loading = false;
-    this.router.navigate(['/landing']);
+    const email = this.loginForm.value.email as string;
+    const password = this.loginForm.value.password as string;
+
+    this.authApiService.login({ email, password }).subscribe({
+      next: (response) => {
+        if (isPlatformBrowser(this.platformId)) {
+          sessionStorage.setItem('auth_token', response.access_token);
+          sessionStorage.setItem('auth_user', JSON.stringify(response.user));
+        }
+
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/landing';
+        this.loading = false;
+        this.router.navigateByUrl(returnUrl);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.loading = false;
+        this.error =
+          error.error?.message || 'Login failed. Check your credentials and try again.';
+      },
+    });
   }
 
-  signUp() {
+  signUp(): void {
     this.router.navigate(['/auth/register']);
   }
 }
