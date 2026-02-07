@@ -6,33 +6,43 @@ Canonical scope: `documentation/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
 ## MVP Route Groups
 
 ### Auth
-- `POST /auth/register`
-- `POST /auth/verify-email`
-- `POST /auth/login`
-- `POST /auth/logout`
-
-### Config
-- `GET /config/public`
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/auth/login` (GitHub OAuth redirect)
+- `GET /api/auth/github/callback`
+- `GET /api/auth/me`
+- `POST /api/auth/logout`
 
 ### Viewer (Mode A / Aladin)
-- `POST /view/state` - create persisted viewer state
-- `GET /view/:shortid` - resolve shortid to viewer state
-- `POST /view/snapshot` - create/record PNG snapshot metadata
+- Planned for MVP pillar 2
+- Not yet implemented in the current API module
 
 ### Community Posts
-- `POST /community/posts`
-- `GET /community/posts`
-- `GET /community/posts/:id`
-- `PUT /community/posts/:id` (creates new revision)
-- `GET /community/posts/:id/revisions`
+- `GET /api/posts`
+- `GET /api/posts/published`
+- `POST /api/posts`
+- `GET /api/posts/:id`
+- `PUT /api/posts/:id`
+- `POST /api/posts/:id/publish`
+- `POST /api/posts/:id/unpublish`
+- `DELETE /api/posts/:id`
 
 ### Moderation (Posts)
-- `PATCH /community/posts/:id/moderate` (hide/unhide/lock/unlock)
+- Planned for MVP pillar 3
+- Not yet implemented in the current API module
 
 ### Ops
-- `GET /health`
+- `GET /api`
+- `GET /api/health`
+- `GET /api/users`
+- `POST /api/users`
+- `GET /api/users/:id`
+- `PUT /api/users/:id`
+- `DELETE /api/users/:id`
+- `GET /api/users/:userId/posts`
 
 ## Explicitly Deferred Routes
+- Email verification endpoint (`/api/auth/verify-email`) - deferred
 - Comment endpoints (`/community/posts/:id/comments`) - v1.1
 - Mode B/manifest routes - v2
 - FITS proxy routes - v2

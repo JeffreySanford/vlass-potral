@@ -33,7 +33,7 @@ These three commands are the minimum quality bar for merge readiness.
 1. Unit tests
 
 - API services/controllers
-- Web components/services
+- Web components/services (Vitest)
 - shared models
 
 1. Integration tests
@@ -42,7 +42,7 @@ These three commands are the minimum quality bar for merge readiness.
 
 1. E2E tests
 
-- Web critical flows
+- Web critical flows (Playwright, Chromium for MVP gates)
 - API e2e scenarios
 
 ## Deferred Test Work (Not MVP)

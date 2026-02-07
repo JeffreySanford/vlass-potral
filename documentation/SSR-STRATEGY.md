@@ -6,8 +6,9 @@ Status date: 2026-02-07
 Deliver fast first paint and stable SEO-rendered pages.
 
 ## MVP SSR Targets
-- Landing page SSR with fast initial render
-- Feed/post detail SSR for discoverability
+- Auth (`/auth/login`) and landing (`/landing`) SSR render with stable first paint
+- Client hydration without blocking interaction
+- Dynamic telemetry overlay rendered client-side (time/region/lat-lon)
 - FCP/LCP targets per product charter
 
 ## Official Metric Source
@@ -16,6 +17,7 @@ SSR KPI reporting is tracked using product KPIs and operational monitoring for
 FCP/LCP and first-render reliability.
 
 ## Deferred
+- Feed/post detail SSR expansion
 - Mode B fallback logic in SSR paths
 - Rendering flows that depend on Go/FITS proxy
 

@@ -2,17 +2,18 @@
 
 Status date: 2026-02-07
 
-Goal: Registration -> email verification -> unlock MVP write actions.
+Goal: Registration/login with clear failure states and immediate access to the MVP shell.
 
-## Unverified
+## Anonymous
 - Can browse public pages
-- Cannot create/edit posts
+- Redirected to login for authenticated-only routes
 
-## Verified
-- Can create/edit posts
-- Can create revisions
-- Can use standard verified quotas
+## Authenticated
+- Can access protected app routes
+- Uses JWT token from `/api/auth/login` or `/api/auth/register`
+- Login/register failures display API-derived error text when available
 
 ## Deferred Unlocks
+- Email verification UX
 - Comments/replies (v1.1)
 - FITS proxy privileges (v2 policy-gated)

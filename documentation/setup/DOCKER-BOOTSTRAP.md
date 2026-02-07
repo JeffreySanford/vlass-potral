@@ -4,10 +4,23 @@ Status date: 2026-02-07
 
 ## MVP Services
 
-- vlass-web
-- vlass-api
 - postgres
 - redis
+
+Application services (`vlass-web`, `vlass-api`) are started via Nx after infra
+is healthy:
+
+```bash
+pnpm start:all
+```
+
+Or manually:
+
+```bash
+pnpm start:infra
+pnpm start:web
+pnpm start:api
+```
 
 ## Deferred Services
 

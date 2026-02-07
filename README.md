@@ -21,7 +21,7 @@ Deferred to v1.1/v2: comments, Mode B, FITS proxy, Go microservice.
 
 ```bash
 pnpm install
-pnpm dev
+pnpm start:all
 pnpm test
 pnpm build
 ```
@@ -29,8 +29,9 @@ pnpm build
 ## Commands (Nx-first with pnpm wrappers)
 
 ```bash
-pnpm dev:web        # nx serve vlass-web
-pnpm dev:api        # nx serve vlass-api
+pnpm start:web      # nx serve vlass-web
+pnpm start:api      # nx serve vlass-api
+pnpm start:all      # free ports + docker infra + web/api serve
 pnpm test           # nx run-many --target=test --all
 pnpm test:web       # nx test vlass-web
 pnpm test:api       # nx test vlass-api

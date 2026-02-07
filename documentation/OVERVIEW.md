@@ -6,7 +6,7 @@ Status date: 2026-02-07
 Ship a focused MVP collaboration layer on public VLASS data.
 
 ## Locked MVP Scope
-1. SSR first paint with fast personalized preview
+1. SSR first paint with fast personalized preview (Pillar 1 complete)
 2. Aladin viewer with shareable permalink state and snapshots
 3. Community notebook posts with revisions
 

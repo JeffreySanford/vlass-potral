@@ -4,20 +4,23 @@ Status date: 2026-02-07
 
 ## Principles
 - Server-only secrets stay in API environment variables.
-- Client receives only sanitized config from `GET /config/public`.
+- Web client currently uses fixed local API base URL (`http://localhost:3001`) in dev.
 - Public VLASS endpoints only; link-out for FITS.
 
 ## Required Core Variables
 - `NODE_ENV`
-- `PORT`
+- `API_PORT` (or `PORT`)
 - `JWT_SECRET`
-- `DB_URL`
-- `VLASS_HIPS_BASE`
-- `VLASS_QUICKLOOK_BASE`
-- `UPSTREAM_ALLOWLIST`
-- `AUDIT_RETENTION_DAYS`
-- `RATE_ANON_RPM`
-- `RATE_VERIFIED_RPM`
+- `JWT_EXPIRES_IN`
+- `SESSION_SECRET`
+- `FRONTEND_URL`
+- `DB_HOST`
+- `DB_PORT`
+- `DB_USER`
+- `DB_PASSWORD`
+- `DB_NAME`
+- `DB_SSL`
+- `DB_LOGGING`
 
 ## Deferred Feature Flags
 - Mode B toggles (v2)

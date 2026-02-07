@@ -15,18 +15,24 @@ pnpm install
 
 ## Run
 
-Use two terminals:
+Recommended (infra + app):
+
+```bash
+pnpm start:all
+```
+
+Split mode (two terminals, no infra automation):
 
 Terminal 1:
 
 ```bash
-pnpm dev:web
+pnpm start:web
 ```
 
 Terminal 2:
 
 ```bash
-pnpm dev:api
+pnpm start:api
 ```
 
 ## Test
@@ -47,4 +53,8 @@ pnpm build
 
 - Nx is the primary task runner.
 - `pnpm` scripts are wrappers around Nx targets.
+- `start:all` runs:
+  1. `start:ports:free`
+  2. `start:infra` (`docker compose down --volumes`, build, up `--wait`)
+  3. `nx run-many --target=serve --projects=vlass-web,vlass-api`
 - Go and Mode B are deferred and not part of MVP setup.

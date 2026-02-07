@@ -1,277 +1,120 @@
 # Docker Setup Guide
 
+Status date: 2026-02-07
+
 ## Overview
 
-This guide walks you through setting up the Docker environment for the VLASS Portal. The stack consists of PostgreSQL 16 and Redis 7, networked together via Docker Compose.
+VLASS Portal local infra uses Docker Compose for:
+
+- PostgreSQL 16 (`vlass-postgres`)
+- Redis 7 (`vlass-redis`)
+
+Compose file: `docker-compose.yml`.
 
 ## Prerequisites
 
-- **Docker Desktop** (or Docker Engine + Docker Compose)
-- Minimum 2GB RAM and 5GB disk space
-- Port availability: 15432 (Postgres), 6379 (Redis)
+- Docker Desktop (Windows/macOS) or Docker Engine + Compose
+- Ports available:
+  - Postgres: `15432` (default)
+  - Redis: `6379` (default)
 
-## Quick Start
+## Recommended Startup Flow
 
-### 1. Navigate to the Project Root
-
-```bash
-cd /path/to/vlass-portal
-```
-
-### 2. Start the Docker Stack
+From repository root:
 
 ```bash
-docker-compose up -d
+pnpm start:all
 ```
 
-This command starts both PostgreSQL and Redis in the background (`-d` flag).
+This runs:
 
-### 3. Verify Health Status
+1. `pnpm run start:ports:free`
+2. `pnpm run start:infra`
+3. `nx run-many --target=serve --projects=vlass-web,vlass-api --parallel=2`
 
-Check that both services are running and healthy:
+`start:infra` runs:
 
 ```bash
-docker-compose ps
+pnpm run start:infra:check && docker compose down --remove-orphans --volumes && docker compose build --pull && docker compose up -d --wait
 ```
 
-Expected output:
+This guarantees stale containers/volumes are rebuilt and services are healthy before app startup.
+
+## Manual Infra Commands
 
 ```bash
-NAME                 COMMAND                  SERVICE      STATUS
-vlass-postgres       "docker-entrypoint..."   postgres     Running (healthy)
-vlass-redis          "redis-server..."        redis        Running (healthy)
+# Start infra only
+pnpm run start:infra
+
+# Stop/remove containers and volumes
+docker compose down --remove-orphans --volumes
+
+# Check status
+docker compose ps
+
+# Follow logs
+docker compose logs -f
 ```
 
-### 4. Run Database Initialization
+## Default Local Credentials
 
-Once PostgreSQL is healthy, initialize the schema:
+From `docker-compose.yml` defaults:
+
+- `DB_USER=vlass_user`
+- `DB_PASSWORD=vlass_password_dev`
+- `DB_NAME=vlass_portal`
+- `DB_PORT=15432`
+- `REDIS_PASSWORD=vlass_redis_dev`
+- `REDIS_PORT=6379`
+
+## App Environment Variables
+
+API resolves `.env.local` / `.env` first (non-production), then process env.
+
+Key DB/API vars:
+
+- `API_PORT` (default `3001`)
+- `FRONTEND_URL` (default `http://localhost:4200`)
+- `JWT_SECRET`
+- `JWT_EXPIRES_IN` (default `7d`)
+- `SESSION_SECRET`
+- `DB_HOST` (default `localhost`)
+- `DB_PORT` (default `15432`)
+- `DB_USER` (default `vlass_user`)
+- `DB_PASSWORD` (default `vlass_password_dev`)
+- `DB_NAME` (default `vlass_portal`)
+
+## Health and Troubleshooting
+
+### Docker daemon not running
+
+`start:infra:check` will fail fast and attempt to launch Docker Desktop on Windows.
+
+### Port conflicts (3000/4200)
+
+Use:
 
 ```bash
-pnpm install
-pnpm nx run vlass-api:serve
+pnpm run start:ports:free
 ```
 
-The application will automatically run migrations on startup. Verify in the logs:
+### Database auth failures
+
+Most common cause is stale volumes with old credentials. Reset infra:
 
 ```bash
-[Nest] <timestamp> - 01/15/2025, 10:15:33 AM   LOG [NestFactory] Starting Nest application...
-[Nest] <timestamp> - 01/15/2025, 10:15:34 AM   LOG [TypeOrmModule] Database initialized successfully
+docker compose down --remove-orphans --volumes
+pnpm run start:infra
 ```
 
-## Service Configuration
-
-### PostgreSQL 16
-
-**Port:** 15432 (external) / 5432 (internal)
-**Container:** `vlass-postgres`  
-**Credentials:**
-
-- User: `vlass_user`
-- Password: `vlass_password`
-- Database: `vlass_db`
-
-**Volumes:**
-
-- `vlass-postgres-data` — persists all data between restarts
-
-**Network:** `vlass-network`
-
-### Redis 7
-
-**Port:** 6379 (external and internal)  
-**Container:** `vlass-redis`  
-**Configuration:** AOF persistence enabled
-
-**Volumes:**
-
-- `vlass-redis-data` — persists all data between restarts
-
-**Network:** `vlass-network`
-
-## Docker Compose File Reference
-
-The `docker-compose.yml` file defines the complete stack with:
-
-- Health checks for both services
-- Volume management for persistence
-- Network isolation via `vlass-network`
-- Resource limits and logging configuration
-
-### Accessing Services from the Host
-
-- **PostgreSQL:** `localhost:15432` (e.g., `psql -h localhost -U vlass_user -d vlass_db -p 15432`)
-- **Redis:** `localhost:6379` (e.g., `redis-cli -h localhost -p 6379`)
-
-### Accessing Services from Container
-
-Within the container network:
-
-- **PostgreSQL:** `vlass-postgres:5432`
-- **Redis:** `vlass-redis:6379`
-
-## Common Commands
-
-### View Logs
+### Validate Postgres connectivity
 
 ```bash
-# All services
-docker-compose logs -f
-
-# Specific service
-docker-compose logs -f postgres
-docker-compose logs -f redis
+docker compose exec vlass-postgres psql -U vlass_user -d vlass_portal
 ```
 
-### Stop Services
+## Related Docs
 
-```bash
-docker-compose down
-```
-
-### Full Cleanup (Remove Volumes)
-
-```bash
-docker-compose down -v
-```
-
-**Warning:** This will delete all database and cache data.
-
-### Restart Services
-
-```bash
-docker-compose restart
-```
-
-### Connect to PostgreSQL Shell
-
-```bash
-docker-compose exec postgres psql -U vlass_user -d vlass_db
-```
-
-### Inspect Database
-
-```sql
--- List all tables
-\dt
-
--- List all indexes
-\di
-
--- Describe a table
-\d users
-```
-
-## Troubleshooting
-
-### Port Already in Use
-
-If port 15432 or 6379 is already in use:
-
-1. Stop conflicting services: `docker-compose down`
-2. Alternative: Change ports in `docker-compose.yml`
-
-   ```yaml
-   ports:
-     - "15433:5432"  # Use 15433 instead
-   ```
-
-3. Update environment variables in `.env`
-
-### Database Won't Initialize
-
-If you see connection errors:
-
-1. Verify PostgreSQL is healthy:
-
-   ```bash
-   docker-compose ps postgres
-   ```
-
-2. Check logs:
-
-   ```bash
-   docker-compose logs postgres
-   ```
-
-3. Wait 10-15 seconds (container health check may still be running)
-
-4. Manually trigger initialization:
-
-   ```bash
-   pnpm nx run vlass-api:serve
-   ```
-
-### Redis Connection Issues
-
-1. Verify Redis is running:
-
-   ```bash
-   docker-compose ps redis
-   ```
-
-2. Test connection:
-
-   ```bash
-   redis-cli -h localhost -p 6379 ping
-   ```
-
-   Expected response: `PONG`
-
-### Clean Rebuild
-
-If you need to start fresh:
-
-```bash
-docker-compose down -v
-docker volume prune
-docker-compose up -d
-```
-
-## Environment Variables
-
-Create a `.env` file in the project root:
-
-```bash
-# Database
-DATABASE_URL=postgresql://vlass_user:vlass_password@localhost:15432/vlass_db
-TYPEORM_HOST=localhost
-TYPEORM_PORT=15432
-TYPEORM_USERNAME=vlass_user
-TYPEORM_PASSWORD=vlass_password
-TYPEORM_DATABASE=vlass_db
-
-# Redis
-REDIS_HOST=localhost
-REDIS_PORT=6379
-
-# Node
-NODE_ENV=development
-```
-
-## Development Workflow
-
-1. **Start services on boot:**
-
-   ```bash
-   docker-compose up -d
-   ```
-
-2. **Run tests with live database:**
-
-   ```bash
-   pnpm nx test vlass-api
-   ```
-
-3. **Watch for changes:**
-
-   ```bash
-   pnpm nx run vlass-api:serve --watch
-   ```
-
-4. **Stop services when done:**
-
-   ```bash
-   docker-compose down
-   ```
-
-For detailed information on application setup after Docker is running, see [DOCKER-BOOTSTRAP.md](./DOCKER-BOOTSTRAP.md).
+- `documentation/setup/DOCKER-BOOTSTRAP.md`
+- `documentation/QUICK-START.md`
+- `documentation/ENVIRONMENT-CONFIG.md`
