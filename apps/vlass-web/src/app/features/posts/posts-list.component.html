@@ -1,0 +1,39 @@
+<div class="posts-page">
+  <mat-toolbar color="primary" class="posts-toolbar">
+    <span>Community Research Notebook</span>
+    <span class="spacer"></span>
+    <button mat-stroked-button type="button" (click)="createDraft()">New Draft</button>
+    <a mat-flat-button routerLink="/landing">Back to landing</a>
+  </mat-toolbar>
+
+  <section class="posts-content">
+    @if (loading) {
+      <p>Loading published posts...</p>
+    } @else if (errorMessage) {
+      <p class="error">{{ errorMessage }}</p>
+    } @else if (posts.length === 0) {
+      <p>No published posts yet.</p>
+    } @else {
+      <div class="post-grid">
+        @for (post of posts; track post.id) {
+          <mat-card class="post-card">
+            <mat-card-header>
+              <mat-card-title>{{ post.title }}</mat-card-title>
+              <mat-card-subtitle>
+                {{ post.user?.display_name || post.user?.username || 'Unknown author' }}
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <p>Status: {{ post.status }}</p>
+              <p>Published: {{ post.published_at || 'n/a' }}</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button type="button" (click)="openPost(post)">Open</button>
+            </mat-card-actions>
+          </mat-card>
+        }
+      </div>
+    }
+  </section>
+</div>
+

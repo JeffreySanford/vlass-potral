@@ -24,6 +24,12 @@ export const appRoutes: Route[] = [
       import('./features/viewer/viewer.module').then((m) => m.ViewerModule),
   },
   {
+    path: 'posts',
+    loadChildren: () =>
+      import('./features/posts/posts.module').then((m) => m.PostsModule),
+    canActivate: [AuthGuard],
+  },
+  {
     path: '**',
     redirectTo: 'landing',
   },

@@ -78,26 +78,26 @@ export class AppController {
 
   @Put('posts/:id')
   @UseGuards(AuthenticatedGuard, RateLimitGuard)
-  updatePost(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.appService.updatePost(id, updatePostDto);
+  updatePost(@Request() req: RequestWithUser, @Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+    return this.appService.updatePost(id, req.user.id, updatePostDto);
   }
 
   @Post('posts/:id/publish')
   @UseGuards(AuthenticatedGuard, RateLimitGuard)
-  publishPost(@Param('id') id: string) {
-    return this.appService.publishPost(id);
+  publishPost(@Request() req: RequestWithUser, @Param('id') id: string) {
+    return this.appService.publishPost(id, req.user.id);
   }
 
   @Post('posts/:id/unpublish')
   @UseGuards(AuthenticatedGuard, RateLimitGuard)
-  unpublishPost(@Param('id') id: string) {
-    return this.appService.unpublishPost(id);
+  unpublishPost(@Request() req: RequestWithUser, @Param('id') id: string) {
+    return this.appService.unpublishPost(id, req.user.id);
   }
 
   @Delete('posts/:id')
   @UseGuards(AuthenticatedGuard, RateLimitGuard)
-  deletePost(@Param('id') id: string) {
-    return this.appService.deletePost(id);
+  deletePost(@Request() req: RequestWithUser, @Param('id') id: string) {
+    return this.appService.deletePost(id, req.user.id);
   }
 
   @Get('users/:userId/posts')

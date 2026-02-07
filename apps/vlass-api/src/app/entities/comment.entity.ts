@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  JoinColumn,
   Index,
   Relation,
 } from 'typeorm';
@@ -40,11 +41,13 @@ export class Comment {
     onDelete: 'CASCADE',
     eager: false,
   })
+  @JoinColumn({ name: 'post_id' })
   post!: Relation<Post>;
 
   @ManyToOne(() => User, (user: User) => user.comments, {
     onDelete: 'CASCADE',
     eager: false,
   })
+  @JoinColumn({ name: 'user_id' })
   user!: Relation<User>;
 }

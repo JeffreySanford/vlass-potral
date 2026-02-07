@@ -1,6 +1,19 @@
 import axios, { AxiosError } from 'axios';
 
 describe('vlass-api e2e', () => {
+  async function registerUser(
+    username: string,
+    email: string,
+    password = 'Password123!',
+  ): Promise<{ access_token: string; user: { id: string } }> {
+    const response = await axios.post('/api/auth/register', {
+      username,
+      email,
+      password,
+    });
+    return response.data as { access_token: string; user: { id: string } };
+  }
+
   it('GET /api returns API banner', async () => {
     const response = await axios.get('/api');
     expect(response.status).toBe(200);
@@ -196,6 +209,90 @@ describe('vlass-api e2e', () => {
           recent_failures: expect.any(Array),
         }),
       );
+    });
+  });
+
+  describe('posts authorization and revision flow', () => {
+    it('creates, updates, and publishes a post as owner', async () => {
+      const nonce = Date.now();
+      const owner = await registerUser(`post_owner_${nonce}`, `post_owner_${nonce}@vlass.local`);
+      const authHeader = { Authorization: `Bearer ${owner.access_token}` };
+
+      const createResponse = await axios.post(
+        '/api/posts',
+        {
+          title: 'Owner Draft',
+          content: 'Initial content for owner-managed post.',
+        },
+        { headers: authHeader },
+      );
+
+      expect(createResponse.status).toBe(201);
+      expect(createResponse.data).toMatchObject({
+        title: 'Owner Draft',
+        status: 'draft',
+      });
+
+      const postId = createResponse.data.id as string;
+      const updateResponse = await axios.put(
+        `/api/posts/${postId}`,
+        {
+          title: 'Owner Draft Updated',
+          content: 'Updated content for owner-managed post.',
+        },
+        { headers: authHeader },
+      );
+      expect(updateResponse.status).toBe(200);
+      expect(updateResponse.data).toMatchObject({
+        id: postId,
+        title: 'Owner Draft Updated',
+      });
+
+      const publishResponse = await axios.post(
+        `/api/posts/${postId}/publish`,
+        {},
+        { headers: authHeader },
+      );
+      expect(publishResponse.status).toBe(201);
+      expect(publishResponse.data).toMatchObject({
+        id: postId,
+        status: 'published',
+      });
+
+      const detailResponse = await axios.get(`/api/posts/${postId}`);
+      expect(detailResponse.status).toBe(200);
+      expect(Array.isArray(detailResponse.data.revisions)).toBe(true);
+      expect(detailResponse.data.revisions.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('rejects non-owner post modification with 403', async () => {
+      const nonce = Date.now() + 1;
+      const owner = await registerUser(`post_owner2_${nonce}`, `post_owner2_${nonce}@vlass.local`);
+      const otherUser = await registerUser(`post_other_${nonce}`, `post_other_${nonce}@vlass.local`);
+
+      const createResponse = await axios.post(
+        '/api/posts',
+        {
+          title: 'Owner Locked Post',
+          content: 'Owner-only edit protection target.',
+        },
+        { headers: { Authorization: `Bearer ${owner.access_token}` } },
+      );
+      const postId = createResponse.data.id as string;
+
+      try {
+        await axios.put(
+          `/api/posts/${postId}`,
+          {
+            title: 'Unauthorized update',
+          },
+          { headers: { Authorization: `Bearer ${otherUser.access_token}` } },
+        );
+        throw new Error('Expected non-owner update to fail');
+      } catch (error) {
+        const axiosError = error as AxiosError<{ message?: string }>;
+        expect(axiosError.response?.status).toBe(403);
+      }
     });
   });
 });

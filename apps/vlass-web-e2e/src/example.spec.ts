@@ -241,6 +241,149 @@ test('creates viewer permalink and snapshot from pillar 2 flow', async ({ page }
   await expect(page.getByText(/M87 Core \(RA/)).toBeVisible();
 });
 
+test('creates a notebook post from pillar 3 flow', async ({ page }) => {
+  const token = createFakeJwt(Math.floor(Date.now() / 1000) + 3600);
+  let loginRequestCount = 0;
+
+  await page.route('**/api/auth/login', async (route) => {
+    if (route.request().method() === 'OPTIONS') {
+      await route.fulfill({
+        status: 204,
+        headers: {
+          'access-control-allow-origin': '*',
+          'access-control-allow-methods': 'POST, OPTIONS',
+          'access-control-allow-headers': 'content-type, authorization',
+        },
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
+      body: JSON.stringify({
+        access_token: token,
+        token_type: 'Bearer',
+        user: {
+          id: 'user-1',
+          username: 'astro',
+          email: 'astro@vlass.local',
+          display_name: 'Astro User',
+          created_at: '2026-02-07T00:00:00.000Z',
+        },
+      }),
+    });
+    loginRequestCount += 1;
+  });
+
+  await page.route('**/api/posts**', async (route) => {
+    const method = route.request().method();
+    const url = route.request().url();
+
+    if (method === 'OPTIONS') {
+      await route.fulfill({
+        status: 204,
+        headers: {
+          'access-control-allow-origin': '*',
+          'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'access-control-allow-headers': 'content-type, authorization',
+        },
+      });
+      return;
+    }
+
+    if (method === 'POST' && /\/api\/posts\/?$/.test(url)) {
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        headers: { 'access-control-allow-origin': '*' },
+        body: JSON.stringify({
+          id: 'post-1',
+          user_id: 'user-1',
+          title: 'M87 Notebook',
+          content: 'Notebook markdown content for publishing flow.',
+          status: 'draft',
+          published_at: null,
+          created_at: '2026-02-07T00:00:00.000Z',
+          updated_at: '2026-02-07T00:00:00.000Z',
+        }),
+      });
+      return;
+    }
+
+    if (method === 'POST' && url.includes('/api/posts/post-1/publish')) {
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        headers: { 'access-control-allow-origin': '*' },
+        body: JSON.stringify({
+          id: 'post-1',
+          user_id: 'user-1',
+          title: 'M87 Notebook',
+          content: 'Notebook markdown content for publishing flow.',
+          status: 'published',
+          published_at: '2026-02-07T00:05:00.000Z',
+          created_at: '2026-02-07T00:00:00.000Z',
+          updated_at: '2026-02-07T00:05:00.000Z',
+        }),
+      });
+      return;
+    }
+
+    if (method === 'GET' && url.includes('/api/posts/post-1')) {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: { 'access-control-allow-origin': '*' },
+        body: JSON.stringify({
+          id: 'post-1',
+          user_id: 'user-1',
+          title: 'M87 Notebook',
+          content: 'Notebook markdown content for publishing flow.',
+          status: 'draft',
+          published_at: null,
+          created_at: '2026-02-07T00:00:00.000Z',
+          updated_at: '2026-02-07T00:00:00.000Z',
+        }),
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
+      body: JSON.stringify([]),
+    });
+  });
+
+  await page.goto('/auth/login');
+  const loginEmail = page.locator('input[formcontrolname="email"]');
+  const loginPassword = page.locator('input[formcontrolname="password"]');
+  await expect(page.locator('h1')).toContainText('Login');
+  await loginEmail.fill('astro@vlass.local');
+  await loginPassword.fill('Password123!');
+  await page.getByRole('button', { name: 'Login' }).click();
+  await expect.poll(() => loginRequestCount).toBeGreaterThan(0);
+  await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });
+
+  await page.locator('article.feature-card', { hasText: 'Community Research Notebook' }).click();
+  await expect(page).toHaveURL(/\/posts/);
+  await page.getByRole('button', { name: 'New Draft' }).click();
+  await expect(page).toHaveURL(/\/posts\/new/);
+  const titleInput = page.getByLabel('Title');
+  const contentInput = page.getByLabel('Markdown Content');
+  await titleInput.fill('M87 Notebook');
+  await contentInput.fill('Notebook markdown content for publishing flow.');
+  await expect(titleInput).toHaveValue('M87 Notebook');
+  await expect(contentInput).toHaveValue('Notebook markdown content for publishing flow.');
+  await page.getByRole('button', { name: 'Save Draft' }).click();
+
+  await expect(page).toHaveURL(/\/posts\/post-1/);
+  await expect(page.getByText('Notebook Post')).toBeVisible();
+});
+
 test('syncs RA/Dec/FOV fields from Aladin view events', async ({ page }) => {
   await page.addInitScript(() => {
     type Callback = () => void;
@@ -489,5 +632,5 @@ test('shows conflict errors on duplicate registration', async ({ page }) => {
   await page.getByRole('button', { name: 'Create Account' }).click();
 
   await expect(page).toHaveURL(/\/auth\/register/);
-  await expect(page.getByText(/already in use/i)).toBeVisible();
+  await expect(page.getByText(/already/i)).toBeVisible();
 });

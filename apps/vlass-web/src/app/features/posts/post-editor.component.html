@@ -1,0 +1,56 @@
+<div class="editor-page">
+  <mat-toolbar color="primary" class="editor-toolbar">
+    <span>New Notebook Draft</span>
+    <span class="spacer"></span>
+    <a mat-flat-button routerLink="/posts">Back to feed</a>
+  </mat-toolbar>
+
+  <section class="editor-shell">
+    <mat-card class="editor-card">
+      <mat-card-header>
+        <mat-card-title>Post Editor</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="editorForm" class="editor-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="content-field">
+            <mat-label>Markdown Content</mat-label>
+            <textarea matInput rows="12" formControlName="content"></textarea>
+          </mat-form-field>
+        </form>
+
+        <div class="actions">
+          <button mat-stroked-button type="button" (click)="parseViewerBlocks()">Parse Viewer Blocks</button>
+          <button mat-flat-button color="accent" type="button" [disabled]="saving" (click)="saveDraft()">
+            @if (saving) {
+              Saving...
+            } @else {
+              Save Draft
+            }
+          </button>
+        </div>
+
+        @if (viewerBlocks.length > 0) {
+          <div class="viewer-blocks">
+            <h3>Parsed Viewer Blocks</h3>
+            @for (block of viewerBlocks; track block.encodedState) {
+              <p>
+                <code>{{ block.raw }}</code>
+              </p>
+              <a [routerLink]="['/view']" [queryParams]="{ state: block.encodedState }">Open in Viewer</a>
+            }
+          </div>
+        }
+
+        @if (statusMessage) {
+          <p class="status">{{ statusMessage }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>
+

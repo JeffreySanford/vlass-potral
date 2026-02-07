@@ -1,8 +1,8 @@
 import { AppService } from './app.service';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { User, Post, PostStatus } from './entities';
-import { UserRepository, PostRepository, AuditLogRepository } from './repositories';
+import { UserRepository, PostRepository, AuditLogRepository, RevisionRepository } from './repositories';
 import { CreateUserDto, CreatePostDto, UpdateUserDto } from './dto';
 
 describe('AppService', () => {
@@ -11,6 +11,7 @@ describe('AppService', () => {
   let mockUserRepository: jest.Mocked<UserRepository>;
   let mockPostRepository: jest.Mocked<PostRepository>;
   let mockAuditLogRepository: jest.Mocked<AuditLogRepository>;
+  let mockRevisionRepository: jest.Mocked<RevisionRepository>;
 
   const mockUser: User = {
     id: '1',
@@ -83,12 +84,21 @@ describe('AppService', () => {
       createAuditLog: jest.fn().mockResolvedValue(undefined),
     } as jest.Mocked<AuditLogRepository>;
 
+    mockRevisionRepository = {
+      create: jest.fn().mockResolvedValue(undefined as never),
+      findByPost: jest.fn(),
+      findLatestByPost: jest.fn(),
+      findById: jest.fn(),
+      hardDelete: jest.fn(),
+    } as unknown as jest.Mocked<RevisionRepository>;
+
     // Manually instantiate service to avoid circular dependency in NestJS module system
     service = new AppService(
       mockDataSource as DataSource,
       mockUserRepository,
       mockPostRepository,
       mockAuditLogRepository,
+      mockRevisionRepository,
     );
   });
 
@@ -220,29 +230,72 @@ describe('AppService', () => {
       });
     });
 
+    describe('updatePost', () => {
+      it('should update a post and create revision', async () => {
+        const result = await service.updatePost('1', '1', { title: 'Updated' });
+        expect(result).toEqual(mockPost);
+        expect(mockRevisionRepository.create).toHaveBeenCalled();
+      });
+
+      it('should throw NotFoundException when update target no longer exists', async () => {
+        mockPostRepository.update.mockResolvedValue(null);
+        await expect(service.updatePost('1', '1', { title: 'Updated' })).rejects.toThrow(NotFoundException);
+      });
+
+      it('should throw ForbiddenException when actor is not post owner', async () => {
+        await expect(service.updatePost('1', 'other-user', { title: 'Denied' })).rejects.toThrow(ForbiddenException);
+      });
+    });
+
     describe('publishPost', () => {
       it('should publish a post', async () => {
-        const result = await service.publishPost('1');
+        const result = await service.publishPost('1', '1');
         expect(result.status).toBe(PostStatus.PUBLISHED);
         expect(mockAuditLogRepository.createAuditLog).toHaveBeenCalled();
+        expect(mockRevisionRepository.create).toHaveBeenCalled();
       });
 
       it('should throw NotFoundException when post not found', async () => {
         mockPostRepository.findById.mockResolvedValue(null);
-        await expect(service.publishPost('999')).rejects.toThrow(NotFoundException);
+        await expect(service.publishPost('999', '1')).rejects.toThrow(NotFoundException);
+      });
+
+      it('should throw ForbiddenException when actor is not post owner', async () => {
+        await expect(service.publishPost('1', 'other-user')).rejects.toThrow(ForbiddenException);
       });
     });
 
     describe('deletePost', () => {
       it('should soft delete a post', async () => {
-        const result = await service.deletePost('1');
+        const result = await service.deletePost('1', '1');
         expect(result).toBe(true);
         expect(mockAuditLogRepository.createAuditLog).toHaveBeenCalled();
       });
 
       it('should throw NotFoundException when post not found', async () => {
         mockPostRepository.findById.mockResolvedValue(null);
-        await expect(service.deletePost('999')).rejects.toThrow(NotFoundException);
+        await expect(service.deletePost('999', '1')).rejects.toThrow(NotFoundException);
+      });
+
+      it('should throw ForbiddenException when actor is not post owner', async () => {
+        await expect(service.deletePost('1', 'other-user')).rejects.toThrow(ForbiddenException);
+      });
+    });
+
+    describe('unpublishPost', () => {
+      it('should unpublish a post', async () => {
+        const result = await service.unpublishPost('1', '1');
+        expect(result).toEqual(mockPost);
+        expect(mockAuditLogRepository.createAuditLog).toHaveBeenCalled();
+      });
+
+      it('should throw NotFoundException when post not found', async () => {
+        mockPostRepository.findById.mockResolvedValue(null);
+        await expect(service.unpublishPost('999', '1')).rejects.toThrow(NotFoundException);
+      });
+
+      it('should throw ForbiddenException when actor is not post owner', async () => {
+        await expect(service.unpublishPost('1', 'other-user')).rejects.toThrow(ForbiddenException);
       });
     });
   });

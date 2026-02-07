@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToMany,
+  JoinColumn,
   Index,
   Relation,
 } from 'typeorm';
@@ -62,6 +63,7 @@ export class Post {
     onDelete: 'CASCADE',
     eager: false,
   })
+  @JoinColumn({ name: 'user_id' })
   user!: Relation<User>;
 
   @OneToMany(() => Revision, (revision: Revision) => revision.post, { cascade: ['remove'] })

@@ -177,8 +177,8 @@ describe('AppController', () => {
     });
 
     describe('createPost', () => {
-      it('should create a new post', async () => {
-        const createPostDto = { title: 'New Post', content: 'Content', user_id: '1' };
+      it('should create a new post and enforce authenticated user id', async () => {
+        const createPostDto = { title: 'New Post', content: 'Content', user_id: 'malicious-user' };
         const mockRequest = { user: { id: '1' } };
         const result = await controller.createPost(mockRequest, createPostDto);
         
@@ -202,37 +202,41 @@ describe('AppController', () => {
     describe('updatePost', () => {
       it('should update a post', async () => {
         const updatePostDto = { title: 'Updated Title' };
-        const result = await controller.updatePost('1', updatePostDto);
+        const mockRequest = { user: { id: '1' } };
+        const result = await controller.updatePost(mockRequest as never, '1', updatePostDto);
         
         expect(result).toEqual(mockPost);
-        expect(mockAppService.updatePost).toHaveBeenCalledWith('1', updatePostDto);
+        expect(mockAppService.updatePost).toHaveBeenCalledWith('1', '1', updatePostDto);
       });
     });
 
     describe('publishPost', () => {
       it('should publish a post', async () => {
-        const result = await controller.publishPost('1');
+        const mockRequest = { user: { id: '1' } };
+        const result = await controller.publishPost(mockRequest as never, '1');
         
         expect(result.status).toBe('PUBLISHED');
-        expect(mockAppService.publishPost).toHaveBeenCalledWith('1');
+        expect(mockAppService.publishPost).toHaveBeenCalledWith('1', '1');
       });
     });
 
     describe('unpublishPost', () => {
       it('should unpublish a post', async () => {
-        const result = await controller.unpublishPost('1');
+        const mockRequest = { user: { id: '1' } };
+        const result = await controller.unpublishPost(mockRequest as never, '1');
         
         expect(result).toEqual(mockPost);
-        expect(mockAppService.unpublishPost).toHaveBeenCalledWith('1');
+        expect(mockAppService.unpublishPost).toHaveBeenCalledWith('1', '1');
       });
     });
 
     describe('deletePost', () => {
       it('should delete a post', async () => {
-        const result = await controller.deletePost('1');
+        const mockRequest = { user: { id: '1' } };
+        const result = await controller.deletePost(mockRequest as never, '1');
         
         expect(result).toBe(true);
-        expect(mockAppService.deletePost).toHaveBeenCalledWith('1');
+        expect(mockAppService.deletePost).toHaveBeenCalledWith('1', '1');
       });
     });
   });

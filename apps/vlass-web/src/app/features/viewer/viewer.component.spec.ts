@@ -6,7 +6,7 @@ import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ViewerApiService } from './viewer-api.service';
+import { ViewerApiService, ViewerStateModel } from './viewer-api.service';
 import { ViewerComponent } from './viewer.component';
 
 interface MockAladinView {
@@ -248,6 +248,29 @@ describe('ViewerComponent', () => {
     expect(component.centerCatalogLabel?.name).toBe('Center Match');
     component.addCenterCatalogLabelAsAnnotation();
     expect(component.labels[0]?.name).toBe('Center Match');
+  });
+
+  it('clears stale catalog labels immediately when center moves', () => {
+    component.catalogLabels = [
+      {
+        name: 'Old Match',
+        ra: 187.25,
+        dec: 2.05,
+        object_type: 'Galaxy',
+        angular_distance_deg: 0.005,
+        confidence: 0.8,
+      },
+    ];
+
+    (component as unknown as { scheduleNearbyLabelLookup: (state: ViewerStateModel) => void }).scheduleNearbyLabelLookup({
+      ra: 188.25,
+      dec: 3.05,
+      fov: 1.5,
+      survey: 'VLASS',
+      labels: [],
+    });
+
+    expect(component.catalogLabels).toEqual([]);
   });
 
   it('opens backend cutout path for science data download', () => {

@@ -89,18 +89,18 @@ It's a **collaboration + publishing layer** on top of VLASS data, not an archive
 
 ### What We're NOT Building
 
-| Feature               | Reason                                                  | When?                |
-| --------------------- | ------------------------------------------------------- | -------------------- |
+| Feature | Reason | When? |
+| --- | --- | --- |
 | **FITS Proxy/Caching Tier** | Full proxy/cache/mirroring is deferred; constrained cutout passthrough only in MVP | v2 (if users demand) |
-| **Mode B Viewer**     | Canvas/Paper.js is v2; Aladin is plenty for MVP         | v2 (if Aladin fails) |
-| **WCS Reprojection**  | Compute-heavy; clients can download + reproject locally | v2+                  |
-| **FITS Generation**   | (same as proxy; out of scope)                           | v2+                  |
-| **Comment System**    | Good first v1.1 feature, but not MVP                    | v1.1                 |
-| **Team/Org Features** | Collaborative viewing can wait                          | v2+                  |
-| **Mobile App**        | Web-only for MVP                                        | v2+                  |
-| **User Profiles**     | Focus on posts, not bios                                | v2+                  |
-| **Advanced Search**   | Tag-based discovery suffices                            | v2+                  |
-| **API/SDK**           | Ship web app first; public API later                    | v2+                  |
+| **Mode B Viewer** | Canvas/Paper.js is v2; Aladin is plenty for MVP | v2 (if Aladin fails) |
+| **WCS Reprojection** | Compute-heavy; clients can download + reproject locally | v2+ |
+| **FITS Generation** | (same as proxy; out of scope) | v2+ |
+| **Comment System** | Good first v1.1 feature, but not MVP | v1.1 |
+| **Team/Org Features** | Collaborative viewing can wait | v2+ |
+| **Mobile App** | Web-only for MVP | v2+ |
+| **User Profiles** | Focus on posts, not bios | v2+ |
+| **Advanced Search** | Tag-based discovery suffices | v2+ |
+| **API/SDK** | Ship web app first; public API later | v2+ |
 
 ---
 

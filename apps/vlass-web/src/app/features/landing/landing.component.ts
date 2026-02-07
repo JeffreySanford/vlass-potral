@@ -37,7 +37,7 @@ export class LandingComponent {
     {
       icon: 'menu_book',
       title: 'Community Research Notebook',
-      route: '/landing',
+      route: '/posts',
     },
   ];
   preview: SkyPreview;

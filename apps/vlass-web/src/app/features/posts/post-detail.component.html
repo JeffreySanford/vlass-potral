@@ -1,0 +1,43 @@
+<div class="detail-page">
+  <mat-toolbar color="primary" class="detail-toolbar">
+    <span>Notebook Post</span>
+    <span class="spacer"></span>
+    <a mat-flat-button routerLink="/posts">Back to feed</a>
+  </mat-toolbar>
+
+  <section class="detail-shell">
+    @if (loading) {
+      <p>Loading post...</p>
+    } @else if (!post) {
+      <p>{{ statusMessage || 'Post unavailable.' }}</p>
+    } @else {
+      <mat-card class="detail-card">
+        <mat-card-header>
+          <mat-card-title>{{ post.title }}</mat-card-title>
+          <mat-card-subtitle>
+            {{ post.user?.display_name || post.user?.username || 'Unknown author' }} | {{ post.status }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <pre class="content">{{ post.content }}</pre>
+        </mat-card-content>
+        <mat-card-actions>
+          @if (post.status === 'draft') {
+            <button mat-stroked-button type="button" [disabled]="publishing" (click)="publish()">
+              @if (publishing) {
+                Publishing...
+              } @else {
+                Publish
+              }
+            </button>
+          }
+          <a mat-button routerLink="/view">Open Viewer</a>
+        </mat-card-actions>
+      </mat-card>
+    }
+
+    @if (statusMessage) {
+      <p class="status">{{ statusMessage }}</p>
+    }
+  </section>
+</div>

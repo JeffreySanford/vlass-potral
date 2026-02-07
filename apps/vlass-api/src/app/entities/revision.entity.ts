@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
+  JoinColumn,
   Index,
   Relation,
 } from 'typeorm';
@@ -42,11 +43,13 @@ export class Revision {
     onDelete: 'CASCADE',
     eager: false,
   })
+  @JoinColumn({ name: 'post_id' })
   post!: Relation<Post>;
 
   @ManyToOne(() => User, (user: User) => user.revisions, {
     onDelete: 'SET NULL',
     eager: false,
   })
+  @JoinColumn({ name: 'user_id' })
   user!: Relation<User>;
 }

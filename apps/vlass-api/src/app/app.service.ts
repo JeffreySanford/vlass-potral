@@ -1,8 +1,8 @@
-import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { CreateUserDto, UpdateUserDto, CreatePostDto, UpdatePostDto } from './dto';
 import { User, Post, AuditAction, AuditEntityType } from './entities';
-import { UserRepository, PostRepository, AuditLogRepository } from './repositories';
+import { UserRepository, PostRepository, AuditLogRepository, RevisionRepository } from './repositories';
 
 @Injectable()
 export class AppService {
@@ -13,6 +13,7 @@ export class AppService {
     private readonly userRepository: UserRepository,
     private readonly postRepository: PostRepository,
     private readonly auditLogRepository: AuditLogRepository,
+    private readonly revisionRepository: RevisionRepository,
   ) {}
 
   getData(): { message: string } {
@@ -159,17 +160,20 @@ export class AppService {
     return post;
   }
 
-  async updatePost(id: string, updatePostDto: UpdatePostDto): Promise<Post> {
+  async updatePost(id: string, actorUserId: string, updatePostDto: UpdatePostDto): Promise<Post> {
     const post = await this.postRepository.findById(id);
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
+    this.assertPostOwner(post, actorUserId);
+
     const updatedPost = await this.postRepository.update(id, updatePostDto);
     if (!updatedPost) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
+    await this.createRevisionSnapshot(updatedPost, actorUserId, 'Post content updated');
     await this.auditLogRepository.createAuditLog({
-      user_id: post.user_id,
+      user_id: actorUserId,
       action: AuditAction.UPDATE,
       entity_type: AuditEntityType.POST,
       entity_id: id,
@@ -181,17 +185,20 @@ export class AppService {
     return updatedPost;
   }
 
-  async publishPost(id: string): Promise<Post> {
+  async publishPost(id: string, actorUserId: string): Promise<Post> {
     const post = await this.postRepository.findById(id);
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
+    this.assertPostOwner(post, actorUserId);
+
     const publishedPost = await this.postRepository.publish(id);
     if (!publishedPost) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
+    await this.createRevisionSnapshot(publishedPost, actorUserId, 'Published post revision');
     await this.auditLogRepository.createAuditLog({
-      user_id: post.user_id,
+      user_id: actorUserId,
       action: AuditAction.PUBLISH,
       entity_type: AuditEntityType.POST,
       entity_id: id,
@@ -203,17 +210,19 @@ export class AppService {
     return publishedPost;
   }
 
-  async unpublishPost(id: string): Promise<Post> {
+  async unpublishPost(id: string, actorUserId: string): Promise<Post> {
     const post = await this.postRepository.findById(id);
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
+    this.assertPostOwner(post, actorUserId);
+
     const unpublishedPost = await this.postRepository.unpublish(id);
     if (!unpublishedPost) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
     await this.auditLogRepository.createAuditLog({
-      user_id: post.user_id,
+      user_id: actorUserId,
       action: AuditAction.UNPUBLISH,
       entity_type: AuditEntityType.POST,
       entity_id: id,
@@ -225,15 +234,17 @@ export class AppService {
     return unpublishedPost;
   }
 
-  async deletePost(id: string): Promise<boolean> {
+  async deletePost(id: string, actorUserId: string): Promise<boolean> {
     const post = await this.postRepository.findById(id);
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
+    this.assertPostOwner(post, actorUserId);
+
     const deleted = await this.postRepository.softDelete(id);
     if (deleted) {
       await this.auditLogRepository.createAuditLog({
-        user_id: post.user_id,
+        user_id: actorUserId,
         action: AuditAction.DELETE,
         entity_type: AuditEntityType.POST,
         entity_id: id,
@@ -241,5 +252,22 @@ export class AppService {
       });
     }
     return deleted;
+  }
+
+  private assertPostOwner(post: Post, actorUserId: string): void {
+    if (post.user_id !== actorUserId) {
+      throw new ForbiddenException('Only the post owner can modify this post');
+    }
+  }
+
+  private async createRevisionSnapshot(post: Post, actorUserId: string, changeSummary: string): Promise<void> {
+    await this.revisionRepository.create({
+      post_id: post.id,
+      user_id: actorUserId,
+      title: post.title,
+      description: post.description,
+      content: post.content,
+      change_summary: changeSummary,
+    });
   }
 }

@@ -11,6 +11,9 @@ Canonical scope is defined by:
 - Backend: `apps/vlass-api` (NestJS + Postgres/Redis)
 - Shared models: `libs/shared/models`
 
+Frontend runtime note:
+- Mode A viewer includes short-lived client-side HiPS tile prefetch/cache (window-scoped, TTL/LRU bounded) for UX performance only.
+
 ## Boundaries
 - Browser does not directly own policy decisions.
 - NestJS enforces auth, RBAC, auditing, and rate limits.
@@ -20,6 +23,7 @@ Canonical scope is defined by:
 - Public VLASS usage only.
 - FITS is link-out only.
 - No mirror-like proxy in MVP.
+- Viewer tile prefetch is transient and non-mirroring (not persisted, bounded by policy).
 
 ## Rust and Go Decision
 - Go microservice is removed from MVP.

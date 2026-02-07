@@ -23,6 +23,7 @@ import {
   ViewerLabelModel,
   ViewerStateModel,
 } from './viewer-api.service';
+import { HipsTilePrefetchService } from './hips-tile-prefetch.service';
 
 type AladinEvent = 'positionChanged' | 'zoomChanged';
 
@@ -108,6 +109,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewerApi = inject(ViewerApiService);
+  private readonly tilePrefetch = inject(HipsTilePrefetchService);
   private readonly labelsStorageKey = 'vlass.viewer.labels.v1';
 
   constructor() {
@@ -218,6 +220,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    this.tilePrefetch.activate();
     from(this.initializeAladin())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -241,6 +244,8 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       clearTimeout(this.viewerSyncTimer);
       this.viewerSyncTimer = null;
     }
+
+    this.tilePrefetch.deactivate();
   }
 
   applyStateToUrl(): void {
@@ -670,6 +675,10 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     if (lookupKey === this.lastNearbyLookupKey) {
       return;
     }
+
+    // Clear transient catalog matches immediately when the view moves,
+    // so stale labels do not linger while the debounced lookup runs.
+    this.catalogLabels = [];
 
     if (this.nearbyLookupTimer) {
       clearTimeout(this.nearbyLookupTimer);

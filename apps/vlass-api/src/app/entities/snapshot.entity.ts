@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
+  JoinColumn,
   Index,
   Relation,
 } from 'typeorm';
@@ -36,5 +37,6 @@ export class Snapshot {
     onDelete: 'CASCADE',
     eager: false,
   })
+  @JoinColumn({ name: 'post_id' })
   post!: Relation<Post>;
 }
