@@ -10,16 +10,127 @@
 ## 📊 Current Phase Status
 
 | Phase | Component | Status | Notes |
-|-------|-----------|--------|-------|
+| --- | --- | --- | --- |
 | **PI-1: Weeks 1-4** | Foundation | ✅ COMPLETE | Dev env, Docker, API scaffold, DB (commit ca9b418) |
-| **Phase 7** | OAuth | ✅ **COMPLETE** | GitHub OAuth 2.0, Session mgmt, Auth guards (commit 91394e9) |
+| **Phase 7** | OAuth | ✅ COMPLETE | GitHub OAuth 2.0, Session mgmt, Auth guards (commit 91394e9) |
 | **Phase 8** | Landing Page | 🔄 IN PROGRESS | SSR, Geolocation, Caching |
-| **Phase 9** | Viewer | ⏳ READY | Aladin integration queued |
-| **Phase 10** | Notebook UI | ⏳ READY | Post editor, markdown preview |
+| **Phase 9** | Viewer | ⏳ BACKLOG | Aladin integration queued |
+| **Phase 10** | Notebook UI | ⏳ BACKLOG | Post editor, markdown preview |
 
 ---
 
-## 📋 Program Vision
+## 🎯 Current Sprint (Sprint 7: Weeks 5-6)
+
+**Goal:** Deploy SSR landing page with geolocation & tile caching  
+**Target Date:** Feb 21, 2026  
+**Sprint Velocity:** 12-14 story points  
+**Status:** 🔄 IN PROGRESS
+
+### Active Development Tasks
+
+**US-7.1: SSR First Paint (<1s FCP)**
+- [ ] Geohash location detection (server-side)
+- [ ] VLASS tile cache (Redis) for common regions
+- [ ] Background PNG embedded in SSR HTML
+- [ ] Responsive grid layout (mobile-first)
+- [ ] SEO meta tags (title, description, og:image)
+- [ ] Lighthouse validation: FCP <1000ms, LCP <2000ms
+- **Story Points:** 5
+
+**US-7.2: Location Privacy (Geohashing)**
+- [ ] geohash-32 library integration
+- [ ] Client-side geolocation detection
+- [ ] Opt-in toggle (location consent)
+- [ ] Coarse hash (precision 4 = 5km radius)
+- [ ] Session storage (no persistence)
+- **Story Points:** 3
+
+**US-7.3: Aladin Viewer Component**
+- [ ] Aladin CDN script async load
+- [ ] Viewer component wrapper
+- [ ] Survey selector dropdown
+- [ ] RA/Dec coordinate display
+- [ ] Zoom/pan event listeners
+- **Story Points:** 4
+
+---
+
+## 📚 Completed Sprints (Archived)
+
+### PI-1: Weeks 1-4 ✅ ARCHIVED
+
+**Goal:** Foundation and API scaffolding  
+**Status:** COMPLETE (Feb 05, 2026)
+
+**Completed Work:**
+- ✅ Docker Compose (Postgres + Redis)
+- ✅ pnpm nx monorepo workspace
+- ✅ Makefile for db-up/reset/logs
+- ✅ ESLint + Prettier configuration
+- ✅ Git pre-commit hooks
+- ✅ NestJS API with 14 REST endpoints
+- ✅ TypeORM ORM setup
+- ✅ 6 database entities
+- ✅ Database migrations
+- ✅ Global exception handling
+- ✅ Request validation (class-validator)
+- ✅ 30+ unit tests (all passing)
+- **Output:** commit ca9b418
+- **Quality:** ✅ TypeScript 0 errors | ✅ ESLint 0 errors | ✅ Tests 30/30 passing
+
+### Phase 7: GitHub OAuth ✅ ARCHIVED
+
+**Goal:** Authentication and session management  
+**Status:** COMPLETE (Feb 07, 2026)
+
+**Completed Work:**
+- ✅ passport-github strategy
+- ✅ SessionSerializer (24-hour sessions)
+- ✅ AuthService (validateOrCreateUser, getCurrentUser)
+- ✅ AuthController (4 endpoints: /login, /github/callback, /me, /logout)
+- ✅ AuthenticatedGuard (route protection)
+- ✅ 5 API endpoints protected (POST/PUT/DELETE on posts)
+- ✅ Passport middleware pipeline
+- ✅ User repository methods (findByGitHubId, findOne, save)
+- ✅ Express-session with httpOnly + sameSite cookies
+- ✅ CORS configured for credentials
+- ✅ .env.local + .env.example templates
+- ✅ 44 unit tests (4 test suites)
+- **Output:** commit 91394e9, commit 573ed10
+- **Quality:** ✅ TypeScript 0 errors | ✅ ESLint 0 errors | ✅ Tests 44/44 passing
+
+---
+
+## 📅 Sprint Planning (Upcoming Backlog)
+
+### Sprint 8 (Weeks 7-8): Viewer + Permalinks
+
+**Goal:** Interactive Aladin viewer with shareable state  
+**Target:** Mar 07, 2026
+
+- US-8.1: Viewer State Serialization (4 points)
+- US-8.2: Shortlink Generation (3 points)
+- US-8.3: Snapshot Downloads (3 points)
+
+### Sprint 9 (Weeks 9-10): Notebook CRUD
+
+**Goal:** Post editor, revisions, tags  
+**Target:** Mar 21, 2026
+
+- US-9.1: Markdown Editor (5 points)
+- US-9.2: Revision Tracking (3 points)
+- US-9.3: Tag System (3 points)
+- US-9.4: Moderation (3 points)
+
+### Sprint 10 (Weeks 11-12): Polish & Deploy
+
+**Goal:** Ship MVP v1.0  
+**Target:** Apr 04, 2026
+
+- US-10.1: Feed View (SSR) (4 points)
+- US-10.2: Testing & QA (5 points)
+- US-10.3: Performance & Lighthouse (3 points)
+- US-10.4: Kubernetes Deployment (4 points)
 
 **MVP Goal:** Ship a delightful VLASS explorer with community research notebooks in 12 weeks.
 
