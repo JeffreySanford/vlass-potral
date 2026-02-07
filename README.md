@@ -1,46 +1,136 @@
-# VlassPortal
+# VLASS Portal
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A public-access web portal for interactive exploration of the **Very Large Array Sky Survey (VLASS)** dataset.
+MVP ships with three core pillars: **Server-Side Rendering** (SEO + performance), **Interactive Sky Viewer** (Aladin Lite), and **Community Notebooks** (reproducible astronomy).
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+**For MVP scope, decision locks, and feature roadmap, see [PRODUCT-CHARTER.md](./documentation/PRODUCT-CHARTER.md)**
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+---
 
-## Generate a library
+## Quick Start
 
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# Run tests
+pnpm test
+
+# Build for production
+pnpm build
 ```
 
-## Run tasks
+For detailed setup instructions, see [QUICK-START.md](./documentation/QUICK-START.md).
 
-To build the library use:
+---
 
-```sh
-npx nx build pkg1
+## Project Structure
+
+- **`apps/vlass-web`** — Angular SSR frontend (Material 3, Aladin Lite viewer)
+- **`apps/vlass-api`** — NestJS backend (Postgres, Redis, Bull queue)
+- **`apps/vlass-web-e2e`** — End-to-end tests (Playwright)
+- **`apps/vlass-api-e2e`** — API integration tests (Jest)
+- **`libs/shared/models`** — Shared TypeScript types and interfaces
+
+---
+
+## Key Documentation
+
+### Architecture & Decisions
+
+- [PRODUCT-CHARTER.md](./documentation/PRODUCT-CHARTER.md) — **MVP scope lock** (3 pillars, metrics, non-scope)
+- [ADR-001](./documentation/adr/) — Audit retention policy (90-day hot only)
+- [ADR-002](./documentation/adr/) — FITS access model (link-out, no redistribution)
+- [ADR-003](./documentation/adr/) — Compute tier (optional Rust in v2+)
+- [ADR-004](./documentation/adr/) — Three-tier architecture (Angular + NestJS + optional Rust)
+
+### Developer Guides
+
+- [CACHE-POLICY.md](./documentation/CACHE-POLICY.md) — Redis caching strategy (observations, metadata, tiles)
+- [TESTING-STRATEGY.md](./documentation/TESTING-STRATEGY.md) — Unit, integration, E2E test coverage
+- [HIPS-PIPELINE.md](./documentation/HIPS-PIPELINE.md) — HEALPix tile generation and serving
+- [COMMUNITY-BLOCKS.md](./documentation/COMMUNITY-BLOCKS.md) — Notebook blocks and reproducibility
+
+### Deployment & Operations
+
+- [LOCATION-PRIVACY.md](./documentation/LOCATION-PRIVACY.md) — IP-based geolocation redaction
+- [AUTH-VERIFICATION.md](./documentation/AUTH-VERIFICATION.md) — GitHub + email verification for verified posts
+
+See [documentation/](./documentation/) for the full index.
+
+---
+
+## Technology Stack
+
+**Frontend:** Angular 18 + Angular Universal (SSR) + Material 3 + SCSS  
+**Backend:** NestJS + TypeScript + Postgres + Redis + Bull  
+**Viewer:** Aladin Lite v3 (CDN) — no build required  
+**Testing:** Jest (unit/API), Playwright (E2E), Vitest (models)  
+**Deployment:** Kubernetes + Helm (VLA assumed infrastructure)  
+**Monorepo:** Nx (inferred targets, optimized caching)
+
+---
+
+## Development Workflow
+
+### Nx Workspace Commands
+
+Run any task with Nx:
+
+```bash
+npx nx <target> <project-name>             # Single project
+npx nx run-many --target=build --all       # All projects
+npx nx affected --target=test              # Changed projects only
 ```
 
-To run any task with Nx use:
+Common targets:
 
-```sh
-npx nx <target> <project-name>
+- `npx nx build [project]` — Compile and bundle
+- `npx nx serve [project]` — Start dev server
+- `npx nx test [project]` — Run unit tests
+- `npx nx lint [project]` — Check code quality
+- `npx nx graph` — Visualize dependency graph
+
+See [Nx documentation](https://nx.dev) for advanced workflows (caching, distributed exec, CI integration).
+
+### Project-Specific Tasks
+
+**Frontend (vlass-web):**
+
+```bash
+npx nx serve vlass-web                    # Dev server (http://localhost:4200)
+npx nx build vlass-web                    # Prod build (dist/apps/vlass-web)
+npx nx test vlass-web                     # Unit + integration tests
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+**Backend (vlass-api):**
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Versioning and releasing
-
-To version and release the library use
-
+```bash
+npx nx serve vlass-api                    # Dev server (http://localhost:3000)
+npx nx test vlass-api --coverage          # Unit tests + coverage
 ```
+
+**E2E:**
+
+```bash
+npx nx e2e vlass-web-e2e                  # Playwright tests (requires running servers)
+npx nx e2e vlass-api-e2e                  # API integration tests
+```
+
+---
+
+## Release & Versioning
+
+To version and release the library use:
+
+```bash
 npx nx release
 ```
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
-
-[Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Pass `--dry-run` to see what would happen without actually releasing. [Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
 ## Keep TypeScript project references up to date
 
@@ -48,62 +138,37 @@ Nx automatically updates TypeScript [project references](https://www.typescriptl
 
 To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
 
-```sh
-npx nx sync
-```
+---
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+## CI/CD Setup
 
-```sh
-npx nx sync:check
-```
+To connect to Nx Cloud for remote caching and CI optimization:
 
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
-
-## Set up CI!
-
-### Step 1
-
-To connect to Nx Cloud, run the following command:
-
-```sh
+```bash
 npx nx connect
 ```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+Then configure your CI workflow:
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
+```bash
 npx nx g ci-workflow
 ```
 
 [Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
-## Install Nx Console
+---
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+## Contributing
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- Code style: ESLint + Prettier (run `pnpm lint`)
+- Tests required: Unit tests for new features, E2E for critical paths
+- Scope decisions locked: See [SCOPE-LOCK.md](./SCOPE-LOCK.md) for recent changes
 
-## Useful links
+---
 
-Learn more:
+## Resources
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [PRODUCT-CHARTER.md](./documentation/PRODUCT-CHARTER.md) — MVP scope & metrics
+- [SCOPE-LOCK.md](./SCOPE-LOCK.md) — Recent decision changes
+- [Nx documentation](https://nx.dev)
+- [VLA VLASS Dataset](https://science.nrao.edu/science/vlass)
