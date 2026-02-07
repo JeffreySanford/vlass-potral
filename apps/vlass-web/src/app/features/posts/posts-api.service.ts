@@ -30,7 +30,7 @@ export interface PostModel {
 export class PostsApiService {
   private readonly http = inject(HttpClient);
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly apiBaseUrl = 'http://localhost:3001';
+  private readonly apiBaseUrl = 'http://localhost:3000';
 
   getPublishedPosts(): Observable<PostModel[]> {
     return this.http.get<PostModel[]>(`${this.apiBaseUrl}/api/posts/published`, {
@@ -77,4 +77,3 @@ export class PostsApiService {
     });
   }
 }
-

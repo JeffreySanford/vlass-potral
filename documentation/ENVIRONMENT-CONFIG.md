@@ -4,12 +4,12 @@ Status date: 2026-02-07
 
 ## Principles
 - Server-only secrets stay in API environment variables.
-- Web client currently uses fixed local API base URL (`http://localhost:3001`) in dev.
+- Web client currently uses fixed local API base URL (`http://localhost:3000`) in dev.
 - Public cutout endpoints are the default. Optional keyed secondary cutout provider is supported via API env vars.
 
 ## Required Core Variables
 - `NODE_ENV`
-- `API_PORT` (or `PORT`)
+- `API_PORT`
 - `JWT_SECRET`
 - `JWT_EXPIRES_IN`
 - `SESSION_SECRET`

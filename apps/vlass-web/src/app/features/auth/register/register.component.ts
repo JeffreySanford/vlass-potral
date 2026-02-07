@@ -160,7 +160,7 @@ export class RegisterComponent {
     }
 
     if (error.status === 0) {
-      return 'API is unavailable. Confirm vlass-api is running on port 3001.';
+      return 'API is unavailable. Confirm vlass-api is running on port 3000.';
     }
 
     return 'Registration failed. Please retry.';

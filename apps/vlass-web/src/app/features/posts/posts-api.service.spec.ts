@@ -37,7 +37,7 @@ describe('PostsApiService', () => {
 
     service.getPublishedPosts().subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3001/api/posts/published');
+    const req = httpMock.expectOne('http://localhost:3000/api/posts/published');
     expect(req.request.method).toBe('GET');
     expect(req.request.headers.get('Authorization')).toBe('Bearer token-123');
     req.flush([]);
@@ -49,7 +49,7 @@ describe('PostsApiService', () => {
 
     service.getPostById('post/id').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3001/api/posts/post%2Fid');
+    const req = httpMock.expectOne('http://localhost:3000/api/posts/post%2Fid');
     expect(req.request.method).toBe('GET');
     req.flush({});
   });
@@ -60,7 +60,7 @@ describe('PostsApiService', () => {
 
     service.createPost({ title: 'Title', content: 'Body content for post.' }).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3001/api/posts');
+    const req = httpMock.expectOne('http://localhost:3000/api/posts');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ title: 'Title', content: 'Body content for post.' });
     req.flush({});
@@ -72,7 +72,7 @@ describe('PostsApiService', () => {
 
     service.updatePost('post-1', { title: 'Updated' }).subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3001/api/posts/post-1');
+    const req = httpMock.expectOne('http://localhost:3000/api/posts/post-1');
     expect(req.request.method).toBe('PUT');
     expect(req.request.body).toEqual({ title: 'Updated' });
     req.flush({});
@@ -84,7 +84,7 @@ describe('PostsApiService', () => {
 
     service.publishPost('post-1').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3001/api/posts/post-1/publish');
+    const req = httpMock.expectOne('http://localhost:3000/api/posts/post-1/publish');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({});
     req.flush({});
@@ -96,7 +96,7 @@ describe('PostsApiService', () => {
 
     service.getPublishedPosts().subscribe();
 
-    const req = httpMock.expectOne('http://localhost:3001/api/posts/published');
+    const req = httpMock.expectOne('http://localhost:3000/api/posts/published');
     expect(req.request.headers.has('Authorization')).toBe(false);
     req.flush([]);
   });

@@ -69,7 +69,7 @@ export interface CutoutTelemetryModel {
 })
 export class ViewerApiService {
   private readonly http = inject(HttpClient);
-  private readonly apiBaseUrl = 'http://localhost:3001';
+  private readonly apiBaseUrl = 'http://localhost:3000';
 
   createState(state: ViewerStateModel): Observable<ViewerStateResponse> {
     return this.http.post<ViewerStateResponse>(`${this.apiBaseUrl}/api/view/state`, { state });

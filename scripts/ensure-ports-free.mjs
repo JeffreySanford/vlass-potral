@@ -32,7 +32,7 @@ function readEnvFile() {
 }
 
 const env = readEnvFile();
-const apiPort = Number(env.API_PORT ?? '3001');
+const apiPort = Number(env.API_PORT ?? '3000');
 const frontendPort = Number(env.FRONTEND_PORT ?? '4200');
 const PORTS = [apiPort, frontendPort].filter((port, index, array) => Number.isFinite(port) && port > 0 && array.indexOf(port) === index);
 

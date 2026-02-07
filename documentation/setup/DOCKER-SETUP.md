@@ -73,7 +73,7 @@ API resolves `.env.local` / `.env` first (non-production), then process env.
 
 Key DB/API vars:
 
-- `API_PORT` (default `3001`)
+- `API_PORT` (default `3000`)
 - `FRONTEND_URL` (default `http://localhost:4200`)
 - `JWT_SECRET`
 - `JWT_EXPIRES_IN` (default `7d`)

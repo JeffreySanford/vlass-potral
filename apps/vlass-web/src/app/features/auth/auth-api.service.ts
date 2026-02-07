@@ -33,7 +33,7 @@ export interface LoginResponse {
 })
 export class AuthApiService {
   private readonly http = inject(HttpClient);
-  private readonly apiBaseUrl = 'http://localhost:3001';
+  private readonly apiBaseUrl = 'http://localhost:3000';
 
   login(request: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(

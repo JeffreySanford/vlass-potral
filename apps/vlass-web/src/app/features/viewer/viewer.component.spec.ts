@@ -76,7 +76,7 @@ describe('ViewerComponent', () => {
           recent_failures: [],
         }),
       ),
-      scienceDataUrl: vi.fn().mockReturnValue('http://localhost:3001/api/view/cutout?ra=1'),
+      scienceDataUrl: vi.fn().mockReturnValue('http://localhost:3000/api/view/cutout?ra=1'),
     };
 
     await TestBed.configureTestingModule({
