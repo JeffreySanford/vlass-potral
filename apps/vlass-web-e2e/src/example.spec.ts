@@ -114,16 +114,15 @@ test('logs in and allows logout', async ({ page }) => {
   await page.goto('/auth/login');
   const loginEmail = page.locator('input[formcontrolname="email"]');
   const loginPassword = page.locator('input[formcontrolname="password"]');
+  await expect(page.locator('h1')).toContainText('Login');
   await loginEmail.fill('test@vlass.local');
   await loginPassword.fill('Password123!');
-  await expect(loginEmail).toHaveValue('test@vlass.local');
-  await expect(loginPassword).toHaveValue('Password123!');
   await Promise.all([
     page.waitForResponse(
       (response) => response.url().includes('/api/auth/login') && response.request().method() === 'POST',
       { timeout: 10000 },
     ),
-    page.locator('form').evaluate((form) => (form as HTMLFormElement).requestSubmit()),
+    page.getByRole('button', { name: 'Login' }).click(),
   ]);
 
   await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });
@@ -369,7 +368,7 @@ test('auto-selects higher-resolution survey when VLASS is deeply zoomed', async 
   });
 
   await page.goto('/view');
-  await page.locator('input[formcontrolname="survey"]').fill('VLASS');
+  await page.locator('select[formcontrolname="survey"]').selectOption('VLASS');
   await page.locator('input[formcontrolname="fov"]').fill('0.3');
   await page.locator('input[formcontrolname="fov"]').blur();
 
@@ -440,21 +439,18 @@ test('registers a user and redirects to landing', async ({ page }) => {
   const registerEmail = page.getByRole('textbox', { name: 'Email' });
   const registerPassword = page.locator('input[formcontrolname="password"]');
   const registerConfirmPassword = page.locator('input[formcontrolname="confirmPassword"]');
+  await expect(page.locator('h1')).toContainText('Create Account');
 
   await registerUsername.fill('newuser');
   await registerEmail.fill('new@vlass.local');
   await registerPassword.fill('Password123!');
   await registerConfirmPassword.fill('Password123!');
-  await expect(registerUsername).toHaveValue('newuser');
-  await expect(registerEmail).toHaveValue('new@vlass.local');
-  await expect(registerPassword).toHaveValue('Password123!');
-  await expect(registerConfirmPassword).toHaveValue('Password123!');
   await Promise.all([
     page.waitForResponse(
       (response) => response.url().includes('/api/auth/register') && response.request().method() === 'POST',
       { timeout: 10000 },
     ),
-    page.locator('form').evaluate((form) => (form as HTMLFormElement).requestSubmit()),
+    page.getByRole('button', { name: 'Create Account' }).click(),
   ]);
 
   await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });

@@ -7,7 +7,7 @@ Canonical scope:
 
 ## MVP Priorities
 
-- [ ] Complete Pillar 2 operational telemetry dashboarding for cutout provider reliability
+- [x] Complete Pillar 2 operational telemetry dashboarding for cutout provider reliability
 - [ ] Complete post and revision workflows
 - [ ] Complete post moderation path (hide/lock)
 - [ ] Keep docs aligned with source-of-truth models
@@ -36,6 +36,7 @@ Completed on 2026-02-07:
 - [x] Harden FITS cutout path with fallback surveys, retries, and outage messaging
 - [x] Add deep-zoom native-resolution UX indicator in viewer
 - [x] Add snapshot/cutout rate-limit tuning and audit entries
+- [x] Close Pillar 2 as complete (Mode A viewer, permalink/snapshot/cutout, telemetry, and reliability hardening)
 
 ## Deferred Backlog
 

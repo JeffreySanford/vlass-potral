@@ -7,7 +7,17 @@
 
   <div class="viewer-shell">
     <section class="viewer-canvas-panel">
-      <div #aladinHost class="aladin-host" aria-label="Aladin sky viewer"></div>
+      <div class="aladin-stage">
+        <div #aladinHost class="aladin-host" aria-label="Aladin sky viewer"></div>
+        <div class="center-indicator" aria-hidden="true">
+          <span class="crosshair"></span>
+          @if (centerCatalogLabel) {
+            <span class="center-label">
+              {{ centerCatalogLabel.name }} ({{ centerCatalogLabel.object_type }})
+            </span>
+          }
+        </div>
+      </div>
       <p class="viewer-caption">Aladin Lite Mode A viewer with live RA/Dec/FOV sync.</p>
       @if (nativeResolutionHint) {
         <div class="resolution-hint">
@@ -42,7 +52,11 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Survey</mat-label>
-            <input matInput type="text" formControlName="survey" />
+            <select matNativeControl formControlName="survey">
+              @for (option of surveyOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
           </mat-form-field>
         </form>
 
@@ -74,6 +88,19 @@
           </select>
         </div>
 
+        @if (cutoutTelemetry) {
+          <div class="telemetry-card">
+            <h3>Cutout Telemetry</h3>
+            <p>Success Rate: {{ cutoutSuccessRate }}</p>
+            <p>Requests: {{ cutoutTelemetry.requests_total }} | Failures: {{ cutoutTelemetry.failure_total }}</p>
+            <p>Fallbacks: res {{ cutoutTelemetry.resolution_fallback_total }} | survey {{ cutoutTelemetry.survey_fallback_total }}</p>
+            <p>Cache Hits: {{ cutoutTelemetry.cache_hits_total }} | Attempts: {{ cutoutTelemetry.provider_attempts_total }}</p>
+            @if (cutoutTelemetry.last_failure_reason) {
+              <p class="status">Last Failure: {{ cutoutTelemetry.last_failure_reason }}</p>
+            }
+          </div>
+        }
+
         <div class="label-tools">
           <mat-form-field appearance="outline" class="label-name-field">
             <mat-label>Center Label</mat-label>
@@ -82,8 +109,26 @@
           <button mat-stroked-button type="button" (click)="addCenterLabel()">Label Center</button>
         </div>
 
+        @if (catalogLabels.length > 0) {
+          <div class="catalog-labels">
+            <h3>Catalog Labels Near Center</h3>
+            @if (centerCatalogLabel) {
+              <button mat-stroked-button type="button" (click)="addCenterCatalogLabelAsAnnotation()">
+                Annotate Center Match
+              </button>
+            }
+            @for (label of catalogLabels; track label.name + label.ra + label.dec) {
+              <div class="catalog-row" (mouseenter)="logCatalogHover(label)">
+                <span>{{ label.name }} ({{ label.object_type }}) - {{ label.angular_distance_deg.toFixed(3) }} deg</span>
+                <button mat-button type="button" (click)="addCatalogLabelAsAnnotation(label)">Annotate</button>
+              </div>
+            }
+          </div>
+        }
+
         @if (labels.length > 0) {
           <div class="label-list">
+            <h3>Manual Annotations</h3>
             @for (label of labels; track label.created_at + label.name) {
               <div class="label-row">
                 <span>{{ label.name }} (RA {{ label.ra }}, Dec {{ label.dec }})</span>

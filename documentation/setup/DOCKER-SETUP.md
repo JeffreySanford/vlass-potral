@@ -84,6 +84,19 @@ Key DB/API vars:
 - `DB_PASSWORD` (default `vlass_password_dev`)
 - `DB_NAME` (default `vlass_portal`)
 
+Optional cutout reliability vars:
+
+- `CUTOUT_FETCH_TIMEOUT_MS` (default `25000`)
+- `CUTOUT_CACHE_TTL_MS` (default `300000`)
+- `CUTOUT_SECONDARY_ENABLED` (`true` enables secondary keyed fallback)
+- `CUTOUT_SECONDARY_URL_TEMPLATE`
+  - placeholders supported: `{ra}`, `{dec}`, `{fov}`, `{fov_rad}`, `{survey}`, `{width}`, `{height}`
+- `CUTOUT_SECONDARY_TIMEOUT_MS`
+- `CUTOUT_SECONDARY_API_KEY`
+- `CUTOUT_SECONDARY_API_KEY_HEADER` (default `Authorization`)
+- `CUTOUT_SECONDARY_API_KEY_PREFIX` (default `Bearer `)
+- `CUTOUT_SECONDARY_API_KEY_QUERY_PARAM`
+
 ## Health and Troubleshooting
 
 ### Docker daemon not running

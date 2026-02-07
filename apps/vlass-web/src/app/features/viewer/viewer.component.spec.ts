@@ -28,6 +28,8 @@ describe('ViewerComponent', () => {
     createState: ReturnType<typeof vi.fn>;
     resolveState: ReturnType<typeof vi.fn>;
     createSnapshot: ReturnType<typeof vi.fn>;
+    getNearbyLabels: ReturnType<typeof vi.fn>;
+    getCutoutTelemetry: ReturnType<typeof vi.fn>;
     scienceDataUrl: ReturnType<typeof vi.fn>;
   };
   let router: Router;
@@ -56,6 +58,24 @@ describe('ViewerComponent', () => {
       createState: vi.fn(),
       resolveState: vi.fn(),
       createSnapshot: vi.fn(),
+      getNearbyLabels: vi.fn().mockReturnValue(of([])),
+      getCutoutTelemetry: vi.fn().mockReturnValue(
+        of({
+          requests_total: 2,
+          success_total: 1,
+          failure_total: 1,
+          provider_attempts_total: 3,
+          provider_failures_total: 2,
+          cache_hits_total: 0,
+          resolution_fallback_total: 1,
+          survey_fallback_total: 0,
+          consecutive_failures: 1,
+          last_success_at: '2026-02-07T00:00:00.000Z',
+          last_failure_at: '2026-02-07T00:00:10.000Z',
+          last_failure_reason: 'status 503',
+          recent_failures: [],
+        }),
+      ),
       scienceDataUrl: vi.fn().mockReturnValue('http://localhost:3001/api/view/cutout?ra=1'),
     };
 
@@ -93,6 +113,7 @@ describe('ViewerComponent', () => {
 
   afterEach(() => {
     delete (window as unknown as { A?: unknown }).A;
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -152,7 +173,7 @@ describe('ViewerComponent', () => {
     component.stateForm.patchValue({ survey: 'DSS2' });
     await fixture.whenStable();
 
-    expect(mockAladinView.setImageSurvey).toHaveBeenCalledWith('P/DSS2/color');
+    expect(mockAladinView.setImageSurvey).toHaveBeenCalledWith('https://skies.esac.esa.int/DSSColor');
   });
 
   it('switches VLASS to higher-resolution survey when deeply zoomed', async () => {
@@ -163,11 +184,13 @@ describe('ViewerComponent', () => {
   });
 
   it('syncs form values when Aladin emits position and zoom events', async () => {
+    vi.useFakeTimers();
     mockAladinView.getRaDec.mockReturnValue([199.1234, -12.3456]);
     mockAladinView.getFov.mockReturnValue(2.25);
 
     eventCallbacks['positionChanged']?.();
     eventCallbacks['zoomChanged']?.();
+    await vi.advanceTimersByTimeAsync(1000);
     await fixture.whenStable();
 
     expect(component.stateForm.value.ra).toBe(199.1234);
@@ -181,6 +204,50 @@ describe('ViewerComponent', () => {
 
     expect(component.labels[0]?.name).toBe('M87 Core');
     expect(component.labels[0]?.ra).toBeTypeOf('number');
+  });
+
+  it('keeps catalog labels separate and can convert them to manual annotations', () => {
+    component.catalogLabels = [
+      {
+        name: 'Alpha Centauri B',
+        ra: 219.9021,
+        dec: -60.8353,
+        object_type: 'Star',
+        angular_distance_deg: 0.011,
+        confidence: 0.91,
+      },
+    ];
+
+    component.addCatalogLabelAsAnnotation(component.catalogLabels[0]);
+
+    expect(component.labels[0]?.name).toBe('Alpha Centauri B');
+    expect(component.catalogLabels.length).toBe(1);
+  });
+
+  it('exposes nearest center catalog label and annotates it', () => {
+    component.stateForm.patchValue({ fov: 0.5 });
+    component.catalogLabels = [
+      {
+        name: 'Far Source',
+        ra: 219.9,
+        dec: -60.83,
+        object_type: 'Galaxy',
+        angular_distance_deg: 0.08,
+        confidence: 0.8,
+      },
+      {
+        name: 'Center Match',
+        ra: 219.91,
+        dec: -60.84,
+        object_type: 'Star',
+        angular_distance_deg: 0.01,
+        confidence: 0.92,
+      },
+    ];
+
+    expect(component.centerCatalogLabel?.name).toBe('Center Match');
+    component.addCenterCatalogLabelAsAnnotation();
+    expect(component.labels[0]?.name).toBe('Center Match');
   });
 
   it('opens backend cutout path for science data download', () => {
@@ -210,6 +277,12 @@ describe('ViewerComponent', () => {
     component.stateForm.patchValue({ survey: 'VLASS', fov: 0.3 });
 
     expect(component.nativeResolutionHint).toContain('Auto-switched');
+  });
+
+  it('loads cutout telemetry and computes success rate', () => {
+    expect(viewerApiService.getCutoutTelemetry).toHaveBeenCalled();
+    expect(component.cutoutTelemetry?.requests_total).toBe(2);
+    expect(component.cutoutSuccessRate).toBe('50.0%');
   });
 
   it('offers a one-click sharper survey suggestion', () => {

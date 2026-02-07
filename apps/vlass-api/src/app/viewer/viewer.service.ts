@@ -26,10 +26,97 @@ interface CutoutCacheEntry {
   buffer: Buffer;
 }
 
+interface CutoutFetchResult {
+  buffer: Buffer;
+  survey: string;
+  provider: 'primary' | 'secondary';
+  attempts: number;
+  cacheHit: boolean;
+}
+
+interface CutoutFailureEvent {
+  at: string;
+  reason: string;
+}
+
+export interface CutoutTelemetrySnapshot {
+  requests_total: number;
+  success_total: number;
+  failure_total: number;
+  provider_attempts_total: number;
+  provider_failures_total: number;
+  cache_hits_total: number;
+  resolution_fallback_total: number;
+  survey_fallback_total: number;
+  provider_fallback_total: number;
+  primary_success_total: number;
+  secondary_success_total: number;
+  consecutive_failures: number;
+  last_success_at: string | null;
+  last_failure_at: string | null;
+  last_failure_reason: string | null;
+  recent_failures: CutoutFailureEvent[];
+}
+
+interface SimbadTapMetadataColumn {
+  name?: string;
+}
+
+interface SimbadTapResponse {
+  metadata?: SimbadTapMetadataColumn[];
+  data?: unknown[][];
+}
+
+export interface NearbyCatalogLabel {
+  name: string;
+  ra: number;
+  dec: number;
+  object_type: string;
+  angular_distance_deg: number;
+  confidence: number;
+}
+
 @Injectable()
 export class ViewerService implements OnModuleInit {
   private readonly logger = new Logger(ViewerService.name);
   private readonly cutoutCache = new Map<string, CutoutCacheEntry>();
+  private lastNearbyLabelsWarnAt = 0;
+  private lastNearbyLabelsWarnMessage = '';
+  private readonly cutoutTelemetry: {
+    requestsTotal: number;
+    successTotal: number;
+    failureTotal: number;
+    providerAttemptsTotal: number;
+    providerFailuresTotal: number;
+    cacheHitsTotal: number;
+    resolutionFallbackTotal: number;
+    surveyFallbackTotal: number;
+    providerFallbackTotal: number;
+    primarySuccessTotal: number;
+    secondarySuccessTotal: number;
+    consecutiveFailures: number;
+    lastSuccessAt: string | null;
+    lastFailureAt: string | null;
+    lastFailureReason: string | null;
+    recentFailures: CutoutFailureEvent[];
+  } = {
+    requestsTotal: 0,
+    successTotal: 0,
+    failureTotal: 0,
+    providerAttemptsTotal: 0,
+    providerFailuresTotal: 0,
+    cacheHitsTotal: 0,
+    resolutionFallbackTotal: 0,
+    surveyFallbackTotal: 0,
+    providerFallbackTotal: 0,
+    primarySuccessTotal: 0,
+    secondarySuccessTotal: 0,
+    consecutiveFailures: 0,
+    lastSuccessAt: null,
+    lastFailureAt: null,
+    lastFailureReason: null,
+    recentFailures: [],
+  };
 
   constructor(
     private readonly dataSource: DataSource,
@@ -109,7 +196,7 @@ export class ViewerService implements OnModuleInit {
 
     const snapshotId = randomUUID();
     const fileName = `${snapshotId}.png`;
-    const storageDir = resolve(process.cwd(), 'apps', 'vlass-api', 'storage', 'snapshots');
+    const storageDir = resolve(this.resolveApiRootDir(), 'storage', 'snapshots');
 
     mkdirSync(storageDir, { recursive: true });
     writeFileSync(resolve(storageDir, fileName), pngBuffer);
@@ -145,6 +232,27 @@ export class ViewerService implements OnModuleInit {
     };
   }
 
+  getCutoutTelemetry(): CutoutTelemetrySnapshot {
+    return {
+      requests_total: this.cutoutTelemetry.requestsTotal,
+      success_total: this.cutoutTelemetry.successTotal,
+      failure_total: this.cutoutTelemetry.failureTotal,
+      provider_attempts_total: this.cutoutTelemetry.providerAttemptsTotal,
+      provider_failures_total: this.cutoutTelemetry.providerFailuresTotal,
+      cache_hits_total: this.cutoutTelemetry.cacheHitsTotal,
+      resolution_fallback_total: this.cutoutTelemetry.resolutionFallbackTotal,
+      survey_fallback_total: this.cutoutTelemetry.surveyFallbackTotal,
+      provider_fallback_total: this.cutoutTelemetry.providerFallbackTotal,
+      primary_success_total: this.cutoutTelemetry.primarySuccessTotal,
+      secondary_success_total: this.cutoutTelemetry.secondarySuccessTotal,
+      consecutive_failures: this.cutoutTelemetry.consecutiveFailures,
+      last_success_at: this.cutoutTelemetry.lastSuccessAt,
+      last_failure_at: this.cutoutTelemetry.lastFailureAt,
+      last_failure_reason: this.cutoutTelemetry.lastFailureReason,
+      recent_failures: [...this.cutoutTelemetry.recentFailures],
+    };
+  }
+
   async downloadCutout(request: ViewerCutoutRequest): Promise<{ buffer: Buffer; fileName: string }> {
     this.validateState({
       ra: request.ra,
@@ -155,17 +263,60 @@ export class ViewerService implements OnModuleInit {
     });
 
     const fallbackSurveys = this.cutoutSurveyFallbacks(request.survey);
-    const maxAttempts = 2;
+    this.cutoutTelemetry.requestsTotal += 1;
+    const maxAttempts = 3;
     const detail = request.detail ?? 'standard';
-    const dimensions = this.cutoutDimensions(detail);
+    const dimensionsCandidates = this.cutoutDimensionsCandidates(detail);
+    let buffer: Buffer | null = null;
+    let selectedDimensions = dimensionsCandidates[0];
+    let selectedSurvey = fallbackSurveys[0];
+    let selectedProvider: 'primary' | 'secondary' = 'primary';
+    let lastError: unknown = null;
+    let cacheHit = false;
+    let totalAttempts = 0;
 
-    const buffer = await this.fetchCutoutWithRetries({
-      request,
-      fallbackSurveys,
-      maxAttempts,
-      width: dimensions.width,
-      height: dimensions.height,
-    });
+    for (const dimensions of dimensionsCandidates) {
+      try {
+        const result = await this.fetchCutoutWithRetries({
+          request,
+          fallbackSurveys,
+          maxAttempts,
+          width: dimensions.width,
+          height: dimensions.height,
+        });
+        buffer = result.buffer;
+        selectedDimensions = dimensions;
+        selectedSurvey = result.survey;
+        selectedProvider = result.provider;
+        cacheHit = result.cacheHit;
+        totalAttempts += result.attempts;
+        break;
+      } catch (error) {
+        lastError = error;
+        this.logger.warn(
+          `Cutout fetch failed at ${dimensions.width}x${dimensions.height}; trying lower resolution if available.`,
+        );
+      }
+    }
+
+    if (!buffer) {
+      this.markCutoutFailure(lastError);
+      throw lastError;
+    }
+
+    this.markCutoutSuccess(selectedProvider);
+    if (cacheHit) {
+      this.cutoutTelemetry.cacheHitsTotal += 1;
+    }
+    if (selectedDimensions.width < dimensionsCandidates[0].width) {
+      this.cutoutTelemetry.resolutionFallbackTotal += 1;
+    }
+    if (selectedSurvey !== fallbackSurveys[0]) {
+      this.cutoutTelemetry.surveyFallbackTotal += 1;
+    }
+    if (selectedProvider === 'secondary') {
+      this.cutoutTelemetry.providerFallbackTotal += 1;
+    }
 
     const safeLabel = request.label?.trim().replace(/[^a-zA-Z0-9_-]+/g, '-');
     const fileNameStem = safeLabel && safeLabel.length > 0 ? safeLabel : `ra${request.ra.toFixed(4)}_dec${request.dec.toFixed(4)}`;
@@ -178,9 +329,15 @@ export class ViewerService implements OnModuleInit {
         type: 'viewer_cutout',
         survey: request.survey,
         detail,
+        width: selectedDimensions.width,
+        height: selectedDimensions.height,
         ra: request.ra,
         dec: request.dec,
         fov: request.fov,
+        survey_resolved: selectedSurvey,
+        provider_resolved: selectedProvider,
+        provider_attempts: totalAttempts,
+        cache_hit: cacheHit,
         size_bytes: buffer.length,
       },
     });
@@ -189,6 +346,67 @@ export class ViewerService implements OnModuleInit {
       buffer,
       fileName: `${fileNameStem}.fits`,
     };
+  }
+
+  async getNearbyLabels(ra: number, dec: number, radiusDeg: number, limit: number): Promise<NearbyCatalogLabel[]> {
+    this.validateState({
+      ra,
+      dec,
+      fov: Math.max(radiusDeg, 0.001),
+      survey: 'SIMBAD',
+      labels: [],
+    });
+
+    const normalizedRadius = Number(radiusDeg.toFixed(5));
+    const normalizedLimit = Math.max(1, Math.min(limit, 25));
+    const query = [
+      `SELECT TOP ${normalizedLimit}`,
+      'main_id, ra, dec, otype_txt,',
+      `DISTANCE(POINT('ICRS', ra, dec), POINT('ICRS', ${ra.toFixed(6)}, ${dec.toFixed(6)})) AS ang_dist`,
+      'FROM basic',
+      `WHERE CONTAINS(POINT('ICRS', ra, dec), CIRCLE('ICRS', ${ra.toFixed(6)}, ${dec.toFixed(6)}, ${normalizedRadius})) = 1`,
+      'AND main_id IS NOT NULL',
+      'ORDER BY ang_dist ASC',
+    ].join(' ');
+
+    const formBody = new URLSearchParams({
+      request: 'doQuery',
+      lang: 'adql',
+      format: 'json',
+      query,
+    });
+
+    try {
+      const controller = new AbortController();
+      const timeoutHandle = setTimeout(() => controller.abort(), 6_000);
+      const response = await fetch('https://simbad.cds.unistra.fr/simbad/sim-tap/sync', {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        },
+        body: formBody.toString(),
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeoutHandle));
+
+      if (!response.ok) {
+        this.warnNearbyLabels(`SIMBAD nearby-label query failed with status ${response.status}. Returning empty labels.`);
+        return [];
+      }
+
+      const payload = (await response.json()) as SimbadTapResponse;
+      const rows = this.parseSimbadRows(payload);
+      return rows
+        .filter((row) => Number.isFinite(row.ra) && Number.isFinite(row.dec) && Number.isFinite(row.angular_distance_deg))
+        .map((row) => ({
+          ...row,
+          confidence: this.computeCatalogConfidence(row, normalizedRadius),
+        }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'unknown error';
+      this.warnNearbyLabels(`SIMBAD nearby-label query failed (${message}). Returning empty labels.`);
+      return [];
+    }
   }
 
   encodeState(state: ViewerStatePayload): string {
@@ -280,57 +498,66 @@ export class ViewerService implements OnModuleInit {
     maxAttempts: number;
     width: number;
     height: number;
-  }): Promise<Buffer> {
+  }): Promise<CutoutFetchResult> {
     let lastErrorMessage = 'no response from provider';
+    let attemptsUsed = 0;
+    const providerOrder = this.cutoutProviderOrder();
 
     for (const survey of params.fallbackSurveys) {
       for (let attempt = 1; attempt <= params.maxAttempts; attempt += 1) {
-        try {
-          const cacheKey = this.cutoutCacheKey(params.request, survey, params.width, params.height);
-          const cached = this.getCutoutFromCache(cacheKey);
-          if (cached) {
-            return cached;
+        for (const provider of providerOrder) {
+          try {
+            const cacheKey = this.cutoutCacheKey(params.request, survey, provider, params.width, params.height);
+            const cached = this.getCutoutFromCache(cacheKey);
+            if (cached) {
+              return {
+                buffer: cached,
+                survey,
+                provider,
+                attempts: attemptsUsed,
+                cacheHit: true,
+              };
+            }
+
+            attemptsUsed += 1;
+            this.cutoutTelemetry.providerAttemptsTotal += 1;
+            const cutoutUrl =
+              provider === 'primary'
+                ? this.buildPrimaryCutoutUrl(params.request, survey, params.width, params.height)
+                : this.buildSecondaryCutoutUrl(params.request, survey, params.width, params.height);
+            const response = await this.fetchCutoutResponse(cutoutUrl, provider);
+
+            if (!response.ok) {
+              lastErrorMessage = `status ${response.status}`;
+              this.cutoutTelemetry.providerFailuresTotal += 1;
+              this.logger.warn(`Cutout fetch failed (${provider}:${survey}, attempt ${attempt}): ${lastErrorMessage}`);
+              continue;
+            }
+
+            const arrayBuffer = await response.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            if (buffer.length === 0) {
+              lastErrorMessage = 'empty payload';
+              this.cutoutTelemetry.providerFailuresTotal += 1;
+              this.logger.warn(`Cutout fetch failed (${provider}:${survey}, attempt ${attempt}): ${lastErrorMessage}`);
+              continue;
+            }
+
+            this.setCutoutCache(cacheKey, buffer);
+            return {
+              buffer,
+              survey,
+              provider,
+              attempts: attemptsUsed,
+              cacheHit: false,
+            };
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'unknown fetch error';
+            lastErrorMessage = errorMessage;
+            this.cutoutTelemetry.providerFailuresTotal += 1;
+            this.logger.warn(`Cutout fetch failed (${provider}:${survey}, attempt ${attempt}): ${lastErrorMessage}`);
           }
-
-          const cutoutUrl = new URL('https://alasky.cds.unistra.fr/hips-image-services/hips2fits');
-          cutoutUrl.searchParams.set('hips', survey);
-          cutoutUrl.searchParams.set('format', 'fits');
-          cutoutUrl.searchParams.set('projection', 'TAN');
-          cutoutUrl.searchParams.set('ra', params.request.ra.toString());
-          cutoutUrl.searchParams.set('dec', params.request.dec.toString());
-          cutoutUrl.searchParams.set('fov', this.degToRad(params.request.fov).toString());
-          cutoutUrl.searchParams.set('width', params.width.toString());
-          cutoutUrl.searchParams.set('height', params.height.toString());
-
-          const controller = new AbortController();
-          const timeoutHandle = setTimeout(() => controller.abort(), 12_000);
-          const response = await fetch(cutoutUrl, {
-            headers: {
-              Accept: 'application/fits, application/octet-stream;q=0.9',
-            },
-            signal: controller.signal,
-          }).finally(() => clearTimeout(timeoutHandle));
-
-          if (!response.ok) {
-            lastErrorMessage = `status ${response.status}`;
-            this.logger.warn(`Cutout fetch failed (${survey}, attempt ${attempt}): ${lastErrorMessage}`);
-            continue;
-          }
-
-          const arrayBuffer = await response.arrayBuffer();
-          const buffer = Buffer.from(arrayBuffer);
-
-          if (buffer.length === 0) {
-            lastErrorMessage = 'empty payload';
-            this.logger.warn(`Cutout fetch failed (${survey}, attempt ${attempt}): ${lastErrorMessage}`);
-            continue;
-          }
-
-          this.setCutoutCache(cacheKey, buffer);
-          return buffer;
-        } catch (error) {
-          lastErrorMessage = error instanceof Error ? error.message : 'unknown fetch error';
-          this.logger.warn(`Cutout fetch failed (${survey}, attempt ${attempt}): ${lastErrorMessage}`);
         }
       }
     }
@@ -340,23 +567,214 @@ export class ViewerService implements OnModuleInit {
     );
   }
 
+  private buildPrimaryCutoutUrl(request: ViewerCutoutRequest, survey: string, width: number, height: number): URL {
+    const cutoutUrl = new URL('https://alasky.cds.unistra.fr/hips-image-services/hips2fits');
+    cutoutUrl.searchParams.set('hips', survey);
+    cutoutUrl.searchParams.set('format', 'fits');
+    cutoutUrl.searchParams.set('projection', 'TAN');
+    cutoutUrl.searchParams.set('ra', request.ra.toString());
+    cutoutUrl.searchParams.set('dec', request.dec.toString());
+    cutoutUrl.searchParams.set('fov', this.degToRad(request.fov).toString());
+    cutoutUrl.searchParams.set('width', width.toString());
+    cutoutUrl.searchParams.set('height', height.toString());
+    return cutoutUrl;
+  }
+
+  private buildSecondaryCutoutUrl(request: ViewerCutoutRequest, survey: string, width: number, height: number): URL {
+    const template = process.env['CUTOUT_SECONDARY_URL_TEMPLATE'] ?? '';
+    if (template.trim().length === 0) {
+      throw new Error('secondary cutout template is not configured');
+    }
+
+    const fovRadians = this.degToRad(request.fov);
+    const rendered = template
+      .replaceAll('{ra}', encodeURIComponent(request.ra.toString()))
+      .replaceAll('{dec}', encodeURIComponent(request.dec.toString()))
+      .replaceAll('{fov}', encodeURIComponent(request.fov.toString()))
+      .replaceAll('{fov_rad}', encodeURIComponent(fovRadians.toString()))
+      .replaceAll('{survey}', encodeURIComponent(survey))
+      .replaceAll('{width}', encodeURIComponent(width.toString()))
+      .replaceAll('{height}', encodeURIComponent(height.toString()));
+
+    return new URL(rendered);
+  }
+
+  private cutoutProviderOrder(): Array<'primary' | 'secondary'> {
+    const secondaryEnabled = (process.env['CUTOUT_SECONDARY_ENABLED'] ?? '').toLowerCase() === 'true';
+    const template = process.env['CUTOUT_SECONDARY_URL_TEMPLATE'] ?? '';
+    if (secondaryEnabled && template.trim().length > 0) {
+      return ['primary', 'secondary'];
+    }
+
+    return ['primary'];
+  }
+
+  private async fetchCutoutResponse(url: URL, provider: 'primary' | 'secondary'): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutMs =
+      provider === 'secondary'
+        ? Number(process.env['CUTOUT_SECONDARY_TIMEOUT_MS'] || process.env['CUTOUT_FETCH_TIMEOUT_MS'] || 25_000)
+        : Number(process.env['CUTOUT_FETCH_TIMEOUT_MS'] || 25_000);
+    const timeoutHandle = setTimeout(() => controller.abort(), timeoutMs);
+
+    const headers: Record<string, string> = {
+      Accept: 'application/fits, application/octet-stream;q=0.9',
+    };
+    if (provider === 'secondary') {
+      const token = process.env['CUTOUT_SECONDARY_API_KEY'];
+      if (token && token.trim().length > 0) {
+        const keyHeader = process.env['CUTOUT_SECONDARY_API_KEY_HEADER'] || 'Authorization';
+        const keyPrefix = process.env['CUTOUT_SECONDARY_API_KEY_PREFIX'] ?? 'Bearer ';
+        headers[keyHeader] = `${keyPrefix}${token}`;
+      }
+      const keyQueryParam = process.env['CUTOUT_SECONDARY_API_KEY_QUERY_PARAM'];
+      if (keyQueryParam && keyQueryParam.trim().length > 0 && token && token.trim().length > 0) {
+        url.searchParams.set(keyQueryParam, token);
+      }
+    }
+
+    return fetch(url, {
+      headers,
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timeoutHandle));
+  }
+
+  private parseSimbadRows(payload: SimbadTapResponse): NearbyCatalogLabel[] {
+    if (!Array.isArray(payload.metadata) || !Array.isArray(payload.data)) {
+      return [];
+    }
+
+    const indexByName = new Map<string, number>();
+    payload.metadata.forEach((column, index) => {
+      if (typeof column.name === 'string') {
+        indexByName.set(column.name.toLowerCase(), index);
+      }
+    });
+
+    const getIndex = (name: string): number => indexByName.get(name.toLowerCase()) ?? -1;
+    const nameIndex = getIndex('main_id');
+    const raIndex = getIndex('ra');
+    const decIndex = getIndex('dec');
+    const typeIndex = getIndex('otype_txt');
+    const distanceIndex = getIndex('ang_dist');
+
+    const rows: NearbyCatalogLabel[] = [];
+    for (const row of payload.data) {
+      if (!Array.isArray(row)) {
+        continue;
+      }
+
+      const name = this.readStringCell(row, nameIndex);
+      const ra = this.readNumberCell(row, raIndex);
+      const dec = this.readNumberCell(row, decIndex);
+      const objectType = this.readStringCell(row, typeIndex) || 'Unknown';
+      const angularDistanceDeg = this.readNumberCell(row, distanceIndex);
+
+      if (!name || !Number.isFinite(ra) || !Number.isFinite(dec) || !Number.isFinite(angularDistanceDeg)) {
+        continue;
+      }
+
+      rows.push({
+        name,
+        ra,
+        dec,
+        object_type: objectType,
+        angular_distance_deg: Number(angularDistanceDeg.toFixed(6)),
+        confidence: 0.8,
+      });
+    }
+
+    return rows;
+  }
+
+  private readStringCell(row: unknown[], index: number): string {
+    if (index < 0 || index >= row.length) {
+      return '';
+    }
+
+    const value = row[index];
+    return typeof value === 'string' ? value.trim() : '';
+  }
+
+  private readNumberCell(row: unknown[], index: number): number {
+    if (index < 0 || index >= row.length) {
+      return Number.NaN;
+    }
+
+    const value = row[index];
+    if (typeof value === 'number') {
+      return value;
+    }
+
+    if (typeof value === 'string' && value.trim().length > 0) {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : Number.NaN;
+    }
+
+    return Number.NaN;
+  }
+
+  private computeCatalogConfidence(label: NearbyCatalogLabel, searchRadius: number): number {
+    let confidence = 0.4;
+
+    if (!label.name.startsWith('[')) {
+      confidence += 0.2;
+    }
+
+    if (label.object_type !== 'Unknown') {
+      confidence += 0.2;
+    }
+
+    if (label.angular_distance_deg <= searchRadius * 0.25) {
+      confidence += 0.2;
+    }
+
+    return Number(Math.max(0, Math.min(confidence, 1)).toFixed(2));
+  }
+
+  private warnNearbyLabels(message: string): void {
+    const now = Date.now();
+    const throttleMs = 60_000;
+    if (message === this.lastNearbyLabelsWarnMessage && now - this.lastNearbyLabelsWarnAt < throttleMs) {
+      return;
+    }
+
+    this.lastNearbyLabelsWarnAt = now;
+    this.lastNearbyLabelsWarnMessage = message;
+    this.logger.warn(message);
+  }
+
   private degToRad(value: number): number {
     return (value * Math.PI) / 180;
   }
 
-  private cutoutDimensions(detail: 'standard' | 'high' | 'max'): { width: number; height: number } {
+  private cutoutDimensionsCandidates(detail: 'standard' | 'high' | 'max'): Array<{ width: number; height: number }> {
     if (detail === 'max') {
-      return { width: 3072, height: 3072 };
+      return [
+        { width: 3072, height: 3072 },
+        { width: 2048, height: 2048 },
+        { width: 1024, height: 1024 },
+      ];
     }
     if (detail === 'high') {
-      return { width: 2048, height: 2048 };
+      return [
+        { width: 2048, height: 2048 },
+        { width: 1024, height: 1024 },
+      ];
     }
 
-    return { width: 1024, height: 1024 };
+    return [{ width: 1024, height: 1024 }];
   }
 
-  private cutoutCacheKey(request: ViewerCutoutRequest, survey: string, width: number, height: number): string {
+  private cutoutCacheKey(
+    request: ViewerCutoutRequest,
+    survey: string,
+    provider: 'primary' | 'secondary',
+    width: number,
+    height: number,
+  ): string {
     return [
+      provider,
       survey,
       request.ra.toFixed(6),
       request.dec.toFixed(6),
@@ -393,6 +811,33 @@ export class ViewerService implements OnModuleInit {
         this.cutoutCache.delete(oldestKey);
       }
     }
+  }
+
+  private markCutoutSuccess(provider: 'primary' | 'secondary'): void {
+    this.cutoutTelemetry.successTotal += 1;
+    if (provider === 'secondary') {
+      this.cutoutTelemetry.secondarySuccessTotal += 1;
+    } else {
+      this.cutoutTelemetry.primarySuccessTotal += 1;
+    }
+    this.cutoutTelemetry.consecutiveFailures = 0;
+    this.cutoutTelemetry.lastSuccessAt = new Date().toISOString();
+  }
+
+  private markCutoutFailure(error: unknown): void {
+    const reason =
+      error instanceof ServiceUnavailableException
+        ? String(error.message)
+        : error instanceof Error
+          ? error.message
+          : 'unknown cutout failure';
+    const at = new Date().toISOString();
+
+    this.cutoutTelemetry.failureTotal += 1;
+    this.cutoutTelemetry.consecutiveFailures += 1;
+    this.cutoutTelemetry.lastFailureAt = at;
+    this.cutoutTelemetry.lastFailureReason = reason;
+    this.cutoutTelemetry.recentFailures = [{ at, reason }, ...this.cutoutTelemetry.recentFailures].slice(0, 20);
   }
 
   private async generateShortId(): Promise<string> {
@@ -450,5 +895,13 @@ export class ViewerService implements OnModuleInit {
     await this.dataSource.query(`
       CREATE INDEX IF NOT EXISTS idx_viewer_snapshots_short_id ON viewer_snapshots(short_id);
     `);
+  }
+
+  private resolveApiRootDir(): string {
+    const normalizedCwd = process.cwd().replace(/\\/g, '/');
+    if (normalizedCwd.endsWith('/apps/vlass-api')) {
+      return process.cwd();
+    }
+    return resolve(process.cwd(), 'apps', 'vlass-api');
   }
 }

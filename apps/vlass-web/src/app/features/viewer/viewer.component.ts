@@ -4,7 +4,9 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  isDevMode,
   OnInit,
+  OnDestroy,
   PLATFORM_ID,
   ViewChild,
   inject,
@@ -13,8 +15,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { from, merge } from 'rxjs';
-import { ViewerApiService, ViewerLabelModel, ViewerStateModel } from './viewer-api.service';
+import { catchError, from, interval, merge, of, startWith, switchMap } from 'rxjs';
+import {
+  CutoutTelemetryModel,
+  NearbyCatalogLabelModel,
+  ViewerApiService,
+  ViewerLabelModel,
+  ViewerStateModel,
+} from './viewer-api.service';
 
 type AladinEvent = 'positionChanged' | 'zoomChanged';
 
@@ -48,13 +56,15 @@ interface AladinFactory {
   aladin(container: HTMLElement, options: AladinOptions): AladinView;
 }
 
+const DSS_COLOR_HIPS_URL = 'https://skies.esac.esa.int/DSSColor';
+
 @Component({
   selector: 'app-viewer',
   templateUrl: './viewer.component.html',
   styleUrl: './viewer.component.scss',
   standalone: false, // eslint-disable-line @angular-eslint/prefer-standalone
 })
-export class ViewerComponent implements OnInit, AfterViewInit {
+export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('aladinHost')
   aladinHost?: ElementRef<HTMLElement>;
 
@@ -66,12 +76,31 @@ export class ViewerComponent implements OnInit, AfterViewInit {
   savingSnapshot = false;
   labelDraft = '';
   labels: ViewerLabelModel[] = [];
+  catalogLabels: NearbyCatalogLabelModel[] = [];
+  cutoutTelemetry: CutoutTelemetryModel | null = null;
   cutoutDetail: 'standard' | 'high' | 'max' = 'high';
+  readonly surveyOptions = [
+    { label: 'VLASS', value: 'VLASS' },
+    { label: 'DSS2', value: 'DSS2' },
+    { label: '2MASS', value: '2MASS' },
+    { label: 'PanSTARRS', value: 'P/PanSTARRS/DR1/color-z-zg-g' },
+  ];
 
   private aladinView: AladinView | null = null;
   private syncingFromViewer = false;
   private syncingFromForm = false;
   private lastAppliedSurvey = '';
+  private nearbyLookupTimer: ReturnType<typeof setTimeout> | null = null;
+  private viewerSyncTimer: ReturnType<typeof setTimeout> | null = null;
+  private lastNearbyLookupKey = '';
+  private readonly viewerSyncDebounceMs = 1000;
+  private readonly supportedAladinSurveys = new Set<string>([
+    'P/VLASS/QL',
+    'P/DSS2/color',
+    DSS_COLOR_HIPS_URL,
+    'P/2MASS/color',
+    'P/PanSTARRS/DR1/color-z-zg-g',
+  ]);
 
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
@@ -140,8 +169,34 @@ export class ViewerComponent implements OnInit, AfterViewInit {
     return null;
   }
 
+  get centerCatalogLabel(): NearbyCatalogLabelModel | null {
+    if (this.catalogLabels.length === 0 || !this.stateForm.valid) {
+      return null;
+    }
+
+    const nearest = [...this.catalogLabels].sort((a, b) => a.angular_distance_deg - b.angular_distance_deg)[0];
+    const state = this.currentState();
+    const matchThresholdDeg = Math.max(0.0015, Math.min(0.03, state.fov * 0.06));
+
+    if (nearest.angular_distance_deg > matchThresholdDeg) {
+      return null;
+    }
+
+    return nearest;
+  }
+
+  get cutoutSuccessRate(): string {
+    if (!this.cutoutTelemetry || this.cutoutTelemetry.requests_total === 0) {
+      return 'n/a';
+    }
+
+    const rate = (this.cutoutTelemetry.success_total / this.cutoutTelemetry.requests_total) * 100;
+    return `${rate.toFixed(1)}%`;
+  }
+
   ngOnInit(): void {
     this.loadLocalLabels();
+    this.startCutoutTelemetryStream();
 
     merge(this.route.paramMap, this.route.queryParamMap)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -168,11 +223,24 @@ export class ViewerComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: () => {
           this.syncAladinFromForm();
+          this.scheduleNearbyLabelLookup(this.currentState());
         },
         error: () => {
           this.statusMessage = 'Failed to initialize sky viewer.';
         },
       });
+  }
+
+  ngOnDestroy(): void {
+    if (this.nearbyLookupTimer) {
+      clearTimeout(this.nearbyLookupTimer);
+      this.nearbyLookupTimer = null;
+    }
+
+    if (this.viewerSyncTimer) {
+      clearTimeout(this.viewerSyncTimer);
+      this.viewerSyncTimer = null;
+    }
   }
 
   applyStateToUrl(): void {
@@ -279,6 +347,53 @@ export class ViewerComponent implements OnInit, AfterViewInit {
     this.saveLocalLabels();
     this.labelDraft = '';
     this.statusMessage = `Labeled center as "${label.name}".`;
+  }
+
+  addCatalogLabelAsAnnotation(label: NearbyCatalogLabelModel): void {
+    const annotation: ViewerLabelModel = {
+      name: label.name,
+      ra: Number(label.ra.toFixed(5)),
+      dec: Number(label.dec.toFixed(5)),
+      created_at: new Date().toISOString(),
+    };
+
+    const existing = this.labels.find(
+      (entry) => entry.name === annotation.name && Math.abs(entry.ra - annotation.ra) < 1e-5 && Math.abs(entry.dec - annotation.dec) < 1e-5,
+    );
+    if (existing) {
+      this.statusMessage = `Annotation "${annotation.name}" already exists.`;
+      return;
+    }
+
+    this.labels = [annotation, ...this.labels].slice(0, 100);
+    this.saveLocalLabels();
+    this.statusMessage = `Added catalog label "${annotation.name}" as annotation.`;
+  }
+
+  addCenterCatalogLabelAsAnnotation(): void {
+    const centerLabel = this.centerCatalogLabel;
+    if (!centerLabel) {
+      this.statusMessage = 'No close catalog match at the current center.';
+      return;
+    }
+
+    this.addCatalogLabelAsAnnotation(centerLabel);
+  }
+
+  logCatalogHover(label: NearbyCatalogLabelModel): void {
+    if (!isDevMode()) {
+      return;
+    }
+
+    // Temporary dev aid for hover-based object inspection.
+    console.log('[viewer:hover]', {
+      name: label.name,
+      objectType: label.object_type,
+      ra: label.ra,
+      dec: label.dec,
+      angularDistanceDeg: label.angular_distance_deg,
+      confidence: label.confidence,
+    });
   }
 
   removeLabel(label: ViewerLabelModel): void {
@@ -434,10 +549,10 @@ export class ViewerComponent implements OnInit, AfterViewInit {
     });
 
     this.aladinView.on('positionChanged', () => {
-      this.syncFormFromAladin();
+      this.scheduleFormSyncFromAladin();
     });
     this.aladinView.on('zoomChanged', () => {
-      this.syncFormFromAladin();
+      this.scheduleFormSyncFromAladin();
     });
 
     this.applySurveyToAladin(this.resolveEffectiveSurvey(this.currentState()));
@@ -499,6 +614,7 @@ export class ViewerComponent implements OnInit, AfterViewInit {
     this.aladinView.gotoRaDec(state.ra, state.dec);
     this.aladinView.setFoV(state.fov);
     this.applySurveyToAladin(this.resolveEffectiveSurvey(state));
+    this.scheduleNearbyLabelLookup(state);
     this.syncingFromForm = false;
   }
 
@@ -528,8 +644,67 @@ export class ViewerComponent implements OnInit, AfterViewInit {
     if (Object.keys(patchState).length > 0) {
       this.stateForm.patchValue(patchState, { emitEvent: false });
     }
+    this.scheduleNearbyLabelLookup(this.currentState());
 
     this.syncingFromViewer = false;
+  }
+
+  private scheduleFormSyncFromAladin(): void {
+    if (this.viewerSyncTimer) {
+      clearTimeout(this.viewerSyncTimer);
+    }
+
+    this.viewerSyncTimer = setTimeout(() => {
+      this.viewerSyncTimer = null;
+      this.syncFormFromAladin();
+    }, this.viewerSyncDebounceMs);
+  }
+
+  private scheduleNearbyLabelLookup(state: ViewerStateModel): void {
+    if (!isPlatformBrowser(this.platformId) || !this.stateForm.valid) {
+      return;
+    }
+
+    const radius = this.lookupRadiusForState(state);
+    const lookupKey = `${state.ra.toFixed(3)}|${state.dec.toFixed(3)}|${radius.toFixed(3)}`;
+    if (lookupKey === this.lastNearbyLookupKey) {
+      return;
+    }
+
+    if (this.nearbyLookupTimer) {
+      clearTimeout(this.nearbyLookupTimer);
+    }
+
+    this.nearbyLookupTimer = setTimeout(() => {
+      this.lastNearbyLookupKey = lookupKey;
+      this.viewerApi.getNearbyLabels(state.ra, state.dec, radius, 16).subscribe({
+        next: (labels) => {
+          this.catalogLabels = this.selectNearbyLabels(labels);
+        },
+        error: () => {
+          this.catalogLabels = [];
+        },
+      });
+    }, 450);
+  }
+
+  private lookupRadiusForState(state: ViewerStateModel): number {
+    return Number(Math.max(0.02, Math.min(0.2, state.fov * 0.15)).toFixed(4));
+  }
+
+  private selectNearbyLabels(labels: NearbyCatalogLabelModel[]): NearbyCatalogLabelModel[] {
+    const highConfidence = labels
+      .filter((label) => label.confidence >= 0.5 && Number.isFinite(label.angular_distance_deg))
+      .sort((a, b) => a.angular_distance_deg - b.angular_distance_deg);
+
+    if (highConfidence.length >= 3) {
+      return highConfidence.slice(0, 8);
+    }
+
+    return labels
+      .filter((label) => Number.isFinite(label.angular_distance_deg))
+      .sort((a, b) => a.angular_distance_deg - b.angular_distance_deg)
+      .slice(0, 5);
   }
 
   private resolveSurvey(surveyValue: unknown): string {
@@ -543,10 +718,15 @@ export class ViewerComponent implements OnInit, AfterViewInit {
       return 'P/VLASS/QL';
     }
     if (normalized === 'DSS2') {
-      return 'P/DSS2/color';
+      return DSS_COLOR_HIPS_URL;
     }
     if (normalized === '2MASS') {
       return 'P/2MASS/color';
+    }
+
+    // Avoid pushing partially typed aliases (e.g. "VL") into Aladin.
+    if (!survey.includes('/')) {
+      return this.lastAppliedSurvey || DSS_COLOR_HIPS_URL;
     }
 
     return survey;
@@ -559,9 +739,22 @@ export class ViewerComponent implements OnInit, AfterViewInit {
       if (state.fov <= 0.35) {
         return 'P/PanSTARRS/DR1/color-z-zg-g';
       }
-      if (state.fov <= 1) {
-        return 'P/DSS2/color';
+
+      if (this.lastAppliedSurvey === 'P/PanSTARRS/DR1/color-z-zg-g') {
+        if (state.fov <= 0.45) {
+          return 'P/PanSTARRS/DR1/color-z-zg-g';
+        }
       }
+
+      if (this.lastAppliedSurvey === DSS_COLOR_HIPS_URL) {
+        if (state.fov <= 2.2) {
+          return DSS_COLOR_HIPS_URL;
+        }
+      }
+
+      // Keep VLASS as the state/cutout survey, but render with stable
+      // optical fallback layers in Aladin to avoid invalid HiPS metadata.
+      return DSS_COLOR_HIPS_URL;
     }
 
     return selectedSurvey;
@@ -571,7 +764,7 @@ export class ViewerComponent implements OnInit, AfterViewInit {
     if (survey.includes('PanSTARRS')) {
       return 0.01;
     }
-    if (survey.includes('DSS2')) {
+    if (survey.includes('DSS2') || survey.includes('DSSColor')) {
       return 0.03;
     }
     if (survey.includes('VLASS')) {
@@ -583,6 +776,10 @@ export class ViewerComponent implements OnInit, AfterViewInit {
 
   private applySurveyToAladin(survey: string): void {
     if (!this.aladinView || !survey || this.lastAppliedSurvey === survey) {
+      return;
+    }
+
+    if (!this.supportedAladinSurveys.has(survey)) {
       return;
     }
 
@@ -611,5 +808,28 @@ export class ViewerComponent implements OnInit, AfterViewInit {
 
   private originPrefix(): string {
     return isPlatformBrowser(this.platformId) ? window.location.origin : '';
+  }
+
+  private startCutoutTelemetryStream(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    interval(30_000)
+      .pipe(
+        startWith(0),
+        switchMap(() =>
+          this.viewerApi.getCutoutTelemetry().pipe(
+            catchError(() => of(null)),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((telemetry) => {
+        if (!telemetry) {
+          return;
+        }
+        this.cutoutTelemetry = telemetry;
+      });
   }
 }

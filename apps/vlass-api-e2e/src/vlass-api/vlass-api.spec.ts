@@ -168,5 +168,34 @@ describe('vlass-api e2e', () => {
         expect(axiosError.response?.status).toBe(400);
       }
     });
+
+    it('GET /api/view/labels/nearby validates radius bounds', async () => {
+      try {
+        await axios.get('/api/view/labels/nearby?ra=10&dec=5&radius=0');
+        throw new Error('Expected nearby labels request to fail with 400');
+      } catch (error) {
+        const axiosError = error as AxiosError<{ message?: string }>;
+        expect(axiosError.response?.status).toBe(400);
+      }
+    });
+
+    it('GET /api/view/telemetry returns cutout telemetry counters', async () => {
+      const response = await axios.get('/api/view/telemetry');
+      expect(response.status).toBe(200);
+      expect(response.data).toEqual(
+        expect.objectContaining({
+          requests_total: expect.any(Number),
+          success_total: expect.any(Number),
+          failure_total: expect.any(Number),
+          provider_attempts_total: expect.any(Number),
+          provider_failures_total: expect.any(Number),
+          cache_hits_total: expect.any(Number),
+          resolution_fallback_total: expect.any(Number),
+          survey_fallback_total: expect.any(Number),
+          consecutive_failures: expect.any(Number),
+          recent_failures: expect.any(Array),
+        }),
+      );
+    });
   });
 });

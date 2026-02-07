@@ -34,6 +34,36 @@ export interface ViewerSnapshotResponse {
   created_at: string;
 }
 
+export interface NearbyCatalogLabelModel {
+  name: string;
+  ra: number;
+  dec: number;
+  object_type: string;
+  angular_distance_deg: number;
+  confidence: number;
+}
+
+export interface CutoutTelemetryFailureModel {
+  at: string;
+  reason: string;
+}
+
+export interface CutoutTelemetryModel {
+  requests_total: number;
+  success_total: number;
+  failure_total: number;
+  provider_attempts_total: number;
+  provider_failures_total: number;
+  cache_hits_total: number;
+  resolution_fallback_total: number;
+  survey_fallback_total: number;
+  consecutive_failures: number;
+  last_success_at: string | null;
+  last_failure_at: string | null;
+  last_failure_reason: string | null;
+  recent_failures: CutoutTelemetryFailureModel[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -55,6 +85,21 @@ export class ViewerApiService {
     state?: ViewerStateModel;
   }): Observable<ViewerSnapshotResponse> {
     return this.http.post<ViewerSnapshotResponse>(`${this.apiBaseUrl}/api/view/snapshot`, payload);
+  }
+
+  getNearbyLabels(ra: number, dec: number, radiusDeg: number, limit = 12): Observable<NearbyCatalogLabelModel[]> {
+    const params = new URLSearchParams({
+      ra: ra.toString(),
+      dec: dec.toString(),
+      radius: radiusDeg.toString(),
+      limit: limit.toString(),
+    });
+
+    return this.http.get<NearbyCatalogLabelModel[]>(`${this.apiBaseUrl}/api/view/labels/nearby?${params.toString()}`);
+  }
+
+  getCutoutTelemetry(): Observable<CutoutTelemetryModel> {
+    return this.http.get<CutoutTelemetryModel>(`${this.apiBaseUrl}/api/view/telemetry`);
   }
 
   scienceDataUrl(state: ViewerStateModel, label?: string, detail: 'standard' | 'high' | 'max' = 'standard'): string {
