@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
@@ -8,6 +8,9 @@ describe('AuthService', () => {
   let service: AuthService;
   let userRepository: {
     findByEmailAndPassword: jest.Mock;
+    findByUsername: jest.Mock;
+    findByEmail: jest.Mock;
+    createWithPassword: jest.Mock;
     findOne: jest.Mock;
   };
   let jwtService: {
@@ -17,6 +20,9 @@ describe('AuthService', () => {
   beforeEach(async () => {
     userRepository = {
       findByEmailAndPassword: jest.fn(),
+      findByUsername: jest.fn(),
+      findByEmail: jest.fn(),
+      createWithPassword: jest.fn(),
       findOne: jest.fn(),
     };
 
@@ -87,6 +93,46 @@ describe('AuthService', () => {
         username: 'testuser',
       });
       expect(token).toBe('jwt-token');
+    });
+  });
+
+  describe('registerWithCredentials', () => {
+    it('registers a new user when username/email are available', async () => {
+      const created = {
+        id: 'user-2',
+        username: 'newuser',
+        email: 'new@vlass.local',
+        display_name: 'newuser',
+      };
+      userRepository.findByUsername.mockResolvedValue(null);
+      userRepository.findByEmail.mockResolvedValue(null);
+      userRepository.createWithPassword.mockResolvedValue(created);
+
+      const result = await service.registerWithCredentials({
+        username: 'newuser',
+        email: 'NEW@VLASS.LOCAL',
+        password: 'Password123!',
+      });
+
+      expect(userRepository.createWithPassword).toHaveBeenCalledWith({
+        username: 'newuser',
+        display_name: 'newuser',
+        email: 'new@vlass.local',
+        password: 'Password123!',
+      });
+      expect(result).toBe(created);
+    });
+
+    it('throws conflict for duplicate username', async () => {
+      userRepository.findByUsername.mockResolvedValue({ id: 'existing' });
+
+      await expect(
+        service.registerWithCredentials({
+          username: 'testuser',
+          email: 'new@vlass.local',
+          password: 'Password123!',
+        }),
+      ).rejects.toBeInstanceOf(ConflictException);
     });
   });
 

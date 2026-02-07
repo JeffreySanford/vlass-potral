@@ -1,10 +1,11 @@
-import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, BadRequestException, ConflictException, UnauthorizedException } from '@nestjs/common';
 import Strategy from 'passport-github';
 import { UserRepository } from '../repositories';
 import { CreateUserDto } from '../dto';
 import { User } from '../entities';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 
 export interface JwtPayload {
   sub: string;
@@ -88,6 +89,38 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  async registerWithCredentials(dto: RegisterDto): Promise<User> {
+    const username = dto.username.trim();
+    const email = dto.email.trim().toLowerCase();
+    const password = dto.password;
+    const display_name = dto.display_name?.trim() || username;
+
+    if (username.length < 3) {
+      throw new BadRequestException('Username must be at least 3 characters.');
+    }
+
+    if (password.length < 8) {
+      throw new BadRequestException('Password must be at least 8 characters.');
+    }
+
+    const byUsername = await this.userRepository.findByUsername(username);
+    if (byUsername) {
+      throw new ConflictException('Username is already in use.');
+    }
+
+    const byEmail = await this.userRepository.findByEmail(email);
+    if (byEmail) {
+      throw new ConflictException('Email is already in use.');
+    }
+
+    return this.userRepository.createWithPassword({
+      username,
+      display_name,
+      email,
+      password,
+    });
   }
 
   signToken(user: User): string {

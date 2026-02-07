@@ -8,6 +8,22 @@ describe('vlass-api e2e', () => {
   });
 
   describe('auth login', () => {
+    it('POST /api/auth/register creates account and returns token', async () => {
+      const nonce = Date.now();
+      const response = await axios.post('/api/auth/register', {
+        username: `new_user_${nonce}`,
+        email: `new_${nonce}@vlass.local`,
+        password: 'Password123!',
+      });
+
+      expect(response.status).toBe(201);
+      expect(response.data).toHaveProperty('access_token');
+      expect(response.data.user).toMatchObject({
+        username: `new_user_${nonce}`,
+        email: `new_${nonce}@vlass.local`,
+      });
+    });
+
     it('POST /api/auth/login returns token for seeded user', async () => {
       const response = await axios.post('/api/auth/login', {
         email: 'test@vlass.local',

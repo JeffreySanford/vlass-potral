@@ -30,11 +30,7 @@ async function collectMetrics(): Promise<PerfMetrics> {
     return entries.length > 0 ? entries[entries.length - 1].startTime : 0;
   };
 
-  let lcp = getLcp();
-  if (lcp === 0) {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    lcp = getLcp();
-  }
+  const lcp = getLcp();
 
   return {
     ttfb: navigation?.responseStart ?? 0,

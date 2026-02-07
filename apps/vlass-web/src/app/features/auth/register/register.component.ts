@@ -1,9 +1,12 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, inject, PLATFORM_ID } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, interval } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { AuthApiService } from '../auth-api.service';
+import { AuthSessionService } from '../../../services/auth-session.service';
 import { SkyPreview, SkyPreviewService } from '../../../services/sky-preview.service';
 
 @Component({
@@ -20,9 +23,10 @@ export class RegisterComponent {
   preview: SkyPreview;
   locating = false;
   locationMessage = '';
-  locationLabel = '';
-  latLonLabel = 'Lat --.---- | Lon --.----';
+  locationLabel = 'REG ---- | SRC default';
+  latLonLabel = 'LAT --.---- | LON --.----';
   showTelemetryOverlay = false;
+  telemetryCompact = true;
   readonly clockLine$: Observable<string> = interval(1000).pipe(
     startWith(0),
     map(() => this.buildClockLine()),
@@ -31,6 +35,8 @@ export class RegisterComponent {
   private formBuilder = inject(FormBuilder);
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
+  private authApiService = inject(AuthApiService);
+  private authSessionService = inject(AuthSessionService);
   private skyPreviewService = inject(SkyPreviewService);
 
   constructor() {
@@ -49,7 +55,7 @@ export class RegisterComponent {
     return this.registerForm.controls;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.submitted = true;
     this.error = '';
 
@@ -71,20 +77,35 @@ export class RegisterComponent {
       return;
     }
 
-    this.loading = true;
+    const username = this.registerForm.value.username as string;
+    const email = this.registerForm.value.email as string;
+    const password = this.registerForm.value.password as string;
 
-    // TODO: Replace with actual API call to POST /auth/register
-    // After successful auth, redirect to /landing
-    console.log('Register attempt:', {
-      username: this.registerForm.value.username,
-      email: this.registerForm.value.email,
+    this.loading = true;
+    this.authApiService.register({
+      username,
+      email,
+      password,
+      display_name: username,
+    }).subscribe({
+      next: (response) => {
+        this.authSessionService.setSession(response);
+        this.loading = false;
+        this.router.navigate(['/landing']);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.loading = false;
+        this.error = this.errorFromHttp(error);
+      },
     });
-    this.loading = false;
-    this.router.navigate(['/landing']);
   }
 
-  login() {
+  login(): void {
     this.router.navigate(['/auth/login']);
+  }
+
+  toggleTelemetryCompact(): void {
+    this.telemetryCompact = !this.telemetryCompact;
   }
 
   personalizePreview(): void {
@@ -112,20 +133,36 @@ export class RegisterComponent {
   }
 
   private syncTelemetryFromPreview(): void {
-    this.locationLabel = `Region ${this.preview.geohash.toUpperCase()} (${this.preview.source})`;
+    this.locationLabel = `REG ${this.preview.geohash.toUpperCase()} | SRC ${this.preview.source}`;
 
     if (this.preview.latitude === null || this.preview.longitude === null) {
-      this.latLonLabel = 'Lat --.---- | Lon --.----';
+      this.latLonLabel = 'LAT --.---- | LON --.----';
       return;
     }
 
-    this.latLonLabel = `Lat ${this.preview.latitude.toFixed(4)} | Lon ${this.preview.longitude.toFixed(4)}`;
+    this.latLonLabel = `LAT ${this.preview.latitude.toFixed(4)} | LON ${this.preview.longitude.toFixed(4)}`;
   }
 
   private buildClockLine(): string {
     const now = new Date();
-    const localTime = now.toLocaleTimeString('en-US', { hour12: false });
+    const localTime = now.toLocaleTimeString('en-US', { hour12: false, timeZoneName: 'short' });
     const zuluTime = now.toUTCString().slice(17, 25);
-    return `Local ${localTime} | Zulu ${zuluTime}`;
+    return `LCL ${localTime} | ZUL ${zuluTime}`;
+  }
+
+  private errorFromHttp(error: HttpErrorResponse): string {
+    if (typeof error.error?.message === 'string') {
+      return error.error.message;
+    }
+
+    if (error.status === 409) {
+      return 'Username or email already exists.';
+    }
+
+    if (error.status === 0) {
+      return 'API is unavailable. Confirm vlass-api is running on port 3001.';
+    }
+
+    return 'Registration failed. Please retry.';
   }
 }

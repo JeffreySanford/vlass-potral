@@ -28,6 +28,18 @@
   background: rgba(7, 12, 22, 0.62);
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
   backdrop-filter: blur(4px);
+  animation: telemetry-fade-in 280ms ease-out both;
+  transition: opacity 180ms ease, transform 180ms ease, background-color 180ms ease;
+
+  &:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+    background: rgba(7, 12, 22, 0.7);
+  }
+
+  &.compact .telemetry-detail {
+    display: none;
+  }
 
   p {
     margin: 0;
@@ -36,6 +48,18 @@
     letter-spacing: 0.02em;
     line-height: 1.2;
   }
+}
+
+.telemetry-toggle {
+  border: 0;
+  padding: 0;
+  margin: 0 0 0.1rem;
+  color: #ffe8a8;
+  background: transparent;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
 }
 
 @media (max-width: 700px) {
@@ -201,5 +225,17 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes telemetry-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 0.96;
+    transform: translateY(0);
   }
 }

@@ -23,9 +23,10 @@ export class LoginComponent {
   preview: SkyPreview;
   locating = false;
   locationMessage = '';
-  locationLabel = '';
-  latLonLabel = 'Lat --.---- | Lon --.----';
+  locationLabel = 'REG ---- | SRC default';
+  latLonLabel = 'LAT --.---- | LON --.----';
   showTelemetryOverlay = false;
+  telemetryCompact = true;
   readonly clockLine$: Observable<string> = interval(1000).pipe(
     startWith(0),
     map(() => this.buildClockLine()),
@@ -86,6 +87,10 @@ export class LoginComponent {
     this.router.navigate(['/auth/register']);
   }
 
+  toggleTelemetryCompact(): void {
+    this.telemetryCompact = !this.telemetryCompact;
+  }
+
   personalizePreview(): void {
     this.locating = true;
     this.locationMessage = '';
@@ -111,20 +116,20 @@ export class LoginComponent {
   }
 
   private syncTelemetryFromPreview(): void {
-    this.locationLabel = `Region ${this.preview.geohash.toUpperCase()} (${this.preview.source})`;
+    this.locationLabel = `REG ${this.preview.geohash.toUpperCase()} | SRC ${this.preview.source}`;
 
     if (this.preview.latitude === null || this.preview.longitude === null) {
-      this.latLonLabel = 'Lat --.---- | Lon --.----';
+      this.latLonLabel = 'LAT --.---- | LON --.----';
       return;
     }
 
-    this.latLonLabel = `Lat ${this.preview.latitude.toFixed(4)} | Lon ${this.preview.longitude.toFixed(4)}`;
+    this.latLonLabel = `LAT ${this.preview.latitude.toFixed(4)} | LON ${this.preview.longitude.toFixed(4)}`;
   }
 
   private buildClockLine(): string {
     const now = new Date();
-    const localTime = now.toLocaleTimeString('en-US', { hour12: false });
+    const localTime = now.toLocaleTimeString('en-US', { hour12: false, timeZoneName: 'short' });
     const zuluTime = now.toUTCString().slice(17, 25);
-    return `Local ${localTime} | Zulu ${zuluTime}`;
+    return `LCL ${localTime} | ZUL ${zuluTime}`;
   }
 }

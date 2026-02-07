@@ -57,6 +57,29 @@ export class UserRepository {
     return this.repo.save(entity);
   }
 
+  async createWithPassword(params: {
+    username: string;
+    display_name: string;
+    email: string;
+    password: string;
+  }): Promise<User> {
+    const rows = await this.repo.query(
+      `
+        INSERT INTO users (username, display_name, email, password_hash)
+        VALUES ($1, $2, $3, crypt($4, gen_salt('bf')))
+        RETURNING id
+      `,
+      [params.username, params.display_name, params.email, params.password],
+    ) as Array<{ id: string }>;
+
+    const created = rows[0] ? await this.findById(rows[0].id) : null;
+    if (!created) {
+      throw new Error('Failed to create user record');
+    }
+
+    return created;
+  }
+
   async save(user: User): Promise<User> {
     return this.repo.save(user);
   }

@@ -1,15 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnauthorizedException } from '@nestjs/common';
+import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
-  let authService: { loginWithCredentials: jest.Mock; signToken: jest.Mock };
+  let authService: {
+    loginWithCredentials: jest.Mock;
+    registerWithCredentials: jest.Mock;
+    signToken: jest.Mock;
+  };
 
   beforeEach(async () => {
     authService = {
       loginWithCredentials: jest.fn(),
+      registerWithCredentials: jest.fn(),
       signToken: jest.fn(),
     };
 
@@ -72,6 +77,57 @@ describe('AuthController', () => {
         })
       ).rejects.toBeInstanceOf(UnauthorizedException);
       expect(authService.signToken).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('register', () => {
+    it('should create account and return bearer token + user profile', async () => {
+      const user = {
+        id: 'user-id',
+        username: 'newuser',
+        email: 'new@vlass.local',
+        display_name: 'New User',
+        created_at: new Date(),
+      };
+      authService.registerWithCredentials.mockResolvedValue(user);
+      authService.signToken.mockReturnValue('jwt-token');
+
+      const result = await controller.register({
+        username: 'newuser',
+        email: 'new@vlass.local',
+        password: 'Password123!',
+      });
+
+      expect(authService.registerWithCredentials).toHaveBeenCalledWith({
+        username: 'newuser',
+        email: 'new@vlass.local',
+        password: 'Password123!',
+      });
+      expect(result).toEqual({
+        access_token: 'jwt-token',
+        token_type: 'Bearer',
+        user: {
+          id: 'user-id',
+          username: 'newuser',
+          email: 'new@vlass.local',
+          display_name: 'New User',
+          created_at: expect.any(Date),
+        },
+      });
+    });
+
+    it('propagates conflict when username/email exists', async () => {
+      authService.registerWithCredentials.mockRejectedValue(
+        new ConflictException('Email is already in use.'),
+      );
+
+      await expect(
+        controller.register({
+          username: 'newuser',
+          email: 'new@vlass.local',
+          password: 'Password123!',
+        }),
+      ).rejects.toBeInstanceOf(ConflictException);
     });
   });
 

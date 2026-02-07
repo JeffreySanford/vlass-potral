@@ -13,6 +13,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from '../entities';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 
 type RequestWithUser = ExpressRequest & { user?: User };
 
@@ -20,22 +21,16 @@ type RequestWithUser = ExpressRequest & { user?: User };
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Post('register')
+  async register(@Body() registerDto: RegisterDto) {
+    const user = await this.authService.registerWithCredentials(registerDto);
+    return this.buildAuthResponse(user);
+  }
+
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     const user = await this.authService.loginWithCredentials(loginDto);
-    const access_token = this.authService.signToken(user);
-
-    return {
-      access_token,
-      token_type: 'Bearer',
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        display_name: user.display_name,
-        created_at: user.created_at,
-      },
-    };
+    return this.buildAuthResponse(user);
   }
 
   /**
@@ -98,5 +93,21 @@ export class AuthController {
       }
       res.json({ message: 'Logged out successfully' });
     });
+  }
+
+  private buildAuthResponse(user: User) {
+    const access_token = this.authService.signToken(user);
+
+    return {
+      access_token,
+      token_type: 'Bearer' as const,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        display_name: user.display_name,
+        created_at: user.created_at,
+      },
+    };
   }
 }

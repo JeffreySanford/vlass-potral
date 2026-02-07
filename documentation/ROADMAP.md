@@ -8,6 +8,7 @@ Canonical scope: `documentation/PRODUCT-CHARTER.md` and `SCOPE-LOCK.md`.
 1. Pillar 1: SSR first paint
 - Landing SSR preview
 - Performance tuning for FCP/LCP targets
+- Status: complete (SSR regional preview on auth/landing, client-only telemetry overlay, gated perf tests)
 
 2. Pillar 2: Viewer + permalink + snapshots
 - Aladin integration (Mode A only)
