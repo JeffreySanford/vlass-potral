@@ -179,10 +179,14 @@ describe('AppController', () => {
     describe('createPost', () => {
       it('should create a new post', async () => {
         const createPostDto = { title: 'New Post', content: 'Content', user_id: '1' };
-        const result = await controller.createPost(createPostDto);
+        const mockRequest = { user: { id: 1 } };
+        const result = await controller.createPost(mockRequest, createPostDto);
         
         expect(result).toEqual(mockPost);
-        expect(mockAppService.createPost).toHaveBeenCalledWith(createPostDto);
+        expect(mockAppService.createPost).toHaveBeenCalledWith({
+          ...createPostDto,
+          user_id: 1,
+        });
       });
     });
 

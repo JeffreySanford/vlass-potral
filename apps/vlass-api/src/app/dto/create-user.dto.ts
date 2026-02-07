@@ -2,5 +2,6 @@ export class CreateUserDto {
   username!: string;
   email!: string;
   github_id?: number;
-  full_name?: string;
+  display_name?: string;
+  avatar_url?: string | null;
 }

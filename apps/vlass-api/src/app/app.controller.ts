@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateUserDto, UpdateUserDto, CreatePostDto, UpdatePostDto } from './dto';
+import { AuthenticatedGuard } from './auth/guards/authenticated.guard';
 
 @Controller()
 export class AppController {
@@ -54,8 +55,12 @@ export class AppController {
   }
 
   @Post('api/posts')
-  createPost(@Body() createPostDto: CreatePostDto) {
-    return this.appService.createPost(createPostDto);
+  @UseGuards(AuthenticatedGuard)
+  createPost(@Request() req: any, @Body() createPostDto: CreatePostDto) {
+    return this.appService.createPost({
+      ...createPostDto,
+      user_id: req.user.id,
+    });
   }
 
   @Get('api/posts/:id')
@@ -64,21 +69,25 @@ export class AppController {
   }
 
   @Put('api/posts/:id')
+  @UseGuards(AuthenticatedGuard)
   updatePost(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.appService.updatePost(id, updatePostDto);
   }
 
   @Post('api/posts/:id/publish')
+  @UseGuards(AuthenticatedGuard)
   publishPost(@Param('id') id: string) {
     return this.appService.publishPost(id);
   }
 
   @Post('api/posts/:id/unpublish')
+  @UseGuards(AuthenticatedGuard)
   unpublishPost(@Param('id') id: string) {
     return this.appService.unpublishPost(id);
   }
 
   @Delete('api/posts/:id')
+  @UseGuards(AuthenticatedGuard)
   deletePost(@Param('id') id: string) {
     return this.appService.deletePost(id);
   }

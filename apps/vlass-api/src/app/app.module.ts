@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database.module';
 import { UserRepository, PostRepository } from './repositories';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { UserRepository, PostRepository } from './repositories';
       envFilePath: process.env.NODE_ENV === 'production' ? '.env' : '.env.local',
     }),
     DatabaseModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserRepository, PostRepository],

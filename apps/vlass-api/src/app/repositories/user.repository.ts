@@ -28,9 +28,21 @@ export class UserRepository {
     return this.repo.findOneBy({ github_id: githubId, deleted_at: IsNull() });
   }
 
+  async findByGitHubId(githubId: number): Promise<User | null> {
+    return this.findByGithubId(githubId);
+  }
+
+  async findOne(options: any): Promise<User | null> {
+    return this.repo.findOne(options);
+  }
+
   async create(user: Partial<User>): Promise<User> {
     const entity = this.repo.create(user);
     return this.repo.save(entity);
+  }
+
+  async save(user: User): Promise<User> {
+    return this.repo.save(user);
   }
 
   async update(id: string, user: Omit<Partial<User>, 'posts' | 'revisions' | 'comments' | 'auditLogs'>): Promise<User | null> {
