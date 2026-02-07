@@ -16,7 +16,7 @@ import { LoginDto } from './dto/login.dto';
 
 type RequestWithUser = ExpressRequest & { user?: User };
 
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
