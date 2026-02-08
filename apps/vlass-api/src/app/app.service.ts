@@ -1,11 +1,11 @@
-import { Injectable, Logger, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, ForbiddenException, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { CreateUserDto, UpdateUserDto, CreatePostDto, UpdatePostDto } from './dto';
 import { User, Post, AuditAction, AuditEntityType } from './entities';
 import { UserRepository, PostRepository, AuditLogRepository, RevisionRepository } from './repositories';
 
 @Injectable()
-export class AppService {
+export class AppService implements OnModuleInit {
   private readonly logger = new Logger(AppService.name);
 
   constructor(
@@ -15,6 +15,10 @@ export class AppService {
     private readonly auditLogRepository: AuditLogRepository,
     private readonly revisionRepository: RevisionRepository,
   ) {}
+
+  async onModuleInit(): Promise<void> {
+    await this.ensurePostModerationColumns();
+  }
 
   getData(): { message: string } {
     return { message: 'VLASS Portal API' };
@@ -165,7 +169,7 @@ export class AppService {
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
-    this.assertPostOwner(post, actorUserId);
+    this.assertCanEditPost(post, actorUserId);
 
     const updatedPost = await this.postRepository.update(id, updatePostDto);
     if (!updatedPost) {
@@ -190,7 +194,7 @@ export class AppService {
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
-    this.assertPostOwner(post, actorUserId);
+    this.assertCanEditPost(post, actorUserId);
 
     const publishedPost = await this.postRepository.publish(id);
     if (!publishedPost) {
@@ -215,7 +219,7 @@ export class AppService {
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
-    this.assertPostOwner(post, actorUserId);
+    this.assertCanEditPost(post, actorUserId);
 
     const unpublishedPost = await this.postRepository.unpublish(id);
     if (!unpublishedPost) {
@@ -239,7 +243,7 @@ export class AppService {
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
-    this.assertPostOwner(post, actorUserId);
+    this.assertCanEditPost(post, actorUserId);
 
     const deleted = await this.postRepository.softDelete(id);
     if (deleted) {
@@ -254,9 +258,118 @@ export class AppService {
     return deleted;
   }
 
-  private assertPostOwner(post: Post, actorUserId: string): void {
+  async hidePost(id: string, actorUserId: string): Promise<Post> {
+    const post = await this.postRepository.findById(id);
+    if (!post) {
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    }
+
+    await this.assertCanModeratePost(post, actorUserId);
+    const hiddenPost = await this.postRepository.hide(id);
+    if (!hiddenPost) {
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    }
+
+    await this.auditLogRepository.createAuditLog({
+      user_id: actorUserId,
+      action: AuditAction.HIDE,
+      entity_type: AuditEntityType.POST,
+      entity_id: id,
+      changes: { before: { hidden_at: post.hidden_at }, after: { hidden_at: hiddenPost.hidden_at } },
+    });
+
+    return hiddenPost;
+  }
+
+  async unhidePost(id: string, actorUserId: string): Promise<Post> {
+    const post = await this.postRepository.findById(id);
+    if (!post) {
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    }
+
+    await this.assertCanModeratePost(post, actorUserId);
+    const unhiddenPost = await this.postRepository.unhide(id);
+    if (!unhiddenPost) {
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    }
+
+    await this.auditLogRepository.createAuditLog({
+      user_id: actorUserId,
+      action: AuditAction.UNHIDE,
+      entity_type: AuditEntityType.POST,
+      entity_id: id,
+      changes: { before: { hidden_at: post.hidden_at }, after: { hidden_at: unhiddenPost.hidden_at } },
+    });
+
+    return unhiddenPost;
+  }
+
+  async lockPost(id: string, actorUserId: string): Promise<Post> {
+    const post = await this.postRepository.findById(id);
+    if (!post) {
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    }
+
+    await this.assertCanModeratePost(post, actorUserId);
+    const lockedPost = await this.postRepository.lock(id);
+    if (!lockedPost) {
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    }
+
+    await this.auditLogRepository.createAuditLog({
+      user_id: actorUserId,
+      action: AuditAction.LOCK,
+      entity_type: AuditEntityType.POST,
+      entity_id: id,
+      changes: { before: { locked_at: post.locked_at }, after: { locked_at: lockedPost.locked_at } },
+    });
+
+    return lockedPost;
+  }
+
+  async unlockPost(id: string, actorUserId: string): Promise<Post> {
+    const post = await this.postRepository.findById(id);
+    if (!post) {
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    }
+
+    await this.assertCanModeratePost(post, actorUserId);
+    const unlockedPost = await this.postRepository.unlock(id);
+    if (!unlockedPost) {
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    }
+
+    await this.auditLogRepository.createAuditLog({
+      user_id: actorUserId,
+      action: AuditAction.UNLOCK,
+      entity_type: AuditEntityType.POST,
+      entity_id: id,
+      changes: { before: { locked_at: post.locked_at }, after: { locked_at: unlockedPost.locked_at } },
+    });
+
+    return unlockedPost;
+  }
+
+  private assertCanEditPost(post: Post, actorUserId: string): void {
     if (post.user_id !== actorUserId) {
       throw new ForbiddenException('Only the post owner can modify this post');
+    }
+
+    if (post.locked_at) {
+      throw new ForbiddenException('Post is locked and cannot be modified');
+    }
+  }
+
+  private async assertCanModeratePost(post: Post, actorUserId: string): Promise<void> {
+    const actor = await this.userRepository.findById(actorUserId);
+    if (!actor) {
+      throw new ForbiddenException('Acting user was not found');
+    }
+
+    const isOwner = post.user_id === actorUserId;
+    const isModerator = actor.role === 'moderator' || actor.role === 'admin';
+    if (!isOwner && !isModerator) {
+      throw new ForbiddenException('Only moderators, admins, or post owners can moderate this post');
     }
   }
 
@@ -269,5 +382,17 @@ export class AppService {
       content: post.content,
       change_summary: changeSummary,
     });
+  }
+
+  private async ensurePostModerationColumns(): Promise<void> {
+    await this.dataSource.query(`
+      ALTER TABLE posts
+      ADD COLUMN IF NOT EXISTS hidden_at TIMESTAMP NULL;
+    `);
+
+    await this.dataSource.query(`
+      ALTER TABLE posts
+      ADD COLUMN IF NOT EXISTS locked_at TIMESTAMP NULL;
+    `);
   }
 }

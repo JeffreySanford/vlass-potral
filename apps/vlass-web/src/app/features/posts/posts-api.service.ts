@@ -21,6 +21,8 @@ export interface PostModel {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+  hidden_at?: string | null;
+  locked_at?: string | null;
   user?: PostUserModel;
 }
 
@@ -58,6 +60,30 @@ export class PostsApiService {
 
   publishPost(id: string): Observable<PostModel> {
     return this.http.post<PostModel>(`${this.apiBaseUrl}/api/posts/${encodeURIComponent(id)}/publish`, {}, {
+      headers: this.authHeaders(),
+    });
+  }
+
+  hidePost(id: string): Observable<PostModel> {
+    return this.http.post<PostModel>(`${this.apiBaseUrl}/api/posts/${encodeURIComponent(id)}/hide`, {}, {
+      headers: this.authHeaders(),
+    });
+  }
+
+  unhidePost(id: string): Observable<PostModel> {
+    return this.http.post<PostModel>(`${this.apiBaseUrl}/api/posts/${encodeURIComponent(id)}/unhide`, {}, {
+      headers: this.authHeaders(),
+    });
+  }
+
+  lockPost(id: string): Observable<PostModel> {
+    return this.http.post<PostModel>(`${this.apiBaseUrl}/api/posts/${encodeURIComponent(id)}/lock`, {}, {
+      headers: this.authHeaders(),
+    });
+  }
+
+  unlockPost(id: string): Observable<PostModel> {
+    return this.http.post<PostModel>(`${this.apiBaseUrl}/api/posts/${encodeURIComponent(id)}/unlock`, {}, {
       headers: this.authHeaders(),
     });
   }

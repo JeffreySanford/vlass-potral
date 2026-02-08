@@ -285,5 +285,37 @@ describe('vlass-api e2e', () => {
         expect(axiosError.response?.status).toBe(403);
       }
     });
+
+    it('supports owner moderation actions: hide/unhide and lock/unlock', async () => {
+      const nonce = Date.now() + 2;
+      const owner = await registerUser(`post_owner3_${nonce}`, `post_owner3_${nonce}@vlass.local`);
+      const authHeader = { Authorization: `Bearer ${owner.access_token}` };
+
+      const createResponse = await axios.post(
+        '/api/posts',
+        {
+          title: 'Moderation Target',
+          content: 'Owner moderation path target.',
+        },
+        { headers: authHeader },
+      );
+      const postId = createResponse.data.id as string;
+
+      const hideResponse = await axios.post(`/api/posts/${postId}/hide`, {}, { headers: authHeader });
+      expect(hideResponse.status).toBe(201);
+      expect(hideResponse.data.hidden_at).not.toBeNull();
+
+      const lockResponse = await axios.post(`/api/posts/${postId}/lock`, {}, { headers: authHeader });
+      expect(lockResponse.status).toBe(201);
+      expect(lockResponse.data.locked_at).not.toBeNull();
+
+      const unlockResponse = await axios.post(`/api/posts/${postId}/unlock`, {}, { headers: authHeader });
+      expect(unlockResponse.status).toBe(201);
+      expect(unlockResponse.data.locked_at).toBeNull();
+
+      const unhideResponse = await axios.post(`/api/posts/${postId}/unhide`, {}, { headers: authHeader });
+      expect(unhideResponse.status).toBe(201);
+      expect(unhideResponse.data.hidden_at).toBeNull();
+    });
   });
 });

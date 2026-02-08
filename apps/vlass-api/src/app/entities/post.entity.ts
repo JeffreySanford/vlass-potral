@@ -50,6 +50,12 @@ export class Post {
   @Column({ type: 'timestamp', nullable: true })
   published_at: Date | null = null;
 
+  @Column({ type: 'timestamp', nullable: true })
+  hidden_at: Date | null = null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  locked_at: Date | null = null;
+
   @CreateDateColumn()
   created_at!: Date;
 

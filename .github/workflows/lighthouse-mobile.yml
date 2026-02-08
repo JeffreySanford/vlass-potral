@@ -22,8 +22,27 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - uses: treosh/lighthouse-ci-action@v12
+      - name: Install Chromium
+        run: pnpm exec playwright install chromium --with-deps
+      - name: Resolve Chrome path
+        run: echo "CHROME_PATH=$(node -e \"console.log(require('@playwright/test').chromium.executablePath())\")" >> $GITHUB_ENV
+      - name: Start web app for Lighthouse
+        run: |
+          pnpm nx run vlass-web:serve:development > /tmp/vlass-web-lighthouse.log 2>&1 &
+      - name: Wait for web app
+        run: node scripts/wait-for-url.mjs http://localhost:4200 180000
+      - name: Run Lighthouse CI
+        run: pnpm dlx @lhci/cli@0.14.0 autorun --config=.github/lighthouse/lighthouserc.json
+      - name: Generate AI-friendly Lighthouse summaries
+        if: always()
+        run: node scripts/summarize-lighthouse.mjs
+      - name: Upload Lighthouse artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          configPath: .github/lighthouse/lighthouserc.json
-          uploadArtifacts: true
-          temporaryPublicStorage: false
+          name: lighthouse-mobile
+          path: |
+            test-output/lighthouse
+            .lighthouseci
+            /tmp/vlass-web-lighthouse.log
+          if-no-files-found: ignore

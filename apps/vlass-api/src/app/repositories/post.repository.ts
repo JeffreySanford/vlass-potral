@@ -35,7 +35,7 @@ export class PostRepository {
 
   async findPublished(): Promise<Post[]> {
     return this.repo.find({
-      where: { status: PostStatus.PUBLISHED, deleted_at: IsNull() },
+      where: { status: PostStatus.PUBLISHED, deleted_at: IsNull(), hidden_at: IsNull() },
       relations: ['user'],
       order: { published_at: 'DESC' },
     });
@@ -65,6 +65,26 @@ export class PostRepository {
       { id, deleted_at: IsNull() },
       { status: PostStatus.DRAFT, published_at: null }
     );
+    return this.findById(id);
+  }
+
+  async hide(id: string): Promise<Post | null> {
+    await this.repo.update({ id, deleted_at: IsNull() }, { hidden_at: new Date() });
+    return this.findById(id);
+  }
+
+  async unhide(id: string): Promise<Post | null> {
+    await this.repo.update({ id, deleted_at: IsNull() }, { hidden_at: null });
+    return this.findById(id);
+  }
+
+  async lock(id: string): Promise<Post | null> {
+    await this.repo.update({ id, deleted_at: IsNull() }, { locked_at: new Date() });
+    return this.findById(id);
+  }
+
+  async unlock(id: string): Promise<Post | null> {
+    await this.repo.update({ id, deleted_at: IsNull() }, { locked_at: null });
     return this.findById(id);
   }
 

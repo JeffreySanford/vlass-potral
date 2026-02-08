@@ -1,6 +1,6 @@
 # API Routes (MVP Aligned)
 
-Status date: 2026-02-07
+Status date: 2026-02-08
 Canonical scope: `documentation/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
 
 ## MVP Route Groups
@@ -35,8 +35,10 @@ Canonical scope: `documentation/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
 - `DELETE /api/posts/:id`
 
 ### Moderation (Posts)
-- Planned for MVP pillar 3
-- Not yet implemented in the current API module
+- `POST /api/posts/:id/hide`
+- `POST /api/posts/:id/unhide`
+- `POST /api/posts/:id/lock`
+- `POST /api/posts/:id/unlock`
 
 ### Ops
 - `GET /api`

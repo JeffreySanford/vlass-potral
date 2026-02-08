@@ -51,6 +51,10 @@ describe('AppController', () => {
       publishPost: jest.fn().mockResolvedValue({ ...mockPost, status: 'PUBLISHED' }),
       unpublishPost: jest.fn().mockResolvedValue(mockPost),
       deletePost: jest.fn().mockResolvedValue(true),
+      hidePost: jest.fn().mockResolvedValue({ ...mockPost, hidden_at: new Date() }),
+      unhidePost: jest.fn().mockResolvedValue({ ...mockPost, hidden_at: null }),
+      lockPost: jest.fn().mockResolvedValue({ ...mockPost, locked_at: new Date() }),
+      unlockPost: jest.fn().mockResolvedValue({ ...mockPost, locked_at: null }),
       getPostsByUser: jest.fn().mockResolvedValue([mockPost]),
     };
 
@@ -237,6 +241,22 @@ describe('AppController', () => {
         
         expect(result).toBe(true);
         expect(mockAppService.deletePost).toHaveBeenCalledWith('1', '1');
+      });
+    });
+
+    describe('hidePost', () => {
+      it('should hide a post', async () => {
+        const mockRequest = { user: { id: '1' } };
+        await controller.hidePost(mockRequest as never, '1');
+        expect(mockAppService.hidePost).toHaveBeenCalledWith('1', '1');
+      });
+    });
+
+    describe('lockPost', () => {
+      it('should lock a post', async () => {
+        const mockRequest = { user: { id: '1' } };
+        await controller.lockPost(mockRequest as never, '1');
+        expect(mockAppService.lockPost).toHaveBeenCalledWith('1', '1');
       });
     });
   });

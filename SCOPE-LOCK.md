@@ -1,5 +1,7 @@
 # VLASS Sky Portal — MVP Scope Lock
 
+> Affiliation note: this is an independent portfolio/community project using public VLASS data and is not an official VLA/NRAO deliverable.
+
 **Date:** 2026-02-07  
 **Status:** LOCKED (No re-litigating)
 

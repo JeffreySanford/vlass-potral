@@ -1,6 +1,6 @@
 # TODO
 
-Status date: 2026-02-07
+Status date: 2026-02-08
 
 Canonical scope:
 `documentation/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
@@ -8,9 +8,20 @@ Canonical scope:
 ## MVP Priorities
 
 - [x] Complete Pillar 2 operational telemetry dashboarding for cutout provider reliability
-- [ ] Complete post and revision workflows
-- [ ] Complete post moderation path (hide/lock)
+- [x] Complete post and revision workflows
+- [x] Complete post moderation path (hide/lock)
 - [ ] Keep docs aligned with source-of-truth models
+
+## Next Steps (Local Pre-Deploy)
+
+- [ ] Run full release gate locally and record results:
+  `pnpm nx run docs-policy:check && pnpm nx run-many --target=test --all && pnpm nx run mvp-gates:e2e`
+- [ ] Finish Pillar 3 workflow gaps: post lifecycle edge cases, revision diff UX, and moderation hide/lock flow completion
+- [ ] Add API contract regression check in CI (OpenAPI diff check against committed `documentation/api/openapi.json`)
+- [ ] Calibrate Lighthouse mobile assertions and keep artifact baselines in CI for trend comparison
+- [ ] Reduce login route Lighthouse FCP/performance regressions (currently warning-level in local mobile profile)
+- [ ] Finalize public-repo metadata checklist: description, topics, website link, and security feature toggles in GitHub settings
+- [ ] Standardize affiliation disclaimer footer in remaining long-form docs (`documentation/frontend/*`, ADR set)
 
 ## Archived Completed Items
 
@@ -58,3 +69,10 @@ Completed on 2026-02-07:
 - Mode B is deferred from MVP.
 - FITS proxy is deferred from MVP.
 - Comments are deferred from MVP.
+
+## Journal Policy
+
+- Completed work is still being journaled.
+- Primary archive location: `TODO.md` under "Archived Completed Items".
+- Secondary historical context: release notes under `documentation/RELEASE-NOTES-*.md`.
+- `documentation/ROADMAP.md` should stay future-facing, not become a done-work log.

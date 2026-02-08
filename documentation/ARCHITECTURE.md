@@ -6,6 +6,10 @@ Canonical scope is defined by:
 - `documentation/PRODUCT-CHARTER.md`
 - `SCOPE-LOCK.md`
 
+Affiliation note:
+- This architecture describes an independent project that consumes public VLASS data.
+- It is not an official system owned or operated by VLA/NRAO.
+
 ## Components
 - Frontend: `apps/vlass-web` (Angular SSR)
 - Backend: `apps/vlass-api` (NestJS + Postgres/Redis)

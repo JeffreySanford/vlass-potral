@@ -101,6 +101,30 @@ export class AppController {
     return this.appService.deletePost(id, req.user.id);
   }
 
+  @Post('posts/:id/hide')
+  @UseGuards(AuthenticatedGuard, RateLimitGuard)
+  hidePost(@Request() req: RequestWithUser, @Param('id') id: string) {
+    return this.appService.hidePost(id, req.user.id);
+  }
+
+  @Post('posts/:id/unhide')
+  @UseGuards(AuthenticatedGuard, RateLimitGuard)
+  unhidePost(@Request() req: RequestWithUser, @Param('id') id: string) {
+    return this.appService.unhidePost(id, req.user.id);
+  }
+
+  @Post('posts/:id/lock')
+  @UseGuards(AuthenticatedGuard, RateLimitGuard)
+  lockPost(@Request() req: RequestWithUser, @Param('id') id: string) {
+    return this.appService.lockPost(id, req.user.id);
+  }
+
+  @Post('posts/:id/unlock')
+  @UseGuards(AuthenticatedGuard, RateLimitGuard)
+  unlockPost(@Request() req: RequestWithUser, @Param('id') id: string) {
+    return this.appService.unlockPost(id, req.user.id);
+  }
+
   @Get('users/:userId/posts')
   getPostsByUser(@Param('userId') userId: string) {
     return this.appService.getPostsByUser(userId);

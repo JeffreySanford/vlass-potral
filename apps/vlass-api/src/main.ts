@@ -51,7 +51,9 @@ async function bootstrap() {
     app.setGlobalPrefix(globalPrefix);
     const openApiConfig = new DocumentBuilder()
       .setTitle('VLASS Portal API')
-      .setDescription('VLASS browsing and community portal API')
+      .setDescription(
+        'Independent VLASS public-data browsing and community API (not affiliated with VLA/NRAO).',
+      )
       .setVersion('1.0.0')
       .addBearerAuth()
       .build();

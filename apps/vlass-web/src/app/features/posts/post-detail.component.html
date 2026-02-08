@@ -16,6 +16,12 @@
           <mat-card-title>{{ post.title }}</mat-card-title>
           <mat-card-subtitle>
             {{ post.user?.display_name || post.user?.username || 'Unknown author' }} | {{ post.status }}
+            @if (post.hidden_at) {
+              | hidden
+            }
+            @if (post.locked_at) {
+              | locked
+            }
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
@@ -47,6 +53,14 @@
               } @else {
                 Publish
               }
+            </button>
+          }
+          @if (canModerate) {
+            <button mat-stroked-button type="button" [disabled]="moderating" (click)="toggleHidden()">
+              {{ post.hidden_at ? 'Unhide' : 'Hide' }}
+            </button>
+            <button mat-stroked-button type="button" [disabled]="moderating" (click)="toggleLocked()">
+              {{ post.locked_at ? 'Unlock' : 'Lock' }}
             </button>
           }
           <a mat-button routerLink="/view">Open Viewer</a>

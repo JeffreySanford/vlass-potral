@@ -6,6 +6,10 @@ Status date: 2026-02-08
 
 Version 2 extends the MVP portal into a credible research collaboration platform while keeping the SSR + viewer + notebook foundation stable.
 
+Affiliation boundary:
+
+- V2 remains an independent public-data project and not an official VLA/NRAO/VLASS initiative.
+
 ## V2 Outcomes
 
 1. Reliable scale path for viewer and API under higher read traffic.
@@ -48,16 +52,19 @@ Version 2 extends the MVP portal into a credible research collaboration platform
 ## Delivery Plan
 
 1. `v2.0-foundation`
+
 - Security automation baseline (Dependabot, CodeQL, secret scanning).
 - OpenAPI generation + artifact publication.
 - Documentation refresh (`ENV`, `DEMO`, architecture diagram).
 
-2. `v2.1-collaboration`
+1. `v2.1-collaboration`
+
 - Comments/replies and moderation flows.
 - Notebook revision UX pass.
 - Additional integration tests around post lifecycle.
 
-3. `v2.2-viewer-advanced`
+1. `v2.2-viewer-advanced`
+
 - Mode B rollout behind feature flag.
 - Controlled FITS passthrough evaluation.
 - Performance tuning for advanced rendering path.

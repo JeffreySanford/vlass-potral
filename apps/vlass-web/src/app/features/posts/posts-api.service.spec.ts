@@ -100,4 +100,20 @@ describe('PostsApiService', () => {
     expect(req.request.headers.has('Authorization')).toBe(false);
     req.flush([]);
   });
+
+  it('hides and locks post through moderation endpoints', () => {
+    configure('browser');
+    sessionStorage.setItem('auth_token', 'token-123');
+
+    service.hidePost('post-1').subscribe();
+    service.lockPost('post-1').subscribe();
+
+    const hideReq = httpMock.expectOne('http://localhost:3000/api/posts/post-1/hide');
+    expect(hideReq.request.method).toBe('POST');
+    hideReq.flush({});
+
+    const lockReq = httpMock.expectOne('http://localhost:3000/api/posts/post-1/lock');
+    expect(lockReq.request.method).toBe('POST');
+    lockReq.flush({});
+  });
 });

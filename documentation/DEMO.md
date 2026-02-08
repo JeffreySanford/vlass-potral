@@ -2,6 +2,8 @@
 
 Goal: let a reviewer validate MVP value in under 3 minutes.
 
+Affiliation note: this demo is for an independent public-data project and is not an official VLA/NRAO demonstration.
+
 ## Start Here
 
 1. Run `pnpm install`.

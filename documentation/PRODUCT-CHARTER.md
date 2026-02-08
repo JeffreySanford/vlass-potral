@@ -12,6 +12,7 @@
 > **Fast VLASS sky browser + shareable permalinks + research notebook posts + snapshots (+ constrained FITS cutout download).**
 
 It's a **collaboration + publishing layer** on top of VLASS data, not an archive tool or FITS redistribution service.
+It is an independent project and not an official VLA/NRAO/VLASS product.
 
 ---
 
@@ -89,34 +90,51 @@ It's a **collaboration + publishing layer** on top of VLASS data, not an archive
 
 ### What We're NOT Building
 
-| Feature | Reason | When? |
-| --- | --- | --- |
-| **FITS Proxy/Caching Tier** | Full proxy/cache/mirroring is deferred; constrained cutout passthrough only in MVP | v2 (if users demand) |
-| **Mode B Viewer** | Canvas/Paper.js is v2; Aladin is plenty for MVP | v2 (if Aladin fails) |
-| **WCS Reprojection** | Compute-heavy; clients can download + reproject locally | v2+ |
-| **FITS Generation** | (same as proxy; out of scope) | v2+ |
-| **Comment System** | Good first v1.1 feature, but not MVP | v1.1 |
-| **Team/Org Features** | Collaborative viewing can wait | v2+ |
-| **Mobile App** | Web-only for MVP | v2+ |
-| **User Profiles** | Focus on posts, not bios | v2+ |
-| **Advanced Search** | Tag-based discovery suffices | v2+ |
-| **API/SDK** | Ship web app first; public API later | v2+ |
+**FITS Proxy/Caching Tier** (v2 if users demand)  
+Full proxy/cache/mirroring is deferred; constrained cutout passthrough only in MVP
+
+**Mode B Viewer** (v2 if Aladin fails)  
+Canvas/Paper.js is v2; Aladin is plenty for MVP
+
+**WCS Reprojection** (v2+)  
+Compute-heavy; clients can download + reproject locally
+
+**FITS Generation** (v2+)  
+(same as proxy; out of scope)
+
+**Comment System** (v1.1)  
+Good first v1.1 feature, but not MVP
+
+**Team/Org Features** (v2+)  
+Collaborative viewing can wait
+
+**Mobile App** (v2+)  
+Web-only for MVP
+
+**User Profiles** (v2+)  
+Focus on posts, not bios
+
+**Advanced Search** (v2+)  
+Tag-based discovery suffices
+
+**API/SDK** (v2+)  
+Ship web app first; public API later
 
 ---
 
 ## Technology Stack (Locked for MVP)
 
-| Layer              | Tech                                               | Why                                       |
-| ------------------ | -------------------------------------------------- | ----------------------------------------- |
-| **Frontend**       | Angular 18 + Material 3 + SSR                      | Know it well; SSR is key to UX            |
-| **Backend**        | NestJS + Postgres + Redis                          | Proven, maintainable, team familiar       |
-| **Render Service** | Rust (sidecar) for PNG composition                 | Fast image rendering (preview + snapshot) |
-| **Viewer A**       | Aladin Lite (CDN)                                  | Ready-made, proven, no custom build       |
-| **Viewer B**       | (Deferred)                                         | Not in MVP                                |
-| **Cache**          | Redis + local PVC                                  | Simple, no cost for preview artifacts     |
-| **Persistence**    | Postgres (posts, revisions, tags) + S3 (artifacts) | Standard; play-it-safe for MVP            |
-| **Async Jobs**     | Bull (Redis queue)                                 | Snapshot rendering jobs                   |
-| **Deploy**         | Kubernetes + Helm                                  | Assume VLA has K8s; use it                |
+| Layer              | Tech                                               | Why                                        |
+| ------------------ | -------------------------------------------------- | ------------------------------------------ |
+| **Frontend**       | Angular 18 + Material 3 + SSR                      | Know it well; SSR is key to UX             |
+| **Backend**        | NestJS + Postgres + Redis                          | Proven, maintainable, team familiar        |
+| **Render Service** | Rust (sidecar) for PNG composition                 | Fast image rendering (preview + snapshot)  |
+| **Viewer A**       | Aladin Lite (CDN)                                  | Ready-made, proven, no custom build        |
+| **Viewer B**       | (Deferred)                                         | Not in MVP                                 |
+| **Cache**          | Redis + local PVC                                  | Simple, no cost for preview artifacts      |
+| **Persistence**    | Postgres (posts, revisions, tags) + S3 (artifacts) | Standard; play-it-safe for MVP             |
+| **Async Jobs**     | Bull (Redis queue)                                 | Snapshot rendering jobs                    |
+| **Deploy**         | Kubernetes + Helm                                  | Standard deployment path for scalability   |
 
 ---
 
@@ -130,7 +148,7 @@ It's a **collaboration + publishing layer** on top of VLASS data, not an archive
 - Shares links with friends ("check out this object")
 - Reads others' posts; no replies needed
 
-### Secondary: Your VLA Friends (Operators/Astronomers)
+### Secondary: Astronomy Peers (Operators/Astronomers)
 
 - Log in with verified email
 - Publish analysis notebooks (method + results + caveats)

@@ -1,8 +1,12 @@
 # Roadmap
 
-Status date: 2026-02-07
+Status date: 2026-02-08
 
 Canonical scope: `documentation/PRODUCT-CHARTER.md` and `SCOPE-LOCK.md`.
+
+Tracking rule:
+- `ROADMAP.md` is forward-looking (what is next).
+- Completed implementation history is journaled in `TODO.md` ("Archived Completed Items") and release notes.
 
 ## MVP (v1.0)
 1. Pillar 1: SSR first paint
@@ -17,25 +21,24 @@ Canonical scope: `documentation/PRODUCT-CHARTER.md` and `SCOPE-LOCK.md`.
 - PNG snapshot workflow
 - Labeling centered targets in viewer state
 - FITS science cutout download path
-- Status: in progress (Aladin Mode A + state/permalink/snapshot + center labels + FITS cutout endpoint shipped; remaining items listed below)
-
-Pillar 2 remaining:
-- FITS provider hardening (fallback survey mapping, retries, and provider outage messaging) - complete
-- Survey-aware UX polish (native-resolution indicator at deep zoom) - complete
-- Snapshot/cutout observability + policy tuning (audit entries and path-specific rate limits) - complete
-- Remaining: production-level telemetry dashboards for cutout provider reliability
+- Status: complete (Mode A + state/permalink/snapshot/cutout + reliability hardening + telemetry dashboarding)
 
 3. Pillar 3: Community notebooks
 - Post create/edit/read
 - Revision history and diff
 - Moderation controls for posts
 - Tag workflow
+- Status: complete (post create/edit/publish + revisions + hide/lock moderation flow are implemented and tested)
 
 4. Foundations
 - Auth + verification gates
 - Audit logging
 - Rate limiting
 - CI baseline test gate
+
+## v1.0 Completion
+- MVP pillars are implemented in local environment.
+- Remaining work before public deployment is operational hardening (performance tuning, CI trend baselines, release packaging).
 
 ## v1.1 (Quick wins)
 - Comments/replies

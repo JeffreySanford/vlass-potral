@@ -1,6 +1,6 @@
 # Project Status Scorecard
 
-Last validated: 2026-02-07
+Last validated: 2026-02-08
 
 ## Source-of-Truth Model
 
@@ -30,7 +30,9 @@ Weighted success score: **99.5 / 100**
 ## Interpretation
 
 - The engineering governance baseline is healthy.
-- Remaining risk is product completion depth inside each MVP pillar, not quality
-  gate health.
+- MVP feature completion risk is now low across all three pillars.
+- Remaining risk is operational/performance hardening before deployment.
 - Pillar 1 is complete and shipping (SSR first paint + telemetry overlay + auth
   baseline).
+- Pillar 2 is complete and operationally hardened.
+- Pillar 3 is now complete (post/revision workflow + moderation hide/lock flow).

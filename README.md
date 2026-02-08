@@ -1,5 +1,7 @@
 # VLASS Portal
 
+> Independent public-data project. This repository is not affiliated with, sponsored by, or operated on behalf of the VLA, NRAO, or the VLASS program.
+
 [![Build](https://github.com/JeffreySanford/vlass-portal/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/vlass-portal/actions/workflows/build.yml)
 [![Unit Tests](https://github.com/JeffreySanford/vlass-portal/actions/workflows/unit-tests.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/vlass-portal/actions/workflows/unit-tests.yml)
 [![E2E](https://github.com/JeffreySanford/vlass-portal/actions/workflows/e2e.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/vlass-portal/actions/workflows/e2e.yml)
@@ -42,6 +44,8 @@ pnpm test           # nx run-many --target=test --all
 pnpm test:web       # nx test vlass-web
 pnpm test:api       # nx test vlass-api
 pnpm e2e:mvp        # nx run mvp-gates:e2e
+pnpm lighthouse:mobile # lhci mobile audit
+pnpm lighthouse:summary # text/json summary for CI + AI consumers
 pnpm build          # nx run-many --target=build --all
 pnpm lint           # nx run-many --target=lint --all
 ```
@@ -73,6 +77,7 @@ pnpm nx run mvp-gates:e2e
 - `documentation/PRODUCT-CHARTER.md`
 - `SCOPE-LOCK.md`
 - `documentation/STATUS.md`
+- `documentation/AFFILIATION.md`
 - `documentation/ENV.md`
 - `documentation/DEMO.md`
 - `documentation/TESTING-STRATEGY.md`

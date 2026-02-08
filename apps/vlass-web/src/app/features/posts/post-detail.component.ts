@@ -15,8 +15,10 @@ export class PostDetailComponent implements OnInit {
   post: PostModel | null = null;
   loading = false;
   publishing = false;
+  moderating = false;
   statusMessage = '';
   viewMode: 'formatted' | 'raw' = 'formatted';
+  canModerate = false;
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -37,6 +39,7 @@ export class PostDetailComponent implements OnInit {
       .subscribe({
         next: (post) => {
           this.post = post;
+          this.canModerate = this.computeCanModerate(post.user_id);
           this.loading = false;
         },
         error: (error: HttpErrorResponse) => {
@@ -85,6 +88,48 @@ export class PostDetailComponent implements OnInit {
       });
   }
 
+  toggleHidden(): void {
+    if (!this.post || this.moderating || !this.canModerate) {
+      return;
+    }
+
+    this.moderating = true;
+    const action$ = this.post.hidden_at ? this.postsApi.unhidePost(this.post.id) : this.postsApi.hidePost(this.post.id);
+    action$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (post) => {
+        this.post = post;
+        this.moderating = false;
+        this.statusMessage = post.hidden_at ? 'Post hidden.' : 'Post unhidden.';
+      },
+      error: (error: HttpErrorResponse) => {
+        this.moderating = false;
+        this.statusMessage =
+          typeof error.error?.message === 'string' ? error.error.message : 'Moderation action failed.';
+      },
+    });
+  }
+
+  toggleLocked(): void {
+    if (!this.post || this.moderating || !this.canModerate) {
+      return;
+    }
+
+    this.moderating = true;
+    const action$ = this.post.locked_at ? this.postsApi.unlockPost(this.post.id) : this.postsApi.lockPost(this.post.id);
+    action$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (post) => {
+        this.post = post;
+        this.moderating = false;
+        this.statusMessage = post.locked_at ? 'Post locked.' : 'Post unlocked.';
+      },
+      error: (error: HttpErrorResponse) => {
+        this.moderating = false;
+        this.statusMessage =
+          typeof error.error?.message === 'string' ? error.error.message : 'Moderation action failed.';
+      },
+    });
+  }
+
   get formattedContent(): string {
     const content = String(this.post?.content || '');
     return renderSafeMarkdownHtml(content, (rawJson: string) => {
@@ -112,6 +157,25 @@ export class PostDetailComponent implements OnInit {
         .replace(/=+$/g, '');
     } catch {
       return null;
+    }
+  }
+
+  private computeCanModerate(postOwnerId: string): boolean {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+
+    try {
+      const raw = sessionStorage.getItem('auth_user');
+      if (!raw) {
+        return false;
+      }
+      const user = JSON.parse(raw) as { id?: unknown; role?: unknown };
+      const isOwner = typeof user.id === 'string' && user.id === postOwnerId;
+      const isModerator = user.role === 'moderator' || user.role === 'admin';
+      return isOwner || isModerator;
+    } catch {
+      return false;
     }
   }
 }

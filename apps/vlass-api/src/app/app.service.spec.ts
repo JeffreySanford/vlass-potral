@@ -7,7 +7,7 @@ import { CreateUserDto, CreatePostDto, UpdateUserDto } from './dto';
 
 describe('AppService', () => {
   let service: AppService;
-  let mockDataSource: Pick<DataSource, 'isInitialized'>;
+  let mockDataSource: Pick<DataSource, 'isInitialized' | 'query'>;
   let mockUserRepository: jest.Mocked<UserRepository>;
   let mockPostRepository: jest.Mocked<PostRepository>;
   let mockAuditLogRepository: jest.Mocked<AuditLogRepository>;
@@ -17,6 +17,7 @@ describe('AppService', () => {
     id: '1',
     username: 'testuser',
     email: 'test@example.com',
+    role: 'user',
     github_id: 123,
     display_name: 'Test User',
     avatar_url: null,
@@ -45,12 +46,15 @@ describe('AppService', () => {
     created_at: new Date(),
     updated_at: new Date(),
     published_at: null,
+    hidden_at: null,
+    locked_at: null,
     deleted_at: null,
   };
 
   beforeEach(() => {
     mockDataSource = {
       isInitialized: true,
+      query: jest.fn().mockResolvedValue([]),
     };
 
     mockUserRepository = {
@@ -76,6 +80,10 @@ describe('AppService', () => {
       update: jest.fn().mockResolvedValue(mockPost),
       publish: jest.fn().mockResolvedValue({ ...mockPost, status: PostStatus.PUBLISHED }),
       unpublish: jest.fn().mockResolvedValue(mockPost),
+      hide: jest.fn().mockResolvedValue({ ...mockPost, hidden_at: new Date() }),
+      unhide: jest.fn().mockResolvedValue(mockPost),
+      lock: jest.fn().mockResolvedValue({ ...mockPost, locked_at: new Date() }),
+      unlock: jest.fn().mockResolvedValue(mockPost),
       softDelete: jest.fn().mockResolvedValue(true),
       hardDelete: jest.fn(),
     };
@@ -296,6 +304,13 @@ describe('AppService', () => {
 
       it('should throw ForbiddenException when actor is not post owner', async () => {
         await expect(service.unpublishPost('1', 'other-user')).rejects.toThrow(ForbiddenException);
+      });
+    });
+
+    describe('moderation', () => {
+      it('allows owner to hide and lock post', async () => {
+        await expect(service.hidePost('1', '1')).resolves.toBeDefined();
+        await expect(service.lockPost('1', '1')).resolves.toBeDefined();
       });
     });
   });

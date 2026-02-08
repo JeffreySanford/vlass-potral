@@ -5,6 +5,9 @@ Status date: 2026-02-07
 ## Mission
 Ship a focused MVP collaboration layer on public VLASS data.
 
+## Affiliation
+This project is independently developed and publicly documented. It is not affiliated with, sponsored by, or operated for the VLA, NRAO, or the official VLASS program.
+
 ## Locked MVP Scope
 1. SSR first paint with fast personalized preview (Pillar 1 complete)
 2. Aladin viewer with shareable permalink state and snapshots
