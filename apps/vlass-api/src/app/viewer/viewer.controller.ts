@@ -2,10 +2,12 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Param,
   Post,
   Query,
+  Request,
   StreamableFile,
   UseGuards,
 } from '@nestjs/common';
@@ -13,12 +15,20 @@ import { ViewerService } from './viewer.service';
 import { CreateViewerStateDto } from './dto/create-viewer-state.dto';
 import { CreateViewerSnapshotDto } from './dto/create-viewer-snapshot.dto';
 import { RateLimitGuard } from '../guards/rate-limit.guard';
+import { AuthenticatedGuard } from '../auth/guards/authenticated.guard';
+
+type RequestWithUser = {
+  user?: {
+    role?: 'user' | 'admin' | 'moderator';
+  };
+};
 
 @Controller('view')
 export class ViewerController {
   constructor(private readonly viewerService: ViewerService) {}
 
   @Post('state')
+  @UseGuards(RateLimitGuard)
   createState(@Body() body: CreateViewerStateDto) {
     return this.viewerService.createState(body.state);
   }
@@ -64,6 +74,7 @@ export class ViewerController {
   }
 
   @Get('labels/nearby')
+  @UseGuards(RateLimitGuard)
   async getNearbyLabels(
     @Query('ra') raRaw: string,
     @Query('dec') decRaw: string,
@@ -91,7 +102,12 @@ export class ViewerController {
   }
 
   @Get('telemetry')
-  getCutoutTelemetry() {
+  @UseGuards(AuthenticatedGuard)
+  getCutoutTelemetry(@Request() req: RequestWithUser) {
+    if (req.user?.role !== 'admin') {
+      throw new ForbiddenException('Telemetry is restricted to admin users.');
+    }
+
     return this.viewerService.getCutoutTelemetry();
   }
 

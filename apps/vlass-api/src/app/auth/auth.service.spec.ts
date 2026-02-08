@@ -1,6 +1,7 @@
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
+import { DataSource } from 'typeorm';
 import { AuthService } from './auth.service';
 import { UserRepository } from '../repositories';
 
@@ -16,6 +17,9 @@ describe('AuthService', () => {
   let jwtService: {
     sign: jest.Mock;
   };
+  let dataSource: {
+    query: jest.Mock;
+  };
 
   beforeEach(async () => {
     userRepository = {
@@ -29,6 +33,9 @@ describe('AuthService', () => {
     jwtService = {
       sign: jest.fn(),
     };
+    dataSource = {
+      query: jest.fn(),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -40,6 +47,10 @@ describe('AuthService', () => {
         {
           provide: JwtService,
           useValue: jwtService,
+        },
+        {
+          provide: DataSource,
+          useValue: dataSource,
         },
       ],
     }).compile();
@@ -83,6 +94,7 @@ describe('AuthService', () => {
         id: 'user-1',
         username: 'testuser',
         email: 'test@vlass.local',
+        role: 'admin',
       };
 
       const token = service.signToken(user);
@@ -91,6 +103,7 @@ describe('AuthService', () => {
         sub: 'user-1',
         email: 'test@vlass.local',
         username: 'testuser',
+        role: 'admin',
       });
       expect(token).toBe('jwt-token');
     });
@@ -133,6 +146,28 @@ describe('AuthService', () => {
           password: 'Password123!',
         }),
       ).rejects.toBeInstanceOf(ConflictException);
+    });
+  });
+
+  describe('issueAuthTokens', () => {
+    it('issues access and refresh tokens', async () => {
+      jwtService.sign.mockReturnValue('access-token');
+      dataSource.query.mockResolvedValue(undefined);
+      const user = {
+        id: 'user-1',
+        username: 'testuser',
+        email: 'test@vlass.local',
+        role: 'user',
+      };
+
+      const result = await service.issueAuthTokens(user as never);
+
+      expect(result.access_token).toBe('access-token');
+      expect(result.refresh_token.length).toBeGreaterThan(30);
+      expect(dataSource.query).toHaveBeenCalledWith(
+        expect.stringContaining('INSERT INTO auth_refresh_tokens'),
+        expect.arrayContaining(['user-1', expect.any(String), expect.any(String)]),
+      );
     });
   });
 

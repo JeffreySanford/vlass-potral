@@ -2,11 +2,14 @@ import { isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { LoginResponse } from '../features/auth/auth-api.service';
 
+export type UserRole = 'guest' | 'user' | 'admin' | 'moderator';
+
 export interface SessionUser {
   id: string;
   username: string;
   email: string | null;
   display_name: string;
+  role: Exclude<UserRole, 'guest'>;
   created_at: string;
 }
 
@@ -20,6 +23,7 @@ interface JwtPayload {
 export class AuthSessionService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly tokenStorageKey = 'auth_token';
+  private readonly refreshTokenStorageKey = 'auth_refresh_token';
   private readonly userStorageKey = 'auth_user';
 
   setSession(loginResponse: LoginResponse): void {
@@ -28,6 +32,11 @@ export class AuthSessionService {
     }
 
     sessionStorage.setItem(this.tokenStorageKey, loginResponse.access_token);
+    if (loginResponse.refresh_token) {
+      sessionStorage.setItem(this.refreshTokenStorageKey, loginResponse.refresh_token);
+    } else {
+      sessionStorage.removeItem(this.refreshTokenStorageKey);
+    }
     sessionStorage.setItem(this.userStorageKey, JSON.stringify(loginResponse.user));
   }
 
@@ -37,7 +46,24 @@ export class AuthSessionService {
     }
 
     sessionStorage.removeItem(this.tokenStorageKey);
+    sessionStorage.removeItem(this.refreshTokenStorageKey);
     sessionStorage.removeItem(this.userStorageKey);
+  }
+
+  getToken(): string | null {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+
+    return sessionStorage.getItem(this.tokenStorageKey);
+  }
+
+  getRefreshToken(): string | null {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+
+    return sessionStorage.getItem(this.refreshTokenStorageKey);
   }
 
   isAuthenticated(): boolean {
@@ -76,12 +102,12 @@ export class AuthSessionService {
     }
   }
 
-  private getToken(): string | null {
-    if (!isPlatformBrowser(this.platformId)) {
-      return null;
+  getRole(): UserRole {
+    if (!this.isAuthenticated()) {
+      return 'guest';
     }
 
-    return sessionStorage.getItem(this.tokenStorageKey);
+    return this.getUser()?.role ?? 'guest';
   }
 
   private parseJwtPayload(token: string): JwtPayload | null {

@@ -19,13 +19,28 @@ export interface AuthenticatedUser {
   username: string;
   email: string | null;
   display_name: string;
+  role: 'user' | 'admin' | 'moderator';
   created_at: string;
 }
 
 export interface LoginResponse {
   access_token: string;
+  refresh_token?: string;
   token_type: 'Bearer';
   user: AuthenticatedUser;
+}
+
+export interface AuthMeResponse {
+  authenticated: true;
+  user: AuthenticatedUser;
+}
+
+export interface LogoutResponse {
+  message: string;
+}
+
+export interface RefreshRequest {
+  refresh_token: string;
 }
 
 @Injectable({
@@ -47,5 +62,19 @@ export class AuthApiService {
       `${this.apiBaseUrl}/api/auth/register`,
       request
     );
+  }
+
+  getMe(): Observable<AuthMeResponse> {
+    return this.http.get<AuthMeResponse>(`${this.apiBaseUrl}/api/auth/me`);
+  }
+
+  logout(refreshToken?: string): Observable<LogoutResponse> {
+    return this.http.post<LogoutResponse>(`${this.apiBaseUrl}/api/auth/logout`, {
+      refresh_token: refreshToken,
+    });
+  }
+
+  refresh(request: RefreshRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiBaseUrl}/api/auth/refresh`, request);
   }
 }

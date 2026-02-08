@@ -23,6 +23,7 @@ export class RateLimitGuard implements CanActivate {
   private readonly maxRequests = Number(process.env['RATE_LIMIT_MAX_WRITES'] || 30);
   private readonly maxSnapshotRequests = Number(process.env['RATE_LIMIT_MAX_SNAPSHOTS'] || 20);
   private readonly maxCutoutRequests = Number(process.env['RATE_LIMIT_MAX_CUTOUTS'] || 12);
+  private readonly maxNearbyLabelRequests = Number(process.env['RATE_LIMIT_MAX_NEARBY_LABELS'] || 24);
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest<HttpRequestLike>();
@@ -56,6 +57,9 @@ export class RateLimitGuard implements CanActivate {
   private limitForPath(path: string): number {
     if (path.includes('/view/cutout')) {
       return this.maxCutoutRequests;
+    }
+    if (path.includes('/view/labels/nearby')) {
+      return this.maxNearbyLabelRequests;
     }
     if (path.includes('/view/snapshot')) {
       return this.maxSnapshotRequests;

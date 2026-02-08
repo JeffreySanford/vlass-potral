@@ -5,6 +5,7 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express from 'express';
+import helmet from 'helmet';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -13,6 +14,25 @@ const browserDistFolder = resolve(serverDistFolder, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'", "'unsafe-eval'", 'https:'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https:'],
+        imgSrc: ["'self'", 'data:', 'blob:', 'https:', 'http:'],
+        fontSrc: ["'self'", 'data:', 'https:'],
+        connectSrc: ["'self'", 'data:', 'https:', 'http:', 'wss:', 'ws:'],
+        objectSrc: ["'none'"],
+        frameAncestors: ["'none'"],
+        baseUri: ["'self'"],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+  }),
+);
 
 /**
  * Example Express Rest API endpoints can be defined here.

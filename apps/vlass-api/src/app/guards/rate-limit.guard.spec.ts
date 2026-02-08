@@ -20,12 +20,14 @@ describe('RateLimitGuard', () => {
   const originalMax = process.env['RATE_LIMIT_MAX_WRITES'];
   const originalSnapshotMax = process.env['RATE_LIMIT_MAX_SNAPSHOTS'];
   const originalCutoutMax = process.env['RATE_LIMIT_MAX_CUTOUTS'];
+  const originalNearbyLabelsMax = process.env['RATE_LIMIT_MAX_NEARBY_LABELS'];
 
   beforeEach(() => {
     process.env['RATE_LIMIT_WINDOW_MS'] = '10000';
     process.env['RATE_LIMIT_MAX_WRITES'] = '2';
     process.env['RATE_LIMIT_MAX_SNAPSHOTS'] = '3';
     process.env['RATE_LIMIT_MAX_CUTOUTS'] = '1';
+    process.env['RATE_LIMIT_MAX_NEARBY_LABELS'] = '1';
   });
 
   afterEach(() => {
@@ -33,6 +35,7 @@ describe('RateLimitGuard', () => {
     process.env['RATE_LIMIT_MAX_WRITES'] = originalMax;
     process.env['RATE_LIMIT_MAX_SNAPSHOTS'] = originalSnapshotMax;
     process.env['RATE_LIMIT_MAX_CUTOUTS'] = originalCutoutMax;
+    process.env['RATE_LIMIT_MAX_NEARBY_LABELS'] = originalNearbyLabelsMax;
   });
 
   it('allows requests under the write limit', () => {
@@ -94,5 +97,17 @@ describe('RateLimitGuard', () => {
 
     expect(guard.canActivate(cutoutContext)).toBe(true);
     expect(() => guard.canActivate(cutoutContext)).toThrow(HttpException);
+  });
+
+  it('applies nearby-label path limits', () => {
+    const guard = new RateLimitGuard();
+    const nearbyContext = executionContextFromRequest({
+      ip: '127.0.0.1',
+      path: '/api/view/labels/nearby',
+      headers: {},
+    });
+
+    expect(guard.canActivate(nearbyContext)).toBe(true);
+    expect(() => guard.canActivate(nearbyContext)).toThrow(HttpException);
   });
 });

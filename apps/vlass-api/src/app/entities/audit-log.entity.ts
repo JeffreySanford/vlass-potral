@@ -18,6 +18,7 @@ export enum AuditAction {
   UNPUBLISH = 'unpublish',
   COMMENT = 'comment',
   LOGIN = 'login',
+  LOGOUT = 'logout',
 }
 
 export enum AuditEntityType {

@@ -17,6 +17,17 @@
             </span>
           }
         </div>
+        <div class="viewer-overlay-controls">
+          <label class="viewer-toggle" for="grid-overlay-toggle">
+            <input
+              id="grid-overlay-toggle"
+              type="checkbox"
+              [checked]="gridOverlayEnabled"
+              (change)="onGridOverlayToggle($event)"
+            />
+            <span>Grid</span>
+          </label>
+        </div>
       </div>
       @if (nativeResolutionHint) {
         <div class="resolution-hint">

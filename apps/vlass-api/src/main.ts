@@ -11,6 +11,8 @@ import express from 'express';
 import { AppModule } from './app/app.module';
 import session from 'express-session';
 import * as passportImport from 'passport';
+import helmet from 'helmet';
+import { getSessionSecret } from './app/config/security.config';
 
 const envCandidates = [
   resolve(process.cwd(), '.env.local'),
@@ -48,6 +50,12 @@ async function bootstrap() {
     app.setGlobalPrefix(globalPrefix);
     const snapshotDir = resolveApiRootDir('storage', 'snapshots');
     app.use(`/${globalPrefix}/view/snapshots`, express.static(snapshotDir));
+    app.use(
+      helmet({
+        contentSecurityPolicy: false,
+        crossOriginEmbedderPolicy: false,
+      }),
+    );
 
     // Setup CORS to allow credentials
     const corsOrigin = process.env['FRONTEND_URL'] || 'http://localhost:4200';
@@ -55,12 +63,12 @@ async function bootstrap() {
       origin: corsOrigin,
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
     });
 
     // Setup session middleware with memory store
     // In production, use connect-redis or similar
-    const sessionSecret = process.env['SESSION_SECRET'] || 'your-secret-key';
+    const sessionSecret = getSessionSecret();
     app.use(
       session({
         secret: sessionSecret,
@@ -78,6 +86,7 @@ async function bootstrap() {
     // Initialize Passport after session
     app.use(passport.initialize());
     app.use(passport.session());
+    attachCsrfMiddleware(app, globalPrefix);
 
     const port = process.env['API_PORT'] || '3000';
     await app.listen(port);
@@ -99,3 +108,73 @@ function resolveApiRootDir(...segments: string[]): string {
 }
 
 bootstrap();
+
+function attachCsrfMiddleware(
+  app: {
+    use: (
+      callback: (
+        req: CsrfRequest,
+        res: CsrfResponse,
+        next: () => void,
+      ) => void,
+    ) => void;
+  },
+  globalPrefix: string,
+): void {
+  const csrfEnabled = process.env['ENABLE_CSRF_PROTECTION'] === 'true';
+  if (!csrfEnabled) {
+    return;
+  }
+
+  const unsafeMethods = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+  const csrfTokenPath = `/${globalPrefix}/auth/csrf-token`;
+
+  app.use((req, res, next) => {
+    if (!unsafeMethods.has(req.method)) {
+      next();
+      return;
+    }
+
+    if (req.path === csrfTokenPath) {
+      next();
+      return;
+    }
+
+    if (!req.headers.cookie?.includes('connect.sid=')) {
+      next();
+      return;
+    }
+
+    const expectedToken = req.session?.csrfToken;
+    const providedHeader = req.headers['x-csrf-token'];
+    const providedToken =
+      typeof providedHeader === 'string' ? providedHeader : providedHeader?.[0];
+
+    if (!expectedToken || expectedToken !== providedToken) {
+      res.status(403).json({
+        message: 'Invalid CSRF token',
+      });
+      return;
+    }
+
+    next();
+  });
+}
+
+type CsrfRequest = {
+  method: string;
+  path: string;
+  headers: {
+    cookie?: string;
+    'x-csrf-token'?: string | string[];
+  };
+  session?: {
+    csrfToken?: string;
+  };
+};
+
+type CsrfResponse = {
+  status: (code: number) => {
+    json: (body: unknown) => void;
+  };
+};

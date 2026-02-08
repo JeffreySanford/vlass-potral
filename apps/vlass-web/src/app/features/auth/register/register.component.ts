@@ -8,6 +8,7 @@ import { map, startWith } from 'rxjs/operators';
 import { AuthApiService } from '../auth-api.service';
 import { AuthSessionService } from '../../../services/auth-session.service';
 import { SkyPreview, SkyPreviewService } from '../../../services/sky-preview.service';
+import { AppLoggerService } from '../../../services/app-logger.service';
 
 @Component({
   selector: 'app-register',
@@ -38,6 +39,7 @@ export class RegisterComponent {
   private authApiService = inject(AuthApiService);
   private authSessionService = inject(AuthSessionService);
   private skyPreviewService = inject(SkyPreviewService);
+  private readonly logger = inject(AppLoggerService);
 
   constructor() {
     this.showTelemetryOverlay = isPlatformBrowser(this.platformId);
@@ -58,6 +60,9 @@ export class RegisterComponent {
   onSubmit(): void {
     this.submitted = true;
     this.error = '';
+    this.logger.info('auth', 'register_submit', {
+      form_valid: this.registerForm.valid,
+    });
 
     if (this.registerForm.invalid) {
       if (
@@ -90,12 +95,19 @@ export class RegisterComponent {
     }).subscribe({
       next: (response) => {
         this.authSessionService.setSession(response);
+        this.logger.info('auth', 'register_success', {
+          user_id: response.user.id,
+          user_role: response.user.role,
+        });
         this.loading = false;
         this.router.navigate(['/landing']);
       },
       error: (error: HttpErrorResponse) => {
         this.loading = false;
         this.error = this.errorFromHttp(error);
+        this.logger.info('auth', 'register_failed', {
+          status_code: error.status,
+        });
       },
     });
   }
@@ -157,6 +169,10 @@ export class RegisterComponent {
 
     if (error.status === 409) {
       return 'Username or email already exists.';
+    }
+
+    if (error.status === 404) {
+      return 'API route not found on localhost:3000. Another service may be bound to port 3000.';
     }
 
     if (error.status === 0) {

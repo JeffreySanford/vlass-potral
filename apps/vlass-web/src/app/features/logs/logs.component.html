@@ -1,0 +1,37 @@
+<section class="logs-page">
+  <mat-toolbar color="primary" class="logs-toolbar">
+    <span>Logger</span>
+    <span class="spacer"></span>
+    <button mat-stroked-button type="button" (click)="refresh()">Refresh</button>
+  </mat-toolbar>
+
+  <mat-card class="logs-card">
+    <mat-card-header>
+      <mat-card-title>Recent App Events</mat-card-title>
+      <mat-card-subtitle>{{ entries.length }} entries in local runtime buffer</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (entries.length === 0) {
+        <p class="empty-state">No events captured yet.</p>
+      } @else {
+        <mat-list>
+          @for (entry of entries; track trackByEntry($index, entry)) {
+            <mat-list-item>
+              <div class="entry-row">
+                <span class="entry-ts">{{ entry.at }}</span>
+                <span class="entry-level">{{ entry.level.toUpperCase() }}</span>
+                <span class="entry-area">{{ entry.area }}</span>
+                <span class="entry-event">{{ entry.event }}</span>
+              </div>
+              @if (entry.details) {
+                <pre class="entry-details">{{ entry.details | json }}</pre>
+              }
+            </mat-list-item>
+            <mat-divider></mat-divider>
+          }
+        </mat-list>
+      }
+    </mat-card-content>
+  </mat-card>
+</section>

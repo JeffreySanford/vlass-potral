@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
 
 export const appRoutes: Route[] = [
   {
@@ -28,6 +29,12 @@ export const appRoutes: Route[] = [
     loadChildren: () =>
       import('./features/posts/posts.module').then((m) => m.PostsModule),
     canActivate: [AuthGuard],
+  },
+  {
+    path: 'logs',
+    loadChildren: () =>
+      import('./features/logs/logs.module').then((m) => m.LogsModule),
+    canActivate: [AuthGuard, AdminGuard],
   },
   {
     path: '**',

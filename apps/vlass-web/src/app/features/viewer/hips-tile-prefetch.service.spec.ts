@@ -1,4 +1,6 @@
+import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { AppLoggerService } from '../../services/app-logger.service';
 import { HipsTilePrefetchService } from './hips-tile-prefetch.service';
 
 describe('HipsTilePrefetchService', () => {
@@ -6,7 +8,19 @@ describe('HipsTilePrefetchService', () => {
   let initialFetch: typeof globalThis.fetch;
 
   beforeEach(() => {
-    service = new HipsTilePrefetchService();
+    TestBed.configureTestingModule({
+      providers: [
+        HipsTilePrefetchService,
+        {
+          provide: AppLoggerService,
+          useValue: {
+            info: vi.fn(),
+            debug: vi.fn(),
+          },
+        },
+      ],
+    });
+    service = TestBed.inject(HipsTilePrefetchService);
     initialFetch = globalThis.fetch.bind(globalThis);
   });
 

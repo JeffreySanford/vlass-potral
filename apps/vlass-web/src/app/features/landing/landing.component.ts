@@ -2,9 +2,13 @@ import { isPlatformBrowser } from '@angular/common';
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, interval } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { map, startWith } from 'rxjs/operators';
 import { AuthSessionService } from '../../services/auth-session.service';
 import { SkyPreview, SkyPreviewService } from '../../services/sky-preview.service';
+import { UserRole } from '../../services/auth-session.service';
+import { AuthApiService } from '../auth/auth-api.service';
+import { AppLoggerService } from '../../services/app-logger.service';
 
 interface LandingPillar {
   icon: string;
@@ -22,6 +26,7 @@ export class LandingComponent {
   user = {
     name: 'User',
     email: 'user@example.com',
+    role: 'guest' as UserRole,
   };
   pillars: LandingPillar[] = [
     {
@@ -56,6 +61,8 @@ export class LandingComponent {
   private platformId = inject(PLATFORM_ID);
   private authSessionService = inject(AuthSessionService);
   private skyPreviewService = inject(SkyPreviewService);
+  private authApiService = inject(AuthApiService);
+  private readonly logger = inject(AppLoggerService);
 
   constructor() {
     this.showTelemetryOverlay = isPlatformBrowser(this.platformId);
@@ -67,17 +74,46 @@ export class LandingComponent {
       this.user = {
         name: sessionUser.display_name || sessionUser.username,
         email: sessionUser.email || 'user@example.com',
+        role: sessionUser.role,
       };
     }
   }
 
+  get isAdmin(): boolean {
+    return this.user.role === 'admin';
+  }
+
   logout(): void {
-    this.authSessionService.clearSession();
-    this.router.navigate(['/auth/login']);
+    this.logger.info('auth', 'logout_requested', {
+      current_role: this.user.role,
+    });
+
+    this.authApiService
+      .logout(this.authSessionService.getRefreshToken() ?? undefined)
+      .pipe(
+        finalize(() => {
+          this.authSessionService.clearSession();
+          this.router.navigate(['/auth/login']);
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.logger.info('auth', 'logout_success');
+        },
+        error: (error: { status?: number }) => {
+          this.logger.info('auth', 'logout_failed', {
+            status_code: error.status ?? null,
+          });
+        },
+      });
   }
 
   openPillar(pillar: LandingPillar): void {
     this.router.navigateByUrl(pillar.route);
+  }
+
+  openLogs(): void {
+    this.router.navigateByUrl('/logs');
   }
 
   toggleTelemetryCompact(): void {

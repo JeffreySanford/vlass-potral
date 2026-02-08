@@ -55,18 +55,40 @@ const envFlag = (key: string, fallback: boolean): boolean => {
   const raw = envValue(key, fallback ? 'true' : 'false').trim().toLowerCase();
   return raw === '1' || raw === 'true' || raw === 'yes' || raw === 'on';
 };
+const requiredEnv = (key: string, fallback: string): string => {
+  const value = envValue(key, fallback).trim();
+  if (value.length > 0) {
+    return value;
+  }
+  if (process.env.NODE_ENV === 'test') {
+    return fallback;
+  }
+  throw new Error(`${key} is required for database configuration.`);
+};
+const loggingEnabled = envFlag('DB_LOGGING', false);
+const allowSensitiveDbLogging = envFlag('DB_ALLOW_SENSITIVE_LOGGING', false);
+
+if (isProduction && loggingEnabled && !allowSensitiveDbLogging) {
+  throw new Error(
+    'DB_LOGGING is disabled in production by default to prevent sensitive data exposure. Set DB_ALLOW_SENSITIVE_LOGGING=true to override intentionally.',
+  );
+}
 
 export const databaseConfig = (): TypeOrmModuleOptions => ({
   type: 'postgres',
   host: envValue('DB_HOST', 'localhost'),
   port: parseInt(envValue('DB_PORT', '15432'), 10),
   username: envValue('DB_USER', 'vlass_user'),
-  password: envValue('DB_PASSWORD', 'vlass_password_dev'),
+  password: requiredEnv('DB_PASSWORD', 'vlass_password_dev'),
   database: envValue('DB_NAME', 'vlass_portal'),
   entities: [User, Post, Revision, Comment, Snapshot, ViewerState, ViewerSnapshot, AuditLog, VlassTileCache],
   synchronize: false,
-  logging: envFlag('DB_LOGGING', false),
-  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+  logging: loggingEnabled,
+  ssl: process.env.DB_SSL === 'true'
+    ? {
+        rejectUnauthorized: envFlag('DB_SSL_REJECT_UNAUTHORIZED', true),
+      }
+    : false,
   extra: {
     max: 20,
     min: 5,

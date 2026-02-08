@@ -36,6 +36,9 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
   email: string | null = null;
 
+  @Column({ type: 'varchar', length: 32, default: 'user' })
+  role: 'user' | 'admin' | 'moderator' = 'user';
+
   @Column({ type: 'varchar', length: 255, nullable: true, select: false })
   password_hash: string | null = null;
 

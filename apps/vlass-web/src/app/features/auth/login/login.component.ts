@@ -8,6 +8,7 @@ import { map, startWith } from 'rxjs/operators';
 import { AuthApiService } from '../auth-api.service';
 import { AuthSessionService } from '../../../services/auth-session.service';
 import { SkyPreview, SkyPreviewService } from '../../../services/sky-preview.service';
+import { AppLoggerService } from '../../../services/app-logger.service';
 
 @Component({
   selector: 'app-login',
@@ -39,6 +40,7 @@ export class LoginComponent {
   private authApiService = inject(AuthApiService);
   private authSessionService = inject(AuthSessionService);
   private skyPreviewService = inject(SkyPreviewService);
+  private readonly logger = inject(AppLoggerService);
 
   constructor() {
     this.showTelemetryOverlay = isPlatformBrowser(this.platformId);
@@ -57,6 +59,9 @@ export class LoginComponent {
   onSubmit(): void {
     this.submitted = true;
     this.error = '';
+    this.logger.info('auth', 'login_submit', {
+      form_valid: this.loginForm.valid,
+    });
 
     if (this.loginForm.invalid) {
       return;
@@ -70,6 +75,10 @@ export class LoginComponent {
     this.authApiService.login({ email, password }).subscribe({
       next: (response) => {
         this.authSessionService.setSession(response);
+        this.logger.info('auth', 'login_success', {
+          user_id: response.user.id,
+          user_role: response.user.role,
+        });
 
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/landing';
         this.loading = false;
@@ -77,8 +86,10 @@ export class LoginComponent {
       },
       error: (error: HttpErrorResponse) => {
         this.loading = false;
-        this.error =
-          error.error?.message || 'Login failed. Check your credentials and try again.';
+        this.error = this.errorFromHttp(error);
+        this.logger.info('auth', 'login_failed', {
+          status_code: error.status,
+        });
       },
     });
   }
@@ -131,5 +142,25 @@ export class LoginComponent {
     const localTime = now.toLocaleTimeString('en-US', { hour12: false, timeZoneName: 'short' });
     const zuluTime = now.toUTCString().slice(17, 25);
     return `LCL ${localTime} | ZUL ${zuluTime}`;
+  }
+
+  private errorFromHttp(error: HttpErrorResponse): string {
+    if (typeof error.error?.message === 'string') {
+      return error.error.message;
+    }
+
+    if (error.status === 401) {
+      return 'Invalid credentials. Verify your email and password.';
+    }
+
+    if (error.status === 404) {
+      return 'API route not found on localhost:3000. Another service may be bound to port 3000.';
+    }
+
+    if (error.status === 0) {
+      return 'API is unavailable. Confirm vlass-api is running on port 3000.';
+    }
+
+    return 'Login failed. Check your credentials and try again.';
   }
 }

@@ -7,14 +7,15 @@ import { GitHubStrategy } from './strategies/github.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { SessionSerializer } from './strategies/session.serializer';
 import { DatabaseModule } from '../database.module';
+import { getJwtSecret } from '../config/security.config';
 
 @Module({
   imports: [
     PassportModule.register({ session: true }),
     JwtModule.register({
-      secret: process.env['JWT_SECRET'] || 'dev-jwt-secret-change-me',
+      secret: getJwtSecret(),
       signOptions: {
-        expiresIn: process.env['JWT_EXPIRES_IN'] || '7d',
+        expiresIn: process.env['JWT_EXPIRES_IN'] || '15m',
       },
     }),
     DatabaseModule,

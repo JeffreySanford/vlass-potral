@@ -72,6 +72,7 @@ describe('RegisterComponent', () => {
           username: 'newuser',
           email: 'new@vlass.local',
           display_name: 'newuser',
+          role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
         },
       }),

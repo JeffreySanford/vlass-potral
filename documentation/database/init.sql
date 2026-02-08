@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
   display_name VARCHAR(255),
   avatar_url VARCHAR(512),
   email VARCHAR(255) UNIQUE,
+  role VARCHAR(32) NOT NULL DEFAULT 'user',
   password_hash VARCHAR(255),
   bio TEXT,
   github_profile_url VARCHAR(512),
@@ -20,6 +21,9 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   deleted_at TIMESTAMP NULL
 );
+
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS role VARCHAR(32) NOT NULL DEFAULT 'user';
 
 -- Posts table (notebooks)
 CREATE TABLE IF NOT EXISTS posts (
@@ -148,6 +152,7 @@ INSERT INTO users (
   username,
   display_name,
   email,
+  role,
   password_hash,
   github_profile_url
 )
@@ -156,6 +161,7 @@ VALUES (
   'testuser',
   'Test User',
   'test@vlass.local',
+  'user',
   crypt('Password123!', gen_salt('bf')),
   NULL
 )
@@ -163,6 +169,34 @@ ON CONFLICT (username) DO UPDATE
 SET
   display_name = EXCLUDED.display_name,
   email = EXCLUDED.email,
+  role = EXCLUDED.role,
+  password_hash = EXCLUDED.password_hash,
+  deleted_at = NULL;
+
+-- Seed admin credential user for RBAC development.
+INSERT INTO users (
+  github_id,
+  username,
+  display_name,
+  email,
+  role,
+  password_hash,
+  github_profile_url
+)
+VALUES (
+  NULL,
+  'adminuser',
+  'Admin User',
+  'admin@vlass.local',
+  'admin',
+  crypt('AdminPassword123!', gen_salt('bf')),
+  NULL
+)
+ON CONFLICT (username) DO UPDATE
+SET
+  display_name = EXCLUDED.display_name,
+  email = EXCLUDED.email,
+  role = EXCLUDED.role,
   password_hash = EXCLUDED.password_hash,
   deleted_at = NULL;
 

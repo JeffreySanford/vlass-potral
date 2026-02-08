@@ -12,6 +12,9 @@
   <mat-toolbar color="primary" class="app-toolbar">
     <span class="brand">VLASS Portal</span>
     <span class="spacer"></span>
+    @if (isAdmin) {
+      <button mat-stroked-button type="button" (click)="openLogs()">Logs</button>
+    }
     <button mat-flat-button (click)="logout()">Logout</button>
   </mat-toolbar>
 

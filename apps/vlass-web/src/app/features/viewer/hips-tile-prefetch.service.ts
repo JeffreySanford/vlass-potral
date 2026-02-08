@@ -1,4 +1,5 @@
-import { Injectable, isDevMode, OnDestroy } from '@angular/core';
+import { inject, Injectable, isDevMode, OnDestroy } from '@angular/core';
+import { AppLoggerService } from '../../services/app-logger.service';
 
 interface TileCacheEntry {
   body: ArrayBuffer;
@@ -24,15 +25,16 @@ export class HipsTilePrefetchService implements OnDestroy {
   private readonly prefetchSeenAt = new Map<string, number>();
   private readonly inFlight = new Set<string>();
   private readonly ttlMs = 90_000;
-  private readonly maxEntries = 256;
-  private readonly maxPrefetchPerTile = 10;
+  private readonly maxEntries = 384;
+  private readonly maxPrefetchPerTile = 24;
   private readonly prefetchCooldownMs = 1_000;
-  private readonly prefetchDebounceMs = 350;
+  private readonly prefetchDebounceMs = 200;
 
   private refCount = 0;
   private originalFetch: typeof globalThis.fetch | null = null;
   private prefetchTimer: ReturnType<typeof setTimeout> | null = null;
   private pendingPrefetchSeeds = new Set<string>();
+  private readonly appLogger = inject(AppLoggerService);
 
   activate(): void {
     if (typeof window === 'undefined' || typeof window.fetch !== 'function') {
@@ -282,7 +284,15 @@ export class HipsTilePrefetchService implements OnDestroy {
     }
 
     const candidates = new Set<string>();
-    const sameOrderOffsets = [-2, -1, 1, 2, -16, 16];
+
+    if (parsed.order < 15) {
+      const childBase = parsed.pixel * 4;
+      for (let i = 0; i < 4; i += 1) {
+        candidates.add(this.buildTileUrl(parsed.prefix, parsed.order + 1, childBase + i, parsed.extension));
+      }
+    }
+
+    const sameOrderOffsets = [-4, -3, -2, -1, 1, 2, 3, 4, -16, 16, -32, 32, -64, 64];
     for (const offset of sameOrderOffsets) {
       const pixel = parsed.pixel + offset;
       if (pixel >= 0) {
@@ -293,7 +303,15 @@ export class HipsTilePrefetchService implements OnDestroy {
     if (parsed.order < 15) {
       const childBase = parsed.pixel * 4;
       for (let i = 0; i < 4; i += 1) {
-        candidates.add(this.buildTileUrl(parsed.prefix, parsed.order + 1, childBase + i, parsed.extension));
+        const childPixel = childBase + i;
+        if (parsed.order < 14) {
+          const grandChildBase = childPixel * 4;
+          for (let j = 0; j < 4; j += 1) {
+            candidates.add(
+              this.buildTileUrl(parsed.prefix, parsed.order + 2, grandChildBase + j, parsed.extension),
+            );
+          }
+        }
       }
     }
 
@@ -335,7 +353,9 @@ export class HipsTilePrefetchService implements OnDestroy {
     }
 
     const snapshot = this.debugSnapshot();
-    console.log('[viewer:tile-cache]', snapshot);
+    this.appLogger.debug('viewer', 'tile_cache_snapshot', {
+      cacheSize: snapshot.cacheSize,
+      inFlight: snapshot.inFlight,
+    });
   }
 }
-

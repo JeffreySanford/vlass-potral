@@ -6,10 +6,12 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  OnModuleDestroy,
   OnModuleInit,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import Redis from 'ioredis';
 import { DataSource, Repository } from 'typeorm';
 import { ViewerState } from '../entities/viewer-state.entity';
 import { ViewerSnapshot } from '../entities/viewer-snapshot.entity';
@@ -32,6 +34,7 @@ interface CutoutFetchResult {
   provider: 'primary' | 'secondary';
   attempts: number;
   cacheHit: boolean;
+  cacheSource: 'memory' | 'redis' | 'none';
 }
 
 interface CutoutFailureEvent {
@@ -77,9 +80,12 @@ export interface NearbyCatalogLabel {
 }
 
 @Injectable()
-export class ViewerService implements OnModuleInit {
+export class ViewerService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(ViewerService.name);
   private readonly cutoutCache = new Map<string, CutoutCacheEntry>();
+  private readonly nearbyLabelsCache = new Map<string, { expiresAt: number; labels: NearbyCatalogLabel[] }>();
+  private redisClient: Redis | null = null;
+  private redisEnabled = false;
   private lastNearbyLabelsWarnAt = 0;
   private lastNearbyLabelsWarnMessage = '';
   private readonly cutoutTelemetry: {
@@ -129,6 +135,24 @@ export class ViewerService implements OnModuleInit {
 
   async onModuleInit(): Promise<void> {
     await this.ensureViewerTables();
+    await this.initializeRedisCache();
+    this.logCacheConfiguration();
+    this.scheduleWarmupIfEnabled();
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    if (!this.redisClient) {
+      return;
+    }
+
+    try {
+      await this.redisClient.quit();
+    } catch {
+      await this.redisClient.disconnect();
+    } finally {
+      this.redisClient = null;
+      this.redisEnabled = false;
+    }
   }
 
   async createState(state: ViewerStatePayload) {
@@ -290,6 +314,7 @@ export class ViewerService implements OnModuleInit {
         selectedProvider = result.provider;
         cacheHit = result.cacheHit;
         totalAttempts += result.attempts;
+        this.logCutoutCacheEvent(result.cacheSource, selectedProvider, selectedSurvey, dimensions.width, dimensions.height);
         break;
       } catch (error) {
         lastError = error;
@@ -359,6 +384,13 @@ export class ViewerService implements OnModuleInit {
 
     const normalizedRadius = Number(radiusDeg.toFixed(5));
     const normalizedLimit = Math.max(1, Math.min(limit, 25));
+    const nearbyCacheKey = this.nearbyLabelsCacheKey(ra, dec, normalizedRadius, normalizedLimit);
+    const cachedNearby = await this.getNearbyLabelsFromCache(nearbyCacheKey);
+    if (cachedNearby) {
+      this.logNearbyCacheEvent('hit', cachedNearby.source, normalizedLimit, normalizedRadius);
+      return cachedNearby;
+    }
+    this.logNearbyCacheEvent('miss', 'none', normalizedLimit, normalizedRadius);
     const query = [
       `SELECT TOP ${normalizedLimit}`,
       'main_id, ra, dec, otype_txt,',
@@ -396,12 +428,14 @@ export class ViewerService implements OnModuleInit {
 
       const payload = (await response.json()) as SimbadTapResponse;
       const rows = this.parseSimbadRows(payload);
-      return rows
+      const normalized = rows
         .filter((row) => Number.isFinite(row.ra) && Number.isFinite(row.dec) && Number.isFinite(row.angular_distance_deg))
         .map((row) => ({
           ...row,
           confidence: this.computeCatalogConfidence(row, normalizedRadius),
         }));
+      await this.setNearbyLabelsCache(nearbyCacheKey, normalized);
+      return normalized;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'unknown error';
       this.warnNearbyLabels(`SIMBAD nearby-label query failed (${message}). Returning empty labels.`);
@@ -508,14 +542,15 @@ export class ViewerService implements OnModuleInit {
         for (const provider of providerOrder) {
           try {
             const cacheKey = this.cutoutCacheKey(params.request, survey, provider, params.width, params.height);
-            const cached = this.getCutoutFromCache(cacheKey);
+            const cached = await this.getCutoutFromCache(cacheKey);
             if (cached) {
               return {
-                buffer: cached,
+                buffer: cached.buffer,
                 survey,
                 provider,
                 attempts: attemptsUsed,
                 cacheHit: true,
+                cacheSource: cached.source,
               };
             }
 
@@ -544,13 +579,14 @@ export class ViewerService implements OnModuleInit {
               continue;
             }
 
-            this.setCutoutCache(cacheKey, buffer);
+            await this.setCutoutCache(cacheKey, buffer);
             return {
               buffer,
               survey,
               provider,
               attempts: attemptsUsed,
               cacheHit: false,
+              cacheSource: 'none',
             };
           } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'unknown fetch error';
@@ -784,10 +820,15 @@ export class ViewerService implements OnModuleInit {
     ].join('|');
   }
 
-  private getCutoutFromCache(cacheKey: string): Buffer | null {
+  private async getCutoutFromCache(cacheKey: string): Promise<{ buffer: Buffer; source: 'memory' | 'redis' } | null> {
     const entry = this.cutoutCache.get(cacheKey);
     if (!entry) {
-      return null;
+      const redisBuffer = await this.getRedisBuffer(cacheKey);
+      if (!redisBuffer) {
+        return null;
+      }
+      this.setInMemoryCutoutCache(cacheKey, redisBuffer);
+      return { buffer: redisBuffer, source: 'redis' };
     }
 
     if (entry.expiresAt <= Date.now()) {
@@ -795,10 +836,16 @@ export class ViewerService implements OnModuleInit {
       return null;
     }
 
-    return entry.buffer;
+    return { buffer: entry.buffer, source: 'memory' };
   }
 
-  private setCutoutCache(cacheKey: string, buffer: Buffer): void {
+  private async setCutoutCache(cacheKey: string, buffer: Buffer): Promise<void> {
+    const ttlMs = this.cutoutCacheTtlMs();
+    this.setInMemoryCutoutCache(cacheKey, buffer);
+    await this.setRedisBuffer(cacheKey, buffer, ttlMs);
+  }
+
+  private setInMemoryCutoutCache(cacheKey: string, buffer: Buffer): void {
     const ttlMs = Number(process.env['CUTOUT_CACHE_TTL_MS'] || 300_000);
     this.cutoutCache.set(cacheKey, {
       expiresAt: Date.now() + ttlMs,
@@ -810,6 +857,224 @@ export class ViewerService implements OnModuleInit {
       if (oldestKey) {
         this.cutoutCache.delete(oldestKey);
       }
+    }
+  }
+
+  private nearbyLabelsCacheKey(ra: number, dec: number, radius: number, limit: number): string {
+    return ['nearby', ra.toFixed(5), dec.toFixed(5), radius.toFixed(5), limit].join('|');
+  }
+
+  private nearbyLabelsCacheTtlMs(): number {
+    return Number(process.env['NEARBY_LABELS_CACHE_TTL_MS'] || 30_000);
+  }
+
+  private cutoutCacheTtlMs(): number {
+    return Number(process.env['CUTOUT_CACHE_TTL_MS'] || 300_000);
+  }
+
+  private async getNearbyLabelsFromCache(
+    cacheKey: string,
+  ): Promise<{ labels: NearbyCatalogLabel[]; source: 'memory' | 'redis' } | null> {
+    const local = this.nearbyLabelsCache.get(cacheKey);
+    if (local && local.expiresAt > Date.now()) {
+      return { labels: local.labels, source: 'memory' };
+    }
+    if (local) {
+      this.nearbyLabelsCache.delete(cacheKey);
+    }
+
+    const redisValue = await this.getRedisJson<NearbyCatalogLabel[]>(cacheKey);
+    if (!Array.isArray(redisValue)) {
+      return null;
+    }
+
+    this.nearbyLabelsCache.set(cacheKey, {
+      expiresAt: Date.now() + this.nearbyLabelsCacheTtlMs(),
+      labels: redisValue,
+    });
+    return { labels: redisValue, source: 'redis' };
+  }
+
+  private async setNearbyLabelsCache(cacheKey: string, labels: NearbyCatalogLabel[]): Promise<void> {
+    const ttlMs = this.nearbyLabelsCacheTtlMs();
+    this.nearbyLabelsCache.set(cacheKey, {
+      expiresAt: Date.now() + ttlMs,
+      labels,
+    });
+    await this.setRedisJson(cacheKey, labels, ttlMs);
+  }
+
+  private async initializeRedisCache(): Promise<void> {
+    const enabled = (process.env['REDIS_CACHE_ENABLED'] ?? 'false').toLowerCase() === 'true';
+    if (!enabled) {
+      this.redisEnabled = false;
+      return;
+    }
+
+    const host = process.env['REDIS_HOST'] ?? '127.0.0.1';
+    const port = Number(process.env['REDIS_PORT'] ?? 6379);
+    const password = process.env['REDIS_PASSWORD']?.trim() || undefined;
+    const connectTimeout = Number(process.env['REDIS_CONNECT_TIMEOUT_MS'] ?? 2_000);
+    const redisTlsEnabled = (process.env['REDIS_TLS_ENABLED'] ?? 'false').toLowerCase() === 'true';
+    const redisTlsRejectUnauthorized =
+      (process.env['REDIS_TLS_REJECT_UNAUTHORIZED'] ?? 'true').toLowerCase() !== 'false';
+
+    if ((process.env['NODE_ENV'] === 'production' || process.env['REDIS_REQUIRE_PASSWORD'] === 'true') && !password) {
+      this.logger.warn('Redis cache disabled: REDIS_PASSWORD is required for secure Redis connections.');
+      this.redisEnabled = false;
+      return;
+    }
+
+    const client = new Redis({
+      host,
+      port,
+      password,
+      lazyConnect: true,
+      connectTimeout,
+      maxRetriesPerRequest: 1,
+      enableOfflineQueue: false,
+      tls: redisTlsEnabled
+        ? {
+            rejectUnauthorized: redisTlsRejectUnauthorized,
+          }
+        : undefined,
+    });
+
+    try {
+      await client.connect();
+      await client.ping();
+      this.redisClient = client;
+      this.redisEnabled = true;
+      this.logger.log(`Redis cache enabled at ${host}:${port}.`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'unknown redis error';
+      this.logger.warn(`Redis cache unavailable (${message}). Falling back to in-memory cache.`);
+      client.disconnect();
+      this.redisClient = null;
+      this.redisEnabled = false;
+    }
+  }
+
+  private logCacheConfiguration(): void {
+    const cutoutTtlMs = this.cutoutCacheTtlMs();
+    const nearbyTtlMs = this.nearbyLabelsCacheTtlMs();
+    const warmupEnabled = (process.env['VIEWER_CACHE_WARMUP_ENABLED'] ?? 'false').toLowerCase() === 'true';
+    this.logger.log(
+      `Viewer cache config: redis_enabled=${this.redisEnabled}, cutout_ttl_ms=${cutoutTtlMs}, nearby_ttl_ms=${nearbyTtlMs}, warmup_enabled=${warmupEnabled}.`,
+    );
+  }
+
+  private logCutoutCacheEvent(
+    source: 'memory' | 'redis' | 'none',
+    provider: 'primary' | 'secondary',
+    survey: string,
+    width: number,
+    height: number,
+  ): void {
+    this.logger.log(
+      `Cutout cache ${source === 'none' ? 'miss' : 'hit'} (source=${source}, provider=${provider}, survey=${survey}, size=${width}x${height}).`,
+    );
+  }
+
+  private logNearbyCacheEvent(
+    result: 'hit' | 'miss',
+    source: 'memory' | 'redis' | 'none',
+    limit: number,
+    radiusDeg: number,
+  ): void {
+    this.logger.log(`Nearby-label cache ${result} (source=${source}, limit=${limit}, radius_deg=${radiusDeg}).`);
+  }
+
+  private scheduleWarmupIfEnabled(): void {
+    const enabled = (process.env['VIEWER_CACHE_WARMUP_ENABLED'] ?? 'false').toLowerCase() === 'true';
+    if (!enabled) {
+      return;
+    }
+
+    setTimeout(() => {
+      void this.warmViewerCaches();
+    }, 50);
+  }
+
+  private async warmViewerCaches(): Promise<void> {
+    const ra = Number(process.env['VIEWER_WARMUP_RA'] ?? 187.25);
+    const dec = Number(process.env['VIEWER_WARMUP_DEC'] ?? 2.05);
+    const fov = Number(process.env['VIEWER_WARMUP_FOV'] ?? 1.5);
+    const survey = process.env['VIEWER_WARMUP_SURVEY'] ?? 'VLASS';
+
+    try {
+      await this.getNearbyLabels(ra, dec, Math.max(0.02, Math.min(0.2, fov * 0.15)), 12);
+      const fallbackSurveys = this.cutoutSurveyFallbacks(survey);
+      await this.fetchCutoutWithRetries({
+        request: { ra, dec, fov, survey, label: 'warmup', detail: 'standard' },
+        fallbackSurveys,
+        maxAttempts: 2,
+        width: 1024,
+        height: 1024,
+      });
+      this.logger.log('Viewer cache warmup completed.');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'unknown warmup error';
+      this.logger.warn(`Viewer cache warmup failed (${message}).`);
+    }
+  }
+
+  private redisKey(rawKey: string): string {
+    return `viewer:${rawKey}`;
+  }
+
+  private async getRedisBuffer(rawKey: string): Promise<Buffer | null> {
+    if (!this.redisEnabled || !this.redisClient) {
+      return null;
+    }
+
+    try {
+      const value = await this.redisClient.getBuffer(this.redisKey(rawKey));
+      return value ?? null;
+    } catch {
+      this.redisEnabled = false;
+      return null;
+    }
+  }
+
+  private async setRedisBuffer(rawKey: string, value: Buffer, ttlMs: number): Promise<void> {
+    if (!this.redisEnabled || !this.redisClient) {
+      return;
+    }
+
+    try {
+      await this.redisClient.set(this.redisKey(rawKey), value, 'PX', ttlMs);
+    } catch {
+      this.redisEnabled = false;
+    }
+  }
+
+  private async getRedisJson<T>(rawKey: string): Promise<T | null> {
+    if (!this.redisEnabled || !this.redisClient) {
+      return null;
+    }
+
+    try {
+      const raw = await this.redisClient.get(this.redisKey(rawKey));
+      if (!raw) {
+        return null;
+      }
+      return JSON.parse(raw) as T;
+    } catch {
+      this.redisEnabled = false;
+      return null;
+    }
+  }
+
+  private async setRedisJson(rawKey: string, value: unknown, ttlMs: number): Promise<void> {
+    if (!this.redisEnabled || !this.redisClient) {
+      return;
+    }
+
+    try {
+      await this.redisClient.set(this.redisKey(rawKey), JSON.stringify(value), 'PX', ttlMs);
+    } catch {
+      this.redisEnabled = false;
     }
   }
 
@@ -825,12 +1090,13 @@ export class ViewerService implements OnModuleInit {
   }
 
   private markCutoutFailure(error: unknown): void {
-    const reason =
+    const reason = this.sanitizeFailureReason(
       error instanceof ServiceUnavailableException
         ? String(error.message)
         : error instanceof Error
           ? error.message
-          : 'unknown cutout failure';
+          : 'unknown cutout failure',
+    );
     const at = new Date().toISOString();
 
     this.cutoutTelemetry.failureTotal += 1;
@@ -838,6 +1104,14 @@ export class ViewerService implements OnModuleInit {
     this.cutoutTelemetry.lastFailureAt = at;
     this.cutoutTelemetry.lastFailureReason = reason;
     this.cutoutTelemetry.recentFailures = [{ at, reason }, ...this.cutoutTelemetry.recentFailures].slice(0, 20);
+  }
+
+  private sanitizeFailureReason(reason: string): string {
+    const redacted = reason
+      .replace(/(api[_-]?key=)[^&\s]+/gi, '$1[REDACTED]')
+      .replace(/(token=)[^&\s]+/gi, '$1[REDACTED]')
+      .replace(/(authorization:\s*bearer\s+)[^\s]+/gi, '$1[REDACTED]');
+    return redacted.slice(0, 240);
   }
 
   private async generateShortId(): Promise<string> {

@@ -24,6 +24,8 @@ import {
   ViewerStateModel,
 } from './viewer-api.service';
 import { HipsTilePrefetchService } from './hips-tile-prefetch.service';
+import { AppLoggerService } from '../../services/app-logger.service';
+import { AuthSessionService } from '../../services/auth-session.service';
 
 type AladinEvent = 'positionChanged' | 'zoomChanged';
 
@@ -46,6 +48,8 @@ interface AladinView {
   setFoV(fov: number): void;
   setImageSurvey?(survey: string): void;
   setBaseImageLayer?(survey: string): void;
+  setCooGrid?(enabled: boolean): void;
+  showCooGrid?(enabled: boolean): void;
   getFov(): number | [number, number];
   getRaDec(): [number, number];
   getViewDataURL(options?: { format?: 'image/png'; width?: number; height?: number; logo?: boolean }): Promise<string>;
@@ -79,7 +83,8 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   labels: ViewerLabelModel[] = [];
   catalogLabels: NearbyCatalogLabelModel[] = [];
   cutoutTelemetry: CutoutTelemetryModel | null = null;
-  cutoutDetail: 'standard' | 'high' | 'max' = 'high';
+  cutoutDetail: 'standard' | 'high' | 'max' = 'max';
+  gridOverlayEnabled = false;
   readonly surveyOptions = [
     { label: 'VLASS', value: 'VLASS' },
     { label: 'DSS2', value: 'DSS2' },
@@ -94,7 +99,12 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   private nearbyLookupTimer: ReturnType<typeof setTimeout> | null = null;
   private viewerSyncTimer: ReturnType<typeof setTimeout> | null = null;
   private lastNearbyLookupKey = '';
+  private initialFovForLabels: number | null = null;
+  private hasUserZoomedIn = false;
+  private zoomEventCount = 0;
+  private gridToggleStartedAt: number | null = null;
   private readonly viewerSyncDebounceMs = 1000;
+  private readonly nearbyLookupDebounceMs = 1000;
   private readonly supportedAladinSurveys = new Set<string>([
     'P/VLASS/QL',
     'P/DSS2/color',
@@ -110,6 +120,8 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewerApi = inject(ViewerApiService);
   private readonly tilePrefetch = inject(HipsTilePrefetchService);
+  private readonly appLogger = inject(AppLoggerService);
+  private readonly authSessionService = inject(AuthSessionService);
   private readonly labelsStorageKey = 'vlass.viewer.labels.v1';
 
   constructor() {
@@ -160,11 +172,11 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       return null;
     }
 
-    if (state.fov <= 0.35) {
+    if (state.fov <= 0.85) {
       return 'P/PanSTARRS/DR1/color-z-zg-g';
     }
 
-    if (state.fov <= 1) {
+    if (state.fov <= 2.2) {
       return 'P/DSS2/color';
     }
 
@@ -198,6 +210,8 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadLocalLabels();
+    this.gridOverlayEnabled = false;
+    this.resetLabelLookupGate();
     this.startCutoutTelemetryStream();
 
     merge(this.route.paramMap, this.route.queryParamMap)
@@ -220,15 +234,22 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.tilePrefetch.activate();
+    const startAt = performance.now();
     from(this.initializeAladin())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.syncAladinFromForm();
+          this.logViewerEvent('viewer_load_complete', {
+            duration_ms: Math.round(performance.now() - startAt),
+            grid_enabled: this.gridOverlayEnabled,
+          });
+          this.schedulePrefetchActivation();
           this.scheduleNearbyLabelLookup(this.currentState());
         },
         error: () => {
+          this.logViewerEvent('viewer_load_failed', {
+            duration_ms: Math.round(performance.now() - startAt),
+          });
           this.statusMessage = 'Failed to initialize sky viewer.';
         },
       });
@@ -390,8 +411,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // Temporary dev aid for hover-based object inspection.
-    console.log('[viewer:hover]', {
+    this.appLogger.debug('viewer', 'catalog_label_hover', {
       name: label.name,
       objectType: label.object_type,
       ra: label.ra,
@@ -427,6 +447,26 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.statusMessage = `Switched to ${survey} for sharper detail at this zoom.`;
   }
 
+  toggleGridOverlay(enabled: boolean): void {
+    const previous = this.gridOverlayEnabled;
+    this.gridOverlayEnabled = enabled;
+    this.gridToggleStartedAt = isPlatformBrowser(this.platformId) ? performance.now() : null;
+    this.logViewerEvent('grid_toggle_requested', {
+      previous_enabled: previous,
+      next_enabled: enabled,
+    });
+    void this.reinitializeAladinView();
+  }
+
+  onGridOverlayToggle(event: Event): void {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement)) {
+      return;
+    }
+
+    this.toggleGridOverlay(target.checked);
+  }
+
   private hydrateStateFromRoute(): void {
     const shortId = this.route.snapshot.paramMap.get('shortId');
     if (shortId) {
@@ -450,6 +490,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       this.saveLocalLabels();
       this.shortId = '';
       this.permalink = '';
+      this.resetLabelLookupGate();
       this.syncAladinFromForm();
     } catch {
       this.statusMessage = 'Invalid `state` query param. Using defaults.';
@@ -466,6 +507,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
         this.shortId = response.short_id;
         this.permalink = `${this.originPrefix()}/view/${response.short_id}`;
         this.statusMessage = `Loaded permalink ${response.short_id}.`;
+        this.resetLabelLookupGate();
         this.syncAladinFromForm();
       },
       error: () => {
@@ -534,6 +576,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private async initializeAladin(): Promise<void> {
+    const startedAt = isPlatformBrowser(this.platformId) ? performance.now() : 0;
     const host = this.aladinHost?.nativeElement;
     if (!host) {
       return;
@@ -548,19 +591,29 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       target: `${this.stateForm.value.ra} ${this.stateForm.value.dec}`,
       fov: Number(this.stateForm.value.fov),
       survey: this.resolveEffectiveSurvey(this.currentState()),
-      showCooGrid: true,
+      showCooGrid: this.gridOverlayEnabled,
       showFullscreenControl: false,
-      showLayersControl: true,
+      showLayersControl: false,
     });
 
     this.aladinView.on('positionChanged', () => {
       this.scheduleFormSyncFromAladin();
     });
     this.aladinView.on('zoomChanged', () => {
+      this.zoomEventCount += 1;
       this.scheduleFormSyncFromAladin();
     });
 
     this.applySurveyToAladin(this.resolveEffectiveSurvey(this.currentState()));
+    if (this.initialFovForLabels === null) {
+      this.initialFovForLabels = Number(this.stateForm.value.fov);
+    }
+    if (isPlatformBrowser(this.platformId)) {
+      this.logViewerEvent('aladin_initialized', {
+        duration_ms: Math.round(performance.now() - startedAt),
+        grid_enabled: this.gridOverlayEnabled,
+      });
+    }
   }
 
   private async loadAladinFactory(): Promise<AladinFactory | null> {
@@ -646,6 +699,15 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       patchState.fov = Number(fov.toFixed(4));
     }
 
+    if (
+      this.initialFovForLabels !== null &&
+      this.zoomEventCount > 1 &&
+      fov <= this.initialFovForLabels * 0.98 &&
+      this.initialFovForLabels - fov >= 0.01
+    ) {
+      this.hasUserZoomedIn = true;
+    }
+
     if (Object.keys(patchState).length > 0) {
       this.stateForm.patchValue(patchState, { emitEvent: false });
     }
@@ -680,6 +742,10 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     // so stale labels do not linger while the debounced lookup runs.
     this.catalogLabels = [];
 
+    if (!this.hasUserZoomedIn) {
+      return;
+    }
+
     if (this.nearbyLookupTimer) {
       clearTimeout(this.nearbyLookupTimer);
     }
@@ -694,7 +760,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
           this.catalogLabels = [];
         },
       });
-    }, 450);
+    }, this.nearbyLookupDebounceMs);
   }
 
   private lookupRadiusForState(state: ViewerStateModel): number {
@@ -745,12 +811,12 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     const selectedSurvey = this.resolveSurvey(state.survey);
 
     if (selectedSurvey === 'P/VLASS/QL') {
-      if (state.fov <= 0.35) {
+      if (state.fov <= 0.85) {
         return 'P/PanSTARRS/DR1/color-z-zg-g';
       }
 
       if (this.lastAppliedSurvey === 'P/PanSTARRS/DR1/color-z-zg-g') {
-        if (state.fov <= 0.45) {
+        if (state.fov <= 1.05) {
           return 'P/PanSTARRS/DR1/color-z-zg-g';
         }
       }
@@ -804,6 +870,35 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private async reinitializeAladinView(): Promise<void> {
+    const host = this.aladinHost?.nativeElement;
+    if (!host) {
+      return;
+    }
+
+    host.innerHTML = '';
+    this.aladinView = null;
+    this.lastAppliedSurvey = '';
+    this.zoomEventCount = 0;
+    await this.initializeAladin();
+    this.syncAladinFromForm();
+    if (this.gridToggleStartedAt !== null && isPlatformBrowser(this.platformId)) {
+      this.logViewerEvent('grid_toggle_applied', {
+        enabled: this.gridOverlayEnabled,
+        reinit_duration_ms: Math.round(performance.now() - this.gridToggleStartedAt),
+      });
+      this.gridToggleStartedAt = null;
+    }
+  }
+
+  private resetLabelLookupGate(): void {
+    this.hasUserZoomedIn = false;
+    this.initialFovForLabels = Number(this.stateForm.value.fov);
+    this.catalogLabels = [];
+    this.lastNearbyLookupKey = '';
+    this.zoomEventCount = 0;
+  }
+
   private downloadSnapshot(dataUrl: string, id: string): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
@@ -824,6 +919,10 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    if (this.authSessionService.getRole() !== 'admin') {
+      return;
+    }
+
     interval(30_000)
       .pipe(
         startWith(0),
@@ -840,5 +939,34 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.cutoutTelemetry = telemetry;
       });
+  }
+
+  private schedulePrefetchActivation(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    const windowWithIdle = window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+    };
+    if (typeof windowWithIdle.requestIdleCallback === 'function') {
+      windowWithIdle.requestIdleCallback(() => this.tilePrefetch.activate(), { timeout: 1200 });
+      return;
+    }
+
+    window.setTimeout(() => this.tilePrefetch.activate(), 350);
+  }
+
+  private logViewerEvent(event: string, details: Record<string, boolean | number | string>): void {
+    if (!isPlatformBrowser(this.platformId) || !isDevMode()) {
+      return;
+    }
+
+    const userAgent = typeof navigator === 'undefined' ? '' : navigator.userAgent;
+    if (userAgent.toLowerCase().includes('jsdom')) {
+      return;
+    }
+
+    this.appLogger.info('viewer', event, details);
   }
 }

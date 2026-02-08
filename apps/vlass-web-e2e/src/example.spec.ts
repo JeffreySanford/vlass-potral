@@ -86,6 +86,7 @@ test('logs in and allows logout', async ({ page }) => {
           username: 'testuser',
           email: 'test@vlass.local',
           display_name: 'Test User',
+          role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
         },
       }),
@@ -105,6 +106,7 @@ test('logs in and allows logout', async ({ page }) => {
           username: 'testuser',
           email: 'test@vlass.local',
           display_name: 'Test User',
+          role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
         },
       }),
@@ -117,13 +119,7 @@ test('logs in and allows logout', async ({ page }) => {
   await expect(page.locator('h1')).toContainText('Login');
   await loginEmail.fill('test@vlass.local');
   await loginPassword.fill('Password123!');
-  await Promise.all([
-    page.waitForResponse(
-      (response) => response.url().includes('/api/auth/login') && response.request().method() === 'POST',
-      { timeout: 10000 },
-    ),
-    page.getByRole('button', { name: 'Login' }).click(),
-  ]);
+  await page.getByRole('button', { name: 'Login' }).click();
 
   await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });
   await expect(page.locator('h1')).toContainText('Welcome back, Test User');
@@ -135,6 +131,154 @@ test('logs in and allows logout', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Logout' }).click();
   await expect(page).toHaveURL(/\/auth\/login/);
+});
+
+test('blocks access to logs when backend confirms non-admin role', async ({ page }) => {
+  const token = createFakeJwt(Math.floor(Date.now() / 1000) + 3600);
+
+  await page.route('**/api/auth/login', async (route) => {
+    if (route.request().method() === 'OPTIONS') {
+      await route.fulfill({
+        status: 204,
+        headers: {
+          'access-control-allow-origin': '*',
+          'access-control-allow-methods': 'POST, OPTIONS',
+          'access-control-allow-headers': 'content-type, authorization',
+        },
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
+      body: JSON.stringify({
+        access_token: token,
+        token_type: 'Bearer',
+        user: {
+          id: 'user-1',
+          username: 'testuser',
+          email: 'test@vlass.local',
+          display_name: 'Test User',
+          role: 'user',
+          created_at: '2026-02-07T00:00:00.000Z',
+        },
+      }),
+    });
+  });
+
+  await page.route('**/api/auth/me', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
+      body: JSON.stringify({
+        authenticated: true,
+        user: {
+          id: 'user-1',
+          username: 'testuser',
+          email: 'test@vlass.local',
+          display_name: 'Test User',
+          role: 'user',
+          created_at: '2026-02-07T00:00:00.000Z',
+        },
+      }),
+    });
+  });
+
+  await page.goto('/auth/login');
+  const loginEmail = page.locator('input[formcontrolname="email"]');
+  const loginPassword = page.locator('input[formcontrolname="password"]');
+  await expect(loginEmail).toBeVisible();
+  await loginEmail.fill('test@vlass.local');
+  await loginPassword.fill('Password123!');
+  await expect(loginEmail).toHaveValue('test@vlass.local');
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/auth/login') &&
+        response.request().method() === 'POST' &&
+        response.status() === 200,
+    ),
+    page.getByRole('button', { name: 'Login' }).click(),
+  ]);
+  await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });
+
+  await page.evaluate(() => {
+    window.history.pushState({}, '', '/logs');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
+  await expect(page).toHaveURL(/\/landing/);
+});
+
+test('allows admin user to open logs when backend confirms admin role', async ({ page }) => {
+  const token = createFakeJwt(Math.floor(Date.now() / 1000) + 3600);
+
+  await page.route('**/api/auth/login', async (route) => {
+    if (route.request().method() === 'OPTIONS') {
+      await route.fulfill({
+        status: 204,
+        headers: {
+          'access-control-allow-origin': '*',
+          'access-control-allow-methods': 'POST, OPTIONS',
+          'access-control-allow-headers': 'content-type, authorization',
+        },
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
+      body: JSON.stringify({
+        access_token: token,
+        token_type: 'Bearer',
+        user: {
+          id: 'admin-1',
+          username: 'adminuser',
+          email: 'admin@vlass.local',
+          display_name: 'Admin User',
+          role: 'admin',
+          created_at: '2026-02-07T00:00:00.000Z',
+        },
+      }),
+    });
+  });
+
+  await page.route('**/api/auth/me', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
+      body: JSON.stringify({
+        authenticated: true,
+        user: {
+          id: 'admin-1',
+          username: 'adminuser',
+          email: 'admin@vlass.local',
+          display_name: 'Admin User',
+          role: 'admin',
+          created_at: '2026-02-07T00:00:00.000Z',
+        },
+      }),
+    });
+  });
+
+  await page.goto('/auth/login');
+  const loginEmail = page.getByRole('textbox', { name: 'Email' });
+  const loginPassword = page.locator('input[formcontrolname="password"]');
+  await expect(loginEmail).toBeVisible();
+  await loginEmail.fill('admin@vlass.local');
+  await loginPassword.fill('AdminPassword123!');
+  await expect(loginEmail).toHaveValue('admin@vlass.local');
+  await page.getByRole('button', { name: 'Login' }).click();
+  await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });
+
+  await page.getByRole('button', { name: 'Logs' }).click();
+  await expect(page).toHaveURL(/\/logs/);
+  await expect(page.getByText('Recent App Events')).toBeVisible();
 });
 
 test('creates viewer permalink and snapshot from pillar 2 flow', async ({ page }) => {
@@ -243,7 +387,6 @@ test('creates viewer permalink and snapshot from pillar 2 flow', async ({ page }
 
 test('creates a notebook post from pillar 3 flow', async ({ page }) => {
   const token = createFakeJwt(Math.floor(Date.now() / 1000) + 3600);
-  let loginRequestCount = 0;
 
   await page.route('**/api/auth/login', async (route) => {
     if (route.request().method() === 'OPTIONS') {
@@ -270,11 +413,11 @@ test('creates a notebook post from pillar 3 flow', async ({ page }) => {
           username: 'astro',
           email: 'astro@vlass.local',
           display_name: 'Astro User',
+          role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
         },
       }),
     });
-    loginRequestCount += 1;
   });
 
   await page.route('**/api/posts**', async (route) => {
@@ -364,8 +507,15 @@ test('creates a notebook post from pillar 3 flow', async ({ page }) => {
   await expect(page.locator('h1')).toContainText('Login');
   await loginEmail.fill('astro@vlass.local');
   await loginPassword.fill('Password123!');
-  await page.getByRole('button', { name: 'Login' }).click();
-  await expect.poll(() => loginRequestCount).toBeGreaterThan(0);
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/auth/login') &&
+        response.request().method() === 'POST' &&
+        response.status() === 200,
+    ),
+    page.getByRole('button', { name: 'Login' }).click(),
+  ]);
   await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });
 
   await page.locator('article.feature-card', { hasText: 'Community Research Notebook' }).click();
@@ -515,11 +665,13 @@ test('auto-selects higher-resolution survey when VLASS is deeply zoomed', async 
   await page.locator('input[formcontrolname="fov"]').fill('0.3');
   await page.locator('input[formcontrolname="fov"]').blur();
 
-  const lastSurvey = await page.evaluate(() => {
-    return (window as unknown as { __vlassFakeAladin: { lastSurvey: string } }).__vlassFakeAladin.lastSurvey;
-  });
-
-  expect(lastSurvey).toBe('P/PanSTARRS/DR1/color-z-zg-g');
+  await expect
+    .poll(async () => {
+      return page.evaluate(() => {
+        return (window as unknown as { __vlassFakeAladin: { lastSurvey: string } }).__vlassFakeAladin.lastSurvey;
+      });
+    })
+    .toBe('P/PanSTARRS/DR1/color-z-zg-g');
 });
 
 test('registers a user and redirects to landing', async ({ page }) => {
@@ -552,6 +704,7 @@ test('registers a user and redirects to landing', async ({ page }) => {
           username: 'newuser',
           email: 'new@vlass.local',
           display_name: 'newuser',
+          role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
         },
       }),
@@ -571,6 +724,7 @@ test('registers a user and redirects to landing', async ({ page }) => {
           username: 'newuser',
           email: 'new@vlass.local',
           display_name: 'newuser',
+          role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
         },
       }),

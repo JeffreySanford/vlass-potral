@@ -192,23 +192,14 @@ describe('vlass-api e2e', () => {
       }
     });
 
-    it('GET /api/view/telemetry returns cutout telemetry counters', async () => {
-      const response = await axios.get('/api/view/telemetry');
-      expect(response.status).toBe(200);
-      expect(response.data).toEqual(
-        expect.objectContaining({
-          requests_total: expect.any(Number),
-          success_total: expect.any(Number),
-          failure_total: expect.any(Number),
-          provider_attempts_total: expect.any(Number),
-          provider_failures_total: expect.any(Number),
-          cache_hits_total: expect.any(Number),
-          resolution_fallback_total: expect.any(Number),
-          survey_fallback_total: expect.any(Number),
-          consecutive_failures: expect.any(Number),
-          recent_failures: expect.any(Array),
-        }),
-      );
+    it('GET /api/view/telemetry requires authenticated admin access', async () => {
+      try {
+        await axios.get('/api/view/telemetry');
+        throw new Error('Expected telemetry request to fail with 401');
+      } catch (error) {
+        const axiosError = error as AxiosError<{ message?: string }>;
+        expect(axiosError.response?.status).toBe(401);
+      }
     });
   });
 

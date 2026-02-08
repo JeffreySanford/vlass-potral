@@ -41,6 +41,7 @@ jobs:
       - run: pnpm exec playwright install --with-deps
       - uses: nrwl/nx-set-shas@v4
 
+      - run: pnpm run security:audit
       - run: pnpm nx run docs-policy:check
       - run: pnpm nx run-many --target=test --all
       - run: pnpm nx run mvp-gates:e2e

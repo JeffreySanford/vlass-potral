@@ -8,6 +8,7 @@ import { of, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ViewerApiService, ViewerStateModel } from './viewer-api.service';
 import { ViewerComponent } from './viewer.component';
+import { AuthSessionService } from '../../services/auth-session.service';
 
 interface MockAladinView {
   gotoRaDec: ReturnType<typeof vi.fn>;
@@ -31,6 +32,9 @@ describe('ViewerComponent', () => {
     getNearbyLabels: ReturnType<typeof vi.fn>;
     getCutoutTelemetry: ReturnType<typeof vi.fn>;
     scienceDataUrl: ReturnType<typeof vi.fn>;
+  };
+  let authSessionService: {
+    getRole: ReturnType<typeof vi.fn>;
   };
   let router: Router;
 
@@ -78,6 +82,9 @@ describe('ViewerComponent', () => {
       ),
       scienceDataUrl: vi.fn().mockReturnValue('http://localhost:3000/api/view/cutout?ra=1'),
     };
+    authSessionService = {
+      getRole: vi.fn().mockReturnValue('admin'),
+    };
 
     await TestBed.configureTestingModule({
       declarations: [ViewerComponent],
@@ -98,6 +105,10 @@ describe('ViewerComponent', () => {
               queryParamMap: convertToParamMap({}),
             },
           },
+        },
+        {
+          provide: AuthSessionService,
+          useValue: authSessionService,
         },
       ],
     }).compileComponents();
@@ -286,7 +297,7 @@ describe('ViewerComponent', () => {
 
     component.downloadScienceData();
 
-    expect(viewerApiService.scienceDataUrl).toHaveBeenCalledWith(expect.any(Object), 'M87 Core', 'high');
+    expect(viewerApiService.scienceDataUrl).toHaveBeenCalledWith(expect.any(Object), 'M87 Core', 'max');
     expect(openSpy).toHaveBeenCalled();
   });
 

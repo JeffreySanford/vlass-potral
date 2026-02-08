@@ -8,9 +8,11 @@ Canonical scope: `documentation/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
 ### Auth
 - `POST /api/auth/register`
 - `POST /api/auth/login`
+- `POST /api/auth/refresh`
 - `GET /api/auth/login` (GitHub OAuth redirect)
 - `GET /api/auth/github/callback`
 - `GET /api/auth/me`
+- `GET /api/auth/csrf-token`
 - `POST /api/auth/logout`
 
 ### Viewer (Mode A / Aladin)
@@ -19,6 +21,8 @@ Canonical scope: `documentation/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
 - `POST /api/view/snapshot` (store PNG snapshot metadata + artifact file; write-path rate limited + audited)
 - `GET /api/view/snapshots/:fileName` (static snapshot artifact path)
 - `GET /api/view/cutout?ra&dec&fov&survey[&label]` (stream FITS science cutout attachment with provider retries/fallbacks, rate limit, and audit event)
+- `GET /api/view/labels/nearby?ra&dec&radius[&limit]` (catalog labels around current center; read-path rate limited)
+- `GET /api/view/telemetry` (admin-only telemetry endpoint; authenticated + role gated)
 
 ### Community Posts
 - `GET /api/posts`

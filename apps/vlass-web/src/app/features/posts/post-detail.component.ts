@@ -1,9 +1,9 @@
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostsApiService, PostModel } from './posts-api.service';
+import { renderSafeMarkdownHtml } from './markdown-renderer';
 
 @Component({
   selector: 'app-post-detail',
@@ -22,7 +22,6 @@ export class PostDetailComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly postsApi = inject(PostsApiService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly sanitizer = inject(DomSanitizer);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -86,44 +85,15 @@ export class PostDetailComponent implements OnInit {
       });
   }
 
-  get formattedContent(): SafeHtml {
+  get formattedContent(): string {
     const content = String(this.post?.content || '');
-    const escaped = this.escapeHtml(content);
-    const withViewerBlocks = escaped.replace(
-      /```viewer\s*([\s\S]*?)```/g,
-      (_full, rawJson: string) => {
+    return renderSafeMarkdownHtml(content, (rawJson: string) => {
         const encoded = this.tryEncodeViewerBlock(rawJson);
         if (!encoded) {
           return `<div class="preview-viewer-block invalid">Invalid viewer block</div>`;
         }
-        return `<div class="preview-viewer-block"><a href="/view?state=${encoded}" target="_blank" rel="noopener">Open embedded viewer block</a></div>`;
-      },
-    );
-
-    const withHeadings = withViewerBlocks
-      .replace(/^### (.*)$/gm, '<h3>$1</h3>')
-      .replace(/^## (.*)$/gm, '<h2>$1</h2>')
-      .replace(/^# (.*)$/gm, '<h1>$1</h1>');
-
-    const withInline = withHeadings
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/`([^`]+)`/g, '<code>$1</code>')
-      .replace(/\[(.*?)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-
-    const withParagraphs = withInline
-      .split(/\n{2,}/)
-      .map((block) => block.trim())
-      .filter((block) => block.length > 0)
-      .map((block) => {
-        if (/^<h[1-3]>/.test(block) || /^<div class="preview-viewer-block/.test(block)) {
-          return block;
-        }
-        return `<p>${block.replace(/\n/g, '<br />')}</p>`;
-      })
-      .join('');
-
-    return this.sanitizer.bypassSecurityTrustHtml(withParagraphs);
+        return `<div class="preview-viewer-block"><a href="/view?state=${encoded}" target="_blank" rel="noopener noreferrer">Open embedded viewer block</a></div>`;
+      });
   }
 
   private tryEncodeViewerBlock(rawJson: string): string | null {
@@ -143,14 +113,5 @@ export class PostDetailComponent implements OnInit {
     } catch {
       return null;
     }
-  }
-
-  private escapeHtml(value: string): string {
-    return value
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
   }
 }

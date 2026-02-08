@@ -61,11 +61,28 @@ function killStaleNxWatchersWindows() {
 }
 
 function getListeningPidsWindows(port) {
-  const res = spawnSync('netstat', ['-ano', '-p', 'tcp'], { encoding: 'utf8' });
-  if (res.status !== 0) return [];
+  const psRes = spawnSync(
+    'powershell',
+    [
+      '-NoProfile',
+      '-Command',
+      `Get-NetTCPConnection -LocalPort ${port} -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  if (psRes.status === 0) {
+    return psRes.stdout
+      .split(/\r?\n/)
+      .map((value) => Number(value.trim()))
+      .filter((value) => Number.isFinite(value) && value > 0);
+  }
+
+  const netstatRes = spawnSync('netstat', ['-ano', '-p', 'tcp'], { encoding: 'utf8' });
+  if (netstatRes.status !== 0) return [];
 
   const pids = new Set();
-  for (const line of res.stdout.split(/\r?\n/)) {
+  for (const line of netstatRes.stdout.split(/\r?\n/)) {
     const match = line.match(/^\s*TCP\s+\S+:(\d+)\s+\S+\s+LISTENING\s+(\d+)\s*$/i);
     if (!match) continue;
     const linePort = Number(match[1]);
@@ -78,6 +95,20 @@ function getListeningPidsWindows(port) {
 }
 
 function killPidWindows(pid) {
+  const nameResult = spawnSync(
+    'powershell',
+    [
+      '-NoProfile',
+      '-Command',
+      `(Get-Process -Id ${pid} -ErrorAction SilentlyContinue).ProcessName`,
+    ],
+    { encoding: 'utf8' },
+  );
+  const processName = (nameResult.stdout ?? '').trim().toLowerCase();
+  if (processName === 'com.docker.backend' || processName === 'system') {
+    return;
+  }
+
   spawnSync('taskkill', ['/PID', String(pid), '/F'], { stdio: 'ignore' });
 }
 

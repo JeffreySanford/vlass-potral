@@ -8,6 +8,7 @@ import { Observable, of } from 'rxjs';
 import { AuthSessionService } from '../../services/auth-session.service';
 import { SkyPreviewService } from '../../services/sky-preview.service';
 import { LandingComponent } from './landing.component';
+import { AuthApiService } from '../auth/auth-api.service';
 
 describe('LandingComponent', () => {
   let fixture: ComponentFixture<LandingComponent>;
@@ -18,8 +19,10 @@ describe('LandingComponent', () => {
       username: string;
       email: string;
       display_name: string;
+      role: 'user' | 'admin' | 'moderator';
     };
     clearSession: () => void;
+    getRefreshToken: () => string | null;
   };
   let skyPreviewService: {
     getInitialPreview: () => {
@@ -39,6 +42,9 @@ describe('LandingComponent', () => {
       longitude: number | null;
     } | null>;
   };
+  let authApiService: {
+    logout: ReturnType<typeof vi.fn>;
+  };
   let router: Router;
 
   beforeEach(async () => {
@@ -48,10 +54,12 @@ describe('LandingComponent', () => {
         username: 'testuser',
         email: 'test@vlass.local',
         display_name: 'Test User',
+        role: 'admin' as const,
       })),
       clearSession: vi.fn(() => {
         clearSessionCalls += 1;
       }),
+      getRefreshToken: vi.fn(() => 'refresh-token'),
     };
     skyPreviewService = {
       getInitialPreview: () => ({
@@ -72,6 +80,9 @@ describe('LandingComponent', () => {
           longitude: -118.2437,
         }),
     };
+    authApiService = {
+      logout: vi.fn().mockReturnValue(of({ message: 'Logged out successfully' })),
+    };
 
     await TestBed.configureTestingModule({
       declarations: [LandingComponent],
@@ -85,6 +96,10 @@ describe('LandingComponent', () => {
         {
           provide: SkyPreviewService,
           useValue: skyPreviewService,
+        },
+        {
+          provide: AuthApiService,
+          useValue: authApiService,
         },
       ],
     }).compileComponents();
@@ -115,8 +130,18 @@ describe('LandingComponent', () => {
 
     component.logout();
 
+    expect(authApiService.logout).toHaveBeenCalledWith('refresh-token');
     expect(clearSessionCalls).toBe(1);
     expect(navigateSpy).toHaveBeenCalledWith(['/auth/login']);
+  });
+
+  it('navigates to logs for admin users', () => {
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+
+    component.openLogs();
+
+    expect(component.isAdmin).toBe(true);
+    expect(navigateSpy).toHaveBeenCalledWith('/logs');
   });
 
   it('personalizes preview and shows region notice', () => {

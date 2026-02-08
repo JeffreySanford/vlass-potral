@@ -45,7 +45,7 @@
 
 .aladin-host {
   width: 100%;
-  min-height: 560px;
+  min-height: clamp(420px, 62vh, 520px);
   display: block;
   border-radius: 10px;
   overflow: hidden;
@@ -83,6 +83,35 @@
   border-radius: 8px;
   padding: 0.24rem 0.45rem;
   backdrop-filter: blur(2px);
+}
+
+.viewer-overlay-controls {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.65rem;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+.viewer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: #ffe2a3;
+  background: rgba(7, 12, 24, 0.82);
+  border: 1px solid rgba(255, 214, 135, 0.52);
+  border-radius: 999px;
+  padding: 0.28rem 0.52rem;
+  user-select: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.viewer-toggle input[type='checkbox'] {
+  width: 14px;
+  height: 14px;
+  accent-color: #f2c96b;
 }
 
 .viewer-caption {
