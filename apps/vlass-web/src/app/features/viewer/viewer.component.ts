@@ -92,9 +92,12 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   private previousSurvey = 'VLASS'; // Track survey when disabling P/DSS
   readonly surveyOptions = [
     { label: 'VLASS', value: 'VLASS' },
-    { label: 'DSS2', value: 'DSS2' },
+    { label: 'DSS2 Color', value: 'DSS2' },
+    { label: 'DSS2 Red', value: 'P/DSS2/red' },
+    { label: 'DSS2 Blue', value: 'P/DSS2/blue' },
     { label: '2MASS', value: '2MASS' },
-    { label: 'PanSTARRS', value: 'P/PanSTARRS/DR1/color-z-zg-g' },
+    { label: 'PanSTARRS Color', value: 'P/PanSTARRS/DR1/color-z-zg-g' },
+    { label: 'HST (optical)', value: 'P/HST/color' },
   ];
 
   private aladinView: AladinView | null = null;
@@ -114,9 +117,12 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly supportedAladinSurveys = new Set<string>([
     'P/VLASS/QL',
     'P/DSS2/color',
+    'P/DSS2/red',
+    'P/DSS2/blue',
     DSS_COLOR_HIPS_URL,
     'P/2MASS/color',
     'P/PanSTARRS/DR1/color-z-zg-g',
+    'P/HST/color',
   ]);
 
   private readonly fb = inject(FormBuilder);
