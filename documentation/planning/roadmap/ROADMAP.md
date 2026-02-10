@@ -100,4 +100,3 @@ See [FUNDING-AND-COSTS.md](../funding/FUNDING-AND-COSTS.md) for comprehensive co
 - Full FITS archive/mirror tier (cutout passthrough suffices; proxy deferred)
 - Custom model training or fine-tuning
 - ngVLA data ingestion (await official ngVLA data release; infrastructure ready by Phase 3)
-

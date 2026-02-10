@@ -3,7 +3,7 @@
 Status date: 2026-02-08
 
 Canonical scope:
-`documentation/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
+`documentation/product/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
 
 ## MVP Priorities
 
@@ -17,7 +17,7 @@ Canonical scope:
 - [ ] Run full release gate locally and record results:
   `pnpm nx run docs-policy:check && pnpm nx run-many --target=test --all && pnpm nx run mvp-gates:e2e`
 - [ ] Finish Pillar 3 workflow gaps: post lifecycle edge cases, revision diff UX, and moderation hide/lock flow completion
-- [ ] Add API contract regression check in CI (OpenAPI diff check against committed `documentation/api/openapi.json`)
+- [ ] Add API contract regression check in CI (OpenAPI diff check against committed `documentation/reference/api/openapi.json`)
 - [ ] Calibrate Lighthouse mobile assertions and keep artifact baselines in CI for trend comparison
 - [ ] Reduce login route Lighthouse FCP/performance regressions (currently warning-level in local mobile profile)
 - [ ] Finalize public-repo metadata checklist: description, topics, website link, and security feature toggles in GitHub settings
@@ -75,4 +75,5 @@ Completed on 2026-02-07:
 - Completed work is still being journaled.
 - Primary archive location: `TODO.md` under "Archived Completed Items".
 - Secondary historical context: release notes under `documentation/RELEASE-NOTES-*.md`.
-- `documentation/ROADMAP.md` should stay future-facing, not become a done-work log.
+- `documentation/planning/roadmap/ROADMAP.md` should stay future-facing, not become a done-work log.
+

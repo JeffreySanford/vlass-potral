@@ -129,5 +129,6 @@ docker compose exec vlass-postgres psql -U vlass_user -d vlass_portal
 ## Related Docs
 
 - `documentation/setup/DOCKER-BOOTSTRAP.md`
-- `documentation/QUICK-START.md`
-- `documentation/ENVIRONMENT-CONFIG.md`
+- `documentation/operations/QUICK-START.md`
+- `documentation/operations/ENVIRONMENT-CONFIG.md`
+

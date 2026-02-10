@@ -854,7 +854,7 @@ logViewerEvent('label_added', { name, ra, dec });
 logViewerEvent('catalog_label_annotated', { name });
 ```
 
-**Logging Framework:** See [LOGGING-SYSTEM-DESIGN.md](../LOGGING-SYSTEM-DESIGN.md)
+**Logging Framework:** See [LOGGING-SYSTEM-DESIGN.md](../backend/LOGGING-SYSTEM-DESIGN.md)
 
 ---
 
