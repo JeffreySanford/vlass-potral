@@ -55,13 +55,6 @@ graph TB
     style OUTCOME fill:#cc0000,color:#fff
 ```
 
-**[PROFESSIONAL DESIGN NOTE]**
-
-- **Left half:** Data sources (neutral blue) → Multiple incompatible tools (warm orange) → Pain points (red)
-- **Right half:** Impact on researcher productivity (red highlights)
-- **Color progression:** Cool → Warm → Red (escalating problem)
-- **Design style:** Icons + text, clean typography, 16:9 aspect ratio
-
 ---
 
 ### The Opportunity
@@ -87,7 +80,7 @@ graph LR
     style REP fill:#d1c4e9
 ```
 
-**[TOTAL TIME: ~3 minutes from data to publication]**
+Estimated end-to-end time: approximately 3 minutes from data to publication.
 
 ---
 
@@ -96,6 +89,7 @@ graph LR
 The progression of vlass-portal from static viewer to federated national infrastructure:
 
 ```mermaid
+%%{init: {"themeVariables":{"fontSize":"22px"},"flowchart":{"nodeSpacing":70,"rankSpacing":90,"padding":24}} }%%
 graph TB
     subgraph MVP["🏆 MVP (Complete)<br/>Foundation: Browser + Data + Community"]
         MVP1["⚡ Pillar 1<br/>Instant Performance<br/>FCP <1s"]
@@ -125,13 +119,6 @@ graph TB
     style P3 fill:#fff9c4
 ```
 
-**[VISUAL SPECIFICATION]**
-
-- **Pyramid shape** with MVP as base (widest), Phase 2 middle, Phase 3 top (narrowest)
-- **Color gradient:** Green (complete) → Blue (current) → Yellow (future)
-- **Size represents:** Scope, complexity, and impact
-- **Timeline annotations** on right: "Done", "2026", "2027"
-
 ---
 
 ## 3. Data Volume Challenge: Why This Matters
@@ -160,41 +147,11 @@ graph LR
     style R fill:#d1c4e9
 ```
 
-```text
-VLASS (Today)
-│
-├─ Annual data volume: ~100 TB
-├─ Researcher storage: Personal laptop/server
-├─ Analysis: Interactive (< 30 seconds)
-└─ Tools: Desktop viewers, notebooks
-   
-   ↓↓↓
-   
-ALMA (Current State)
-│
-├─ Annual data volume: ~1–10 PB
-├─ Researcher storage: Shared archive (institution)
-├─ Analysis: Batch processing (hours)
-└─ Tools: Multiple, specialized
-   
-   ↓↓↓↓↓
-   
-ngVLA (2030s Challenge)
-│
-├─ Annual data volume: 50 PB ← [50,000× VLASS]
-├─ Researcher needs: Real-time anomaly detection
-├─ Compute requirement: 50 petaFLOPS (!)
-├─ Scale: Distributed across institutions
-└─ Problem: VLASS Portal is only tool that can handle this
-```
-
-**[TIMELINE CHART SPECIFICATION]**
-
-- **X-axis:** 2020 (VLASS) → 2030 (ngVLA) → time progression
-- **Y-axis:** Data volume (TB, PB scale)
-- **Plot points:** VLASS, ALMA, ngVLA with growing bars/curves
-- **Annotations:** "Current tools can't scale beyond 1 PB" (red zone) → "VLASS Portal ready for 50 PB" (green zone)
-- **Color:** Green for solvable, Red for unsolvable with current infrastructure
+| Facility | Annual Data Volume | Analysis Mode | Operational Implication |
+| --- | --- | --- | --- |
+| VLASS (Today) | ~100 TB | Interactive (<30s) | Desktop/notebook workflows are still workable |
+| ALMA (Current) | ~1-10 PB | Batch (hours) | Requires shared institutional infrastructure |
+| ngVLA (2030s) | ~50 PB | Real-time + distributed | Demands federated orchestration and high-scale AI operations |
 
 ---
 
@@ -216,27 +173,13 @@ flowchart LR
     style P fill:#e1bee7
 ```
 
-```text
-⏱️  Time:        0s              20s           1min          2min
-    │            │               │             │              │
-    ↓            ↓               ↓             ↓              ↓
-    
-📱 Landing    🔭 Viewer       🖱️  Explore      📸 Snapshot     📓 Publish
-Page (SSR)    Loads (Fast)    Sky Data       Capture        Post
-│             │               │             │              │
-1. User       2. See          3. Zoom,      4. Save PNG    5. Write
-arrives       beautiful       pan to       with meta-     markdown,
-on mobile     VLASS preview   target area  data, share    embed
-              in <1 second    of interest  link           viewer
-                                                          block
-```
-
-**[STORYBOARD SPECIFICATION]**
-
-- 5 wide panels showing user progression
-- Each panel: screenshot mockup + actions + time delta
-- Emphasize speed: "1 sec", "20 sec", "2 min"
-- Color coded: blue (discover) → orange (explore) → red (capture) → purple (publish)
+| Step | Action | Typical Time |
+| --- | --- | --- |
+| 1 | Land on SSR page (mobile/desktop) | 0s |
+| 2 | Viewer loads preview | ~20s |
+| 3 | Explore target sky region | ~1 min |
+| 4 | Capture snapshot and share link | ~1.5 min |
+| 5 | Publish post with embedded context | ~2 min |
 
 ---
 
@@ -256,29 +199,12 @@ flowchart LR
     style P1 fill:#d1c4e9
 ```
 
-```text
-⏱️  Time:        (from above)    10s           20s           30s
-    │            │               │             │              │
-    └─ Snapshot  ↓               ↓             ↓              ↓
-       Ready     
-                 🤖 Run AI       ⏳ Wait        💡 Results     📈 Share
-                 Model          on GPU        Overlay        Analysis
-                 │              │             │              │
-                 6. Click       7. Backend   8. Anomalies   9. Explain
-                 "Analyze"      queues job,  marked in      why detected,
-                 button,        runs model   red/yellow,    save to
-                 choose         on local     saliency       reproducible
-                 "Anomaly       GPU or       map shows      post with
-                 Detection"     TACC         features       model version
-                                            contributing
-```
-
-**[EXTENSION TO STORYBOARD]**
-
-- Continue timeline to show workflow
-- Emphasize speed: "1–10 seconds" for inference
-- Color code: yellow (processing) → green (results)
-- Show "reproducibility recipe" being auto-created
+| Step | Action | Typical Time |
+| --- | --- | --- |
+| 6 | Select model and click Analyze | ~10s |
+| 7 | Job queued/executed on GPU | ~20s |
+| 8 | Overlay + explainability returned | ~30s |
+| 9 | Publish reproducible AI-assisted analysis | ~30-60s |
 
 ---
 
@@ -298,80 +224,13 @@ flowchart TB
     style O fill:#d1c4e9
 ```
 
-```text
-🌍 Multi-site Analysis Flow
+## Multi-site flow summary
 
-User has:
-- Interesting astronomical region (RA, Dec)
-- Question: "Find all anomalies across VLASS + CosmicAI curations"
-
-┌─────────────────────────────────────────────────┐
-│ 1. SELECT DATASETS (federated search)           │
-│                                                  │
-│ Query: "VLASS v3.2 + CosmicAI calibrated"      │
-│ Results from:                                    │
-│   ✓ NRAO archive (1.2 PB, VLASS)               │
-│   ✓ TACC (50 TB, CosmicAI curations)           │
-│   ✓ Local vlass-portal (cached results)        │
-│                                                  │
-│ Total query time: <2 seconds                    │
-└─────────────────────────────────────────────────┘
-         ↓
-┌─────────────────────────────────────────────────┐
-│ 2. CHOOSE ANALYSIS (local or remote)            │
-│                                                  │
-│ Options:                                        │
-│   ☑ Local GPU (instant, <50s)                  │
-│   ☑ TACC Cluster (slow, <10min, many data)    │
-│                                                  │
-│ User selects: TACC (big region)                │
-└─────────────────────────────────────────────────┘
-         ↓
-┌─────────────────────────────────────────────────┐
-│ 3. SUBMIT FEDERATED JOB (TACC)                 │
-│                                                  │
-│ • Data staged from NRAO/CosmicAI to TACC S3    │
-│ • Job submitted to Slurm scheduler              │
-│ • vlass-portal monitors progress                │
-│ • Cache: check if identical result exists       │
-│                                                  │
-│ Status updates via WebSocket (real-time)       │
-└─────────────────────────────────────────────────┘
-         ↓
-┌─────────────────────────────────────────────────┐
-│ 4. MULTI-MODEL RESULTS (Consensus)             │
-│                                                  │
-│ Same region analyzed by:                       │
-│   • CosmicAI anomaly detection (TACC)  91%     │
-│   • Local AlphaCal (vlass-portal)      87%     │
-│   • Expert radio astronomer (review)   ✓       │
-│                                                  │
-│ Result: HIGH CONFIDENCE (both agree + expert)  │
-│ → Suitable for publication!                     │
-└─────────────────────────────────────────────────┘
-         ↓
-┌─────────────────────────────────────────────────┐
-│ 5. PUBLISH REPRODUCIBLE ANALYSIS               │
-│                                                  │
-│ Post includes:                                  │
-│   ✓ Original data (VLASS v3.2)                │
-│   ✓ Model versions (CosmicAI, AlphaCal)       │
-│   ✓ Compute environment (TACC A100 GPU)       │
-│   ✓ Parameters (exact, versioned)              │
-│   ✓ Results (HDF5 + visualization)             │
-│   ✓ Reproducibility DOI (Zenodo)               │
-│                                                  │
-│ → Peer reviewer CAN REPRODUCE EXACTLY         │
-└─────────────────────────────────────────────────┘
-```
-
-**[PHASE 3 WORKFLOW DIAGRAM]**
-
-- 5-level hierarchy showing steps
-- Multi-site sources on left (NRAO, CosmicAI, TACC)
-- Converge to center (vlass-portal orchestration)
-- Output: reproducible, published artifact
-- Color: Blue (data) → Orange (compute) → Green (results)
+1. Select federated datasets (`VLASS + CosmicAI`) with sub-2s query time.
+2. Choose compute path (local GPU for fast runs, TACC for large jobs).
+3. Submit federated job (staging + scheduler + live status + cache checks).
+4. Compare multi-model outputs and expert review for confidence scoring.
+5. Publish reproducible artifact (data versions, model versions, params, outputs, DOI).
 
 ---
 
@@ -388,34 +247,11 @@ flowchart TB
     end
 ```
 
-```text
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃     Angular SSR + Aladin      ┃
-┃  (Fast first paint, Viewer)   ┃
-┗━━━━━━━━━━━━━━┬━━━━━━━━━━━━━━┛
-               ↓
-    ┏━━━━━━━━━━━━━━━━━━━┓
-    ┃   NestJS API      ┃
-    ┃  (Auth, Posts,    ┃
-    ┃   Rate-limit)     ┃
-    ┗━┬━━━━━━━━━━━━━┬━┛
-      │             │
-      ↓             ↓
-  ┌─────────────────────────┐
-  │  PostgreSQL + Redis     │
-  │  (Persistent + Cache)   │
-  └────────────┬────────────┘
-               │
-               ↓
-        ┌──────────────────┐
-        │  VLASS HiPS +    │
-        │  FITS (External) │
-        └──────────────────┘
+### MVP profile
 
-Complexity: ⭐ (Low)
-Deployment: Docker Compose
-Scalability: Single server OK
-```
+- Complexity: Low
+- Deployment: Docker Compose
+- Scalability: Single server
 
 ### Phase 2 Architecture (Local AI + Inference)
 
@@ -431,40 +267,11 @@ flowchart TB
     end
 ```
 
-```text
-Previous layers +
-       ↓
-┏━━━━━━━━━━━━━━━━━━━━┓
-┃ Inference Layer    ┃
-┃  ┌────────────────┐ ┃
-┃  │ Job Queue      │ ┃
-┃  │ (priority,     │ ┃
-┃  │  retry logic)  │ ┃
-┃  └────────────────┘ ┃
-┃  ┌────────────────┐ ┃
-┃  │ Model Registry │ ┃
-┃  │ (versioning)   │ ┃
-┃  └────────────────┘ ┃
-┃  ┌────────────────┐ ┃
-┃  │ Result Cache   │ ┃
-┃  │ (local GPU)    │ ┃
-┃  └────────────────┘ ┃
-┃  ┌────────────────┐ ┃
-┃  │ Explainability │ ┃
-┃  │ (saliency,     │ ┃
-┃  │  attribution)  │ ┃
-┃  └────────────────┘ ┃
-┗━━━━━━┬━━━━━━━━━━━━┛
-       ↓
-  ┌─────────────┐
-  │ Local GPU   │
-  │ VM          │
-  └─────────────┘
+### Phase 2 profile
 
-Complexity: ⭐⭐⭐ (Medium)
-Deployment: Kubernetes-ready
-Scalability: Single GPU node
-```
+- Complexity: Medium
+- Deployment: Kubernetes-ready
+- Scalability: Single GPU node
 
 ### Phase 3 Architecture (Federated Multi-Site)
 
@@ -481,49 +288,11 @@ flowchart TB
     end
 ```
 
-```text
-Previous layers +
-       ↓
-┏━━━━━━━━━━━━━━━━━━━━┓
-┃ Federation Layer   ┃
-┃ ┌────────────────┐ ┃
-┃ │ TACC Gateway   │ ┃
-┃ │ (auth, Slurm)  │ ┃
-┃ └────────────────┘ ┃
-┃ ┌────────────────┐ ┃
-┃ │ Dataset        │ ┃
-┃ │ Federator      │ ┃
-┃ │ (multi-source) │ ┃
-┃ └────────────────┘ ┃
-┃ ┌────────────────┐ ┃
-┃ │ Distributed    │ ┃
-┃ │ Cache          │ ┃
-┃ │ (consistency)  │ ┃
-┃ └────────────────┘ ┃
-┃ ┌────────────────┐ ┃
-┃ │ Reproducibility│ ┃
-┃ │ Manifest       │ ┃
-┃ └────────────────┘ ┃
-┗━━┬━━━━━━━━━━━━━━━┛
-   │
-   └─→ ┌────────────────────────────┐
-       │ Multi-Site Infrastructure  │
-       │                            │
-       │  ┌──────────┐ ┌─────────┐ │
-       │  │  NRAO    │ │ CosmicAI│ │
-       │  │  Archive │ │ TACC    │ │
-       │  └──────────┘ └─────────┘ │
-       │  ┌──────────────────────┐  │
-       │  │  Slurm Scheduler     │  │
-       │  │  GPU Cluster: V100s  │  │
-       │  │  Cache: S3 + NFS     │  │
-       │  └──────────────────────┘  │
-       └────────────────────────────┘
+### Phase 3 profile
 
-Complexity: ⭐⭐⭐⭐⭐ (High)
-Deployment: Kubernetes + Helm
-Scalability: Multi-region, petaflops
-```
+- Complexity: High
+- Deployment: Kubernetes + Helm
+- Scalability: Multi-region, petaflop-scale
 
 ---
 
@@ -552,46 +321,14 @@ gantt
     Phase 3 Target Complete      :milestone, p3m, 2027-06-30, 0d
 ```
 
-```text
-2026-02-10 ────────────────────────────────────────────→ 2027-06-30
-
-MVP COMPLETE ✅
-│
-February 2026
-├─ Phase 2 Planning [████████] DONE
-├─ Grant Preparation
-│  ├─ NSF SI² draft [████████████] Apr 15 due
-│  ├─ DOE ASCR draft [████████████] Jun due
-│  └─ NVIDIA partnership [██████] Apr–May
-├─ Phase 2 Engineering begins [████████████████████] May–Aug (unfunded or internal)
-│  └─ Week 1–2: Job Queue Service
-│  └─ Week 3–4: Viewer Overlays
-│  └─ Week 5–6: Reproducibility Graph
-│  └─ Week 7–8: Explainability UI
-│  └─ Week 9–12: Integration Testing
-│  └─ Week 13–16: Performance + Release
-│
-September 2026
-├─ Phase 2 Completion [████████] Sep target
-├─ Grant decisions start [⏳] Aug–Sep review period
-│
-October 2026
-├─ Phase 3 begins [████████████████████] Oct–Mar (grant-accelerated)
-│  └─ Week 1–3: TACC auth + Slurm
-│  └─ Week 4–6: Dataset federation
-│  └─ Week 7–9: Remote job orchestration
-│  └─ Week 10–12: Multi-site reproducibility
-│  └─ Week 13–16: Explainability aggregation
-│
-June 2027
-└─ Phase 3 Completion ✅ Jun target
-   └─ Ready for community pilot (15+ institutions)
-
-Parallel Activities:
-├─ Community engagement [▓▓▓▓▓▓▓▓▓▓▓▓] Continuous throughout
-├─ Publication + talks [▓▓▓▓▓▓] Phase 2.5 (Sep–Dec 2026)
-└─ Cosmic Horizons conference [●●●●●] Jul 2026 (feedback loop)
-```
+| Window | Milestones |
+| --- | --- |
+| Feb-Apr 2026 | Phase 2 planning complete, NSF/DOE/NVIDIA prep |
+| May-Sep 2026 | Phase 2 engineering execution and integration |
+| Jul 2026 | Cosmic Horizons feedback milestone |
+| Aug-Oct 2026 | Funding decision window |
+| Oct 2026-Jun 2027 | Phase 3 federation + TACC execution |
+| Jun 2027 | Phase 3 target completion and pilot readiness |
 
 ---
 
@@ -622,31 +359,17 @@ flowchart LR
     classDef phase fill:#e3f2fd,stroke:#1565c0;
 ```
 
-```text
-FUNDING SOURCES                     PHASES FUNDED           BUDGET
-────────────────────────────────────────────────────────   ────────
-Internal Budget                     MVP + Phase 2            $150K
-(university/dept R&D)               (self-funded)
+| Funding Source | Primary Phase Coverage | Budget Range | Notes |
+| --- | --- | --- | --- |
+| Internal budget (dept/R&D) | MVP + Phase 2 | ~$150K | Self-funded bridge |
+| NSF SI2 (software infrastructure) | Phase 2-3 | $150K-$300K | 24 months, ~20-25% success |
+| DOE ASCR (advanced computing) | Phase 2-3 | $200K-$400K | 24 months, ~25-30% success |
+| NVIDIA research support | Phase 2 | $50K-$150K | Credits/hardware, ~60-70% success |
+| NSF CIS (later-stage infra) | Phase 4+ | $500K-$1M+ | 36+ months, ~15-20% success |
 
-NSF SI²                             Phase 2 → 3             $150K–300K
-(Research Software Infrastructure)  (strategic infra)        24 months
-Success rate: 20–25%
+#### Realistic blended range
 
-DOE ASCR                            Phase 2 → 3             $200K–400K
-(Advanced Scientific Computing)     (HPC + workflow)         24 months
-Success rate: 25–30%
-
-NVIDIA GPU Research                 Phase 2 + credits       $50K–150K
-(Industry partnership)              (compute)               Optional
-Success rate: 60–70%
-
-NSF CIS                             Phase 4                 $500K–1M+
-(Cyberinfrastructure for Sustained  (national scale)        36+ months
-Scientif Innovation)                Success rate: 15–20%
-
-TOTAL REALISTIC:                                            $800K–1.6M
-(50% NSF/DOE success rates)
-```
+`$800K-$1.6M` over staged cycles.
 
 ### Funding Timeline
 
@@ -667,24 +390,13 @@ gantt
     Phase 3 Grant-Accelerated  :a6, 2026-10-01, 2027-06-30
 ```
 
-```text
-Feb 2026 ----→ Mar 2026 ----→ Apr–May 2026 ----→ Jun 2026 ----→
-  ↓              ↓              ↓                 ↓
-Finalize     Contact        NSF SI²            DOE ASCR
-planning     Program          Draft            Draft+
-(done)       Officers        Submit          Submit
-
-Jul 2026 ----→ Aug–Sep 2026 ---→ Oct 2026 ----→ Jan–Jun 2027
-  ↓              ↓                 ↓             ↓
-Continue      Decisions          Phase 3       Phase 3
-Phase 2       returning          ramp-up       execution
-(unfunded)    (4–6m review)      (grant-acc.)  (if funded)
-
-Last resort: Jun–Aug 2027
-  ↓
-NSF CIS Phase 4 planning
-(larger, later grant)
-```
+| Period | Action |
+| --- | --- |
+| Feb-Mar 2026 | Finalize planning and contact program officers |
+| Apr-Jun 2026 | Submit NSF SI2 and DOE ASCR proposals |
+| Jul-Oct 2026 | Continue Phase 2 while decisions are pending |
+| Oct 2026-Jun 2027 | Phase 3 ramp/execution (grant-accelerated if funded) |
+| Jun-Aug 2027 | NSF CIS fallback planning if needed |
 
 ---
 
@@ -709,42 +421,17 @@ flowchart TB
     style TACC fill:#c8e6c9
 ```
 
-```text
-                        ┌─────────────────────┐
-                        │   Researchers       │
-                        │   (15+ institutions)│
-                        └────────┬────────────┘
-                                 │ (community)
-                                 │
-                    ┌────────────┼────────────┐
-                    │            │            │
-                    ↓            ↓            ↓
-              ┌──────────┐ ┌──────────┐ ┌──────────┐
-              │  NRAO    │ │CosmicAI  │ │  TACC    │
-              │   Data   │ │ Models   │ │ Compute  │
-              └────┬─────┘ └─────┬────┘ └────┬─────┘
-                   │            │            │
-                   └────────────┬────────────┘
-                                │
-                    ┌───────────▼───────────┐
-                    │  VLASS Portal        │
-                    │  (Control Plane)     │
-                    └───────────┬───────────┘
-                                │
-                    ┌───────────┼───────────┐
-                    │           │           │
-                    ↓           ↓           ↓
-              ┌──────────┐ ┌──────────┐ ┌──────────┐
-              │   NSF    │ │   DOE    │ │  ngVLA   │
-              │ Funding  │ │ Funding  │ │Operations│
-              │Strategic │ │Strategic │ │ Future   │
-              └──────────┘ └──────────┘ └──────────┘
+| Layer | Stakeholders | Relationship to vlass-portal |
+| --- | --- | --- |
+| Community | Researchers (15+ institutions) | Drive use-cases and validation feedback |
+| Core partners | NSF NRAO, CosmicAI, TACC | Provide data, models, and compute pathways |
+| Strategic outcomes | NSF, DOE, ngVLA ecosystem | Funding leverage and long-horizon operational alignment |
 
-Timeline:
-2026: Data + Models + Compute integration
-2027: Multi-institution pilot
-2030: ngVLA operations (future)
-```
+Timeline summary:
+
+- 2026: Integrate data + model + compute workflows.
+- 2027: Multi-institution pilot operations.
+- 2030+: ngVLA-aligned operations readiness.
 
 ---
 
@@ -773,34 +460,9 @@ flowchart TB
     style AF fill:#ffebee
 ```
 
-```text
-EASE OF USE
-         ^
-         │
-    High│  ┌─────────────────┐
-         │  │ VLASS Portal    │⭐⭐⭐⭐⭐
-         │  │ (2027 target)   │
-         │  └────────┬────────┘
-         │           │
-         │     ┌─────┴─────┐
-         │     │           │
-         │  ┌──▼──┐     ┌──▼──┐
-         │  │VLASS│     │ Ala- │
-         │  │Proto│     │ din  │
-         │  │(MVP)│     │      │
-         │  └─────┘     └──────┘
-    Low │  ┌─────────────────────┐
-         │  │     Jupyter        │
-         │  │    Notebooks       │
-         │  └─────────────────────┘
-         │
-         └────────────────────────────→
-Low                              High
-SCALABILITY / AI-READINESS
+### Positioning summary
 
-Positioning: VLASS Portal fills the gap between
-ease-of-use (like Jupyter) and scale (like HPC).
-```
+`vlass-portal` is positioned in the high-ease/high-scale quadrant compared with single-purpose tools.
 
 ---
 
@@ -827,31 +489,17 @@ flowchart LR
     end
 ```
 
-```text
-┌──────────────────────────────────────────────━━━━━━━━┐
-│  TECHNICAL PERFORMANCE                              │
-├──────────────────────────────────────────────────────┤
-│  Inference latency:              <10 seconds  ✓ TEST│
-│  Job completion rate:            >99%        ✓ TEST│
-│  Reproducibility linkage:        100%        ✓ TEST│
-└──────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────┐
-│  USER ADOPTION                                      │
-├──────────────────────────────────────────────────────┤
-│  Published posts w/ AI results:  10+         [5]    │
-│  Users running forks:            3+          [1]    │
-│  Explanation satisfaction:       >80%        [75%]  │
-└──────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────┐
-│  STRATEGIC OUTCOMES                                 │
-├──────────────────────────────────────────────────────┤
-│  fundable in proposals:          ✓           ✓ DONE │
-│  TACC partnership readiness:     ✓           ✓ PLAN │
-│  Grant decision support:         ✓           ? (TBD)│
-└──────────────────────────────────────────────────────┘
-```
+| Category | Metric | Target | Current |
+| --- | --- | --- | --- |
+| Technical | Inference latency | <10s | Test pending |
+| Technical | Job completion rate | >99% | Test pending |
+| Technical | Reproducibility linkage | 100% | Test pending |
+| Adoption | Posts with AI results | 10+ | 5 |
+| Adoption | Users running forks | 3+ | 1 |
+| Adoption | Explainability satisfaction | >80% | 75% |
+| Strategic | Fundable proposal narrative | Yes | Done |
+| Strategic | TACC partnership readiness | Yes | In plan |
+| Strategic | Grant decision support | Yes | TBD |
 
 ### Phase 3 Success Metrics (Target Jun 2027)
 
@@ -874,31 +522,17 @@ flowchart LR
     end
 ```
 
-```text
-┌──────────────────────────────────────────────────────┐
-│  TECHNICAL INFRASTRUCTURE                           │
-├──────────────────────────────────────────────────────┤
-│  TACC job submission success:    ≥95%        ? TEST │
-│  Dataset federation latency:     <3s         ? TEST │
-│  Reproducibility completeness:   100%        ? TEST │
-└──────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────┐
-│  COMMUNITY IMPACT                                   │
-├──────────────────────────────────────────────────────┤
-│  Institutions using platform:    15+         [0]    │
-│  Peer-reviewed papers citing:    5+          [0]    │
-│  TACC-compute posts:             ≥20%        [0%]   │
-└──────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────┐
-│  STRATEGIC LEVERAGE                                 │
-├──────────────────────────────────────────────────────┤
-│  NSF/DOE grant awarded:          ✓           ? (TBD)│
-│  CosmicAI formal endpoints:      ✓           ? PLAN │
-│  ngVLA operations planning:      ✓           ? PLAN │
-└──────────────────────────────────────────────────────┘
-```
+| Category | Metric | Target | Current |
+| --- | --- | --- | --- |
+| Infrastructure | TACC submission success | >=95% | Test pending |
+| Infrastructure | Federation latency | <3s | Test pending |
+| Infrastructure | Reproducibility completeness | 100% | Test pending |
+| Community | Institutions onboarded | 15+ | 0 |
+| Community | Peer-reviewed citations | 5+ | 0 |
+| Community | TACC-compute posts | >=20% | 0% |
+| Strategic | NSF/DOE grant awarded | Yes | TBD |
+| Strategic | CosmicAI formal endpoints | Yes | Planned |
+| Strategic | ngVLA planning integration | Yes | Planned |
 
 ---
 
