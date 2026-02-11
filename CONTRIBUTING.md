@@ -37,4 +37,3 @@
 2. Include test evidence (Nx command + result).
 3. Update docs when behavior/config changes.
 4. Ensure GitHub Actions pass.
-
