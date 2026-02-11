@@ -1,6 +1,6 @@
 # Symposium Draft: Cosmic Horizons 2026
 
-**Topic:** Scaling Radio Astronomy with AI-Driven Control Planes: The VLASS Portal Architecture
+**Topic:** Scaling Radio Astronomy with AI-Driven Control Planes: The Cosmic Horizon Architecture
 **Venue:** Cosmic Horizons Conference 2026 (Charlottesville, VA)
 **Abstract Deadline:** April 1, 2026
 
@@ -8,7 +8,7 @@
 
 The Next-Generation Very Large Array (ngVLA) will produce raw data at rates (~8 GB/s) that preclude traditional manual calibration and imaging workflows. The NSF-Simons CosmicAI initiative is developing autonomous engines (AlphaCal, Radio Image Reconstruction) to handle this "firehose."
 
-The VLASS Portal serves as the **AI Control Plane**, bridging the gap between high-performance compute fabric (TACC) and the scientific user. This presentation details the architecture required to provide real-time monitoring, auditability, and job orchestration for autonomous agents while maintaining a high-performance SSR frontend for immediate exploration of Science Ready Data Products (SRDPs).
+The Cosmic Horizon serves as the **AI Control Plane**, bridging the gap between high-performance compute fabric (TACC) and the scientific user. This presentation details the architecture required to provide real-time monitoring, auditability, and job orchestration for autonomous agents while maintaining a high-performance SSR frontend for immediate exploration of Science Ready Data Products (SRDPs).
 
 ## 2. Technical Pillars
 

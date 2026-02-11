@@ -1,9 +1,9 @@
 packages:
   - packages/*
-  - apps/vlass-api
-  - apps/vlass-api-e2e
-  - apps/vlass-web
-  - apps/vlass-web-e2e
+  - apps/cosmic-horizons-api
+  - apps/cosmic-horizons-api-e2e
+  - apps/cosmic-horizons-web
+  - apps/cosmic-horizons-web-e2e
   - libs/shared/*
 
 autoInstallPeers: true
@@ -11,6 +11,7 @@ autoInstallPeers: true
 onlyBuiltDependencies:
   - '@nestjs/core'
   - '@parcel/watcher'
+  - '@scarf/scarf'
   - '@swc/core'
   - esbuild
   - less

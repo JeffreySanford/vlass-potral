@@ -32,7 +32,7 @@ AI/ML agents are required at this scale.
 
 ### 2. Targeted CosmicAI Agents
 
-The VLASS Portal is designed to dock with and provide operational UI surfaces for autonomous engines being developed by the NSF-Simons CosmicAI initiative:
+Cosmic Horizon is designed to dock with and provide operational UI surfaces for autonomous engines being developed by the NSF-Simons CosmicAI initiative:
 
 - `AlphaCal`: autonomous interferometric calibration focused on direction-dependent effects and RFI at scale.
 - `Radio Image Reconstruction`: GPU-accelerated reconstruction models for tens to hundreds of billions of visibilities per ngVLA observation.
@@ -41,7 +41,7 @@ The VLASS Portal is designed to dock with and provide operational UI surfaces fo
 
 ### 3. Portal Role: "AI Control Plane"
 
-CosmicAI delivers the back-half (math and compute fabric). The VLASS Portal delivers the front-half (MLOps and UX). Docking priorities:
+CosmicAI delivers the back-half (math and compute fabric). Cosmic Horizon delivers the front-half (MLOps and UX). Docking priorities:
 
 - `Inference UI`: replace notebook-centric workflows with enterprise-grade dashboards for monitoring agent performance.
 - `Job Orchestration`: provide a web-native interface to launch AI-assisted reprocessing jobs on TACC-scale resources.

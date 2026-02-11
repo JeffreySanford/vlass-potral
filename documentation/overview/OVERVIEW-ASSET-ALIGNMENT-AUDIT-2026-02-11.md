@@ -149,7 +149,7 @@ Required action:
 
 Use this line verbatim in video descriptions, slide appendix, and talk notes:
 
-`VLASS Portal is an independent, public-data-compatible, integration-ready web platform; it is not affiliated with, sponsored by, or operated by VLA/NRAO/VLASS.`
+`Cosmic Horizon is an independent, public-data-compatible, integration-ready web platform; it is not affiliated with, sponsored by, or operated by VLA/NRAO/VLASS.`
 
 ---
 
@@ -172,4 +172,4 @@ External conference/submission use: **apply corrections above first**, especiall
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

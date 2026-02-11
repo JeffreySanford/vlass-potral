@@ -1,4 +1,4 @@
-# Executive Pitch Analysis: Bridging the ngVLA Human Bottleneck with VLASS Portal
+# Executive Pitch Analysis: Bridging the ngVLA Human Bottleneck with Cosmic Horizon
 
 Status date: 2026-02-11  
 Document intent: Turn a strategic narrative into an actionable, affiliation-safe pitch artifact for outreach, proposals, and conference preparation.
@@ -8,7 +8,7 @@ Document intent: Turn a strategic narrative into an actionable, affiliation-safe
 ## Executive Summary
 
 The core narrative is strong: ngVLA-scale data creates a workflow discontinuity where legacy, local, human-driven analysis no longer scales.  
-VLASS Portal is positioned as the web-native "front-half" operations and collaboration layer that can interface with institutional "back-half" compute and AI systems.
+Cosmic Horizon is positioned as the web-native "front-half" operations and collaboration layer that can interface with institutional "back-half" compute and AI systems.
 
 This is an effective framing for stakeholders, provided all external quantitative claims are source-dated and affiliation-safe language is preserved.
 
@@ -17,7 +17,7 @@ This is an effective framing for stakeholders, provided all external quantitativ
 ## Refined Pitch (Affiliation-Safe)
 
 The next era of radio astronomy will be constrained less by raw compute and more by whether humans can effectively operate and trust AI-driven workflows at scale.  
-VLASS Portal is an independent, integration-ready platform designed to address that human bottleneck by delivering:
+Cosmic Horizon is an independent, integration-ready platform designed to address that human bottleneck by delivering:
 
 1. Fast SSR-first scientific access paths.
 2. Persistent viewer state sharing (permalinks + snapshots).
@@ -71,7 +71,7 @@ It is a practical candidate interface layer that can dock into future institutio
 To make this pitch proposal-grade:
 
 1. Attach source-dated citations for all external metrics and policy claims.
-2. Present VLASS Portal as independent and integration-ready.
+2. Present Cosmic Horizon as independent and integration-ready.
 3. Include an implementation-backed architecture slide:
    current MVP + next integration contracts (`submit`, `status`, `cancel`) + audit lineage.
 4. Ask for technical discovery discussions, not implied adoption commitments.
@@ -80,11 +80,11 @@ To make this pitch proposal-grade:
 
 ## Suggested 30-Second Verbal Version
 
-"The ngVLA era introduces a human bottleneck: even with world-class compute, scientists need trustworthy, web-native control planes for AI-driven workflows. VLASS Portal is an independent, integration-ready front-end operations layer that already demonstrates fast SSR access, persistent visualization sharing, and revision-controlled notebook collaboration. Our next step is to formalize integration contracts so this interface can dock into institutional compute backends without claiming institutional ownership."
+"The ngVLA era introduces a human bottleneck: even with world-class compute, scientists need trustworthy, web-native control planes for AI-driven workflows. Cosmic Horizon is an independent, integration-ready front-end operations layer that already demonstrates fast SSR access, persistent visualization sharing, and revision-controlled notebook collaboration. Our next step is to formalize integration contracts so this interface can dock into institutional compute backends without claiming institutional ownership."
 
 ---
 
-## Alignment with VLASS Portal Governance
+## Alignment with Cosmic Horizon Governance
 
 This document must be used together with:
 
@@ -95,4 +95,4 @@ This document must be used together with:
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

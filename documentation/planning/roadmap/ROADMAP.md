@@ -125,7 +125,7 @@ See [../phases/PHASE-2-README.md](../phases/PHASE-2-README.md) for overview and 
 **Strategic alignment:** NSF-Simons CosmicAI Institute
 **Timeline:** ~12–16 weeks
 **Cost:** $100K–$200K (engineering labor)
-**Milestone:** vlass-portal becomes AI-driven scientific platform
+**Milestone:** cosmic-horizons becomes AI-driven scientific platform
 
 ## Phase 3: CosmicAI Federation & ngVLA Preparation
 
@@ -136,13 +136,17 @@ See [../phases/PHASE-3-README.md](../phases/PHASE-3-README.md) for overview and 
 - Pillar 2: TACC compute integration (Slurm + remote job orchestration)
 
 - Pillar 3: Multi-site reproducibility (federated lineage tracking)
+  - **NRAO Radar Integration**: Messaging frameworks (Kafka/RabbitMQ) for inter-site job notification.
+  - **Site-to-Site Benchmarking**: Latency profiling and data-bus throughput metrics for ngVLA scale.
+  - **Common System Software**: Integrated Radar visualization (Range-Doppler) in the AI Control Plane.
+  - See: [NRAO-RADAR-INTEGRATION.md](../NRAO-RADAR-INTEGRATION.md)
 
 - Pillar 4: Explainability aggregation (multi-model consensus, uncertainty quantification)
 
 **Strategic alignment:** TACC partnership, ngVLA operations preparation
 **Timeline:** ~16–20 weeks
 **Cost:** $200K–$400K (engineering + compute, often grant-funded)
-**Milestone:** vlass-portal becomes scientific operations platform for radio astronomy AI workflows
+**Milestone:** cosmic-horizons becomes scientific operations platform for radio astronomy AI workflows
 
 ## Integration Readiness Track (Cross-Phase)
 
@@ -186,7 +190,7 @@ See [FUNDING-AND-COSTS.md](../funding/FUNDING-AND-COSTS.md) for comprehensive co
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
 
 ---
 *Independent portal using public VLASS data; not affiliated with VLA/NRAO.*

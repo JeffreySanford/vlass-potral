@@ -1,4 +1,4 @@
-# VLASS Portal: Scientific Operations Platform for Radio Astronomy
+# Cosmic Horizon: Scientific Operations Platform for Radio Astronomy
 
 ## Marketing Overview & Product Vision
 
@@ -40,11 +40,11 @@
 
 ## Executive Summary
 
-**VLASS Portal** is an open-source, web-native scientific operations platform for radio astronomy. It provides researchers with fast, intuitive access to massive astronomical datasets (VLASS), powerful tools for AI-assisted analysis, and infrastructure for publishing reproducible scientific findings.
+**Cosmic Horizon** is an open-source, web-native scientific operations platform for radio astronomy. It provides researchers with fast, intuitive access to massive astronomical datasets (VLASS), powerful tools for AI-assisted analysis, and infrastructure for publishing reproducible scientific findings.
 
 ### What It Does (In One Sentence)
 
-> VLASS Portal transforms how radio astronomers explore, analyze, and share discoveries from the Very Large Array Sky Survey—combining instant visualization, AI-driven insights, collaborative notebooks, and reproducible research workflows in a single web application.
+> Cosmic Horizon transforms how radio astronomers explore, analyze, and share discoveries from the Very Large Array Sky Survey—combining instant visualization, AI-driven insights, collaborative notebooks, and reproducible research workflows in a single web application.
 
 ### The Vision
 
@@ -52,9 +52,9 @@
 
 - **Today's problem:** Radio astronomy researchers have state-of-the-art AI models and petaflops of compute, but interact through Jupyter notebooks (2012-era UX). There's no unified platform for orchestrating, auditing, and publishing AI-assisted analysis.
 
-- **VLASS Portal's solution:** A modern web platform that brings world-class data exploration, AI orchestration, reproducibility, and scientific publishing into a single, intuitive interface.
+- **Cosmic Horizon's solution:** A modern web platform that brings world-class data exploration, AI orchestration, reproducibility, and scientific publishing into a single, intuitive interface.
 
-- **Strategic opportunity:** Position VLASS Portal as the control plane for the NSF-Simons CosmicAI Initiative and the operational backbone for the upcoming ngVLA (Next Generation Very Large Array) facility.
+- **Strategic opportunity:** Position Cosmic Horizon as the control plane for the NSF-Simons CosmicAI Initiative and the operational backbone for the upcoming ngVLA (Next Generation Very Large Array) facility.
 
 ### The Numbers
 
@@ -152,7 +152,7 @@ The Next Generation Very Large Array will deliver:
 
 ## The Solution
 
-### VLASS Portal: Three Pillars (MVP to Phase 3)
+### Cosmic Horizon: Three Pillars (MVP to Phase 3)
 
 ```mermaid
 %%{init: {"themeVariables":{"fontSize":"22px"},"flowchart":{"nodeSpacing":70,"rankSpacing":90,"padding":24}} }%%
@@ -392,7 +392,7 @@ graph TB
 
 ### Vision
 
-Transform VLASS Portal from a **data browser** into an **AI-driven scientific operations platform**.
+Transform Cosmic Horizon from a **data browser** into an **AI-driven scientific operations platform**.
 
 **The leap:** From "explore data and write about it" → "analyze data with AI models, get interpretable results, publish reproducible findings."
 
@@ -467,7 +467,7 @@ User in viewer
 
 #### **Pillar 2: GPU Job Orchestration**
 
-Transform VLASS Portal into a **reliable, auditable job submission interface**.
+Transform Cosmic Horizon into a **reliable, auditable job submission interface**.
 
 **What you build:**
 
@@ -531,13 +531,11 @@ Make **every analysis reproducible**: track dataset → model → parameters →
 >
 > Colleague says: "Let's replay this analysis on new data"
 >
-> VLASS Portal:
+> Cosmic Horizon:
+>
 > - Checks: original analysis pinned to CosmicAI model v2.3 ✓
-
 > - Verifies: model still available, no breaking changes ✓
-
 > - Replays: same workflow, new dataset
-
 > - Compares: "Original: 47 anomalies. New dataset: 52 anomalies. What changed?"
 
 **Success metrics:**
@@ -637,7 +635,7 @@ User sees red anomaly region in viewer. Hovers over it. Panel appears:
 
 ### Vision
 
-Establish VLASS Portal as the **control plane** for the NSF-Simons CosmicAI ecosystem, and prepare for the Next Generation VLA's petaflop-scale challenge.
+Establish Cosmic Horizon as the **control plane** for the NSF-Simons CosmicAI ecosystem, and prepare for the Next Generation VLA's petaflop-scale challenge.
 
 **The leap:** From local inference → federated multi-site orchestration.
 
@@ -702,7 +700,7 @@ Submit workflows to **TACC GPU clusters**; monitor, cache, audit remotely.
 
 - Data staging orchestration (inputs → TACC, results ← TACC)
 
-- Distributed caching (cache consistency across vlass-portal + TACC)
+- Distributed caching (cache consistency across cosmic-horizons + TACC)
 
 - Cost accounting (track GPU allocation consumed per job)
 
@@ -710,7 +708,7 @@ Submit workflows to **TACC GPU clusters**; monitor, cache, audit remotely.
 
 ```mermaid
 graph TB
-    subgraph VP["vlass-portal<br/>(User Interface)"]
+    subgraph VP["cosmic-horizons<br/>(User Interface)"]
         UI["Web UI"]
         CACHE["Local Cache"]
     end
@@ -758,7 +756,7 @@ Portal checks cache: is identical result cached at TACC?
   ↓
 Monitor job: Status → [queued] → [running] → [complete]
   ↓
-Fetch results into vlass-portal cache
+Fetch results into cosmic-horizons cache
   ↓
 Render in viewer + notify user
 
@@ -786,7 +784,7 @@ Enable reproducibility across **NRAO + TACC + CosmicAI** institutional boundarie
 
   - Input: "vlass" | "cosmicai_curated" | "nrao_archive" + version
 
-  - Processing: "vlass-portal" | "tacc" + GPU spec
+  - Processing: "cosmic-horizons" | "tacc" + GPU spec
 
   - Model: CosmicAI GitHub repo + commit SHA
 
@@ -839,7 +837,7 @@ Same VLASS region analyzed by:
 
 - CosmicAI calibration detection (TACC): 91% confidence anomaly
 
-- Local AlphaCal (vlass-portal): 87% confidence anomaly
+- Local AlphaCal (cosmic-horizons): 87% confidence anomaly
 
 - Manual astronomer review (expert): "Confirmed real anomaly"
 
@@ -859,7 +857,7 @@ Expert consensus: 9/9 radio astronomers agree
 
 ```mermaid
 graph TB
-    VP["VLASS Portal"]
+    VP["Cosmic Horizon"]
 
     VP -->|"Demonstrated<br/>operators"| NRAO["NRAO"]
     VP -->|"CosmicAI<br/>primary<br/>interface"| COSMICAI["CosmicAI<br/>Institute"]
@@ -877,7 +875,7 @@ graph TB
 
 **[VISUAL SPECIFICATION: Strategic partnership map showing:]**
 
-- **Central hub:** VLASS Portal
+- **Central hub:** Cosmic Horizon
 
 - **Radiating connections:** NRAO, CosmicAI, TACC, ngVLA
 
@@ -900,7 +898,7 @@ graph TB
 
 | **User-facing** | NSF-affiliated institutions using portal | 15+ |
 
-| **User-facing** | Peer-reviewed papers citing vlass-portal | 5+ |
+| **User-facing** | Peer-reviewed papers citing cosmic-horizons | 5+ |
 
 | **User-facing** | Posts using TACC compute | ≥20% |
 
@@ -1059,10 +1057,10 @@ The NSF-Simons CosmicAI Initiative produced breakthrough results at the 247th Am
 
 - Not scalable to petaflop data volumes
 
-**VLASS Portal's role:** Become the **missing operations layer**
+**Cosmic Horizon's role:** Become the **missing operations layer**
 
 ```text
-CosmicAI                  VLASS Portal            Scientists
+CosmicAI                  Cosmic Horizon            Scientists
 (ML research)             (operations platform)    (users)
 │                         │                        │
 ├─ Models ──────────────→ ├─ Inference service     │
@@ -1096,9 +1094,9 @@ CosmicAI                  VLASS Portal            Scientists
 
 - Orders of magnitude beyond desktop Jupyter notebooks
 
-**VLASS Portal's role:** Proven operational interface for petaflop-scale workflows
+**Cosmic Horizon's role:** Proven operational interface for petaflop-scale workflows
 
-By 2030, VLASS Portal will have demonstrated:
+By 2030, Cosmic Horizon will have demonstrated:
 
 - ✓ Multi-site GPU orchestration (Phase 3 TACC partnership)
 
@@ -1110,7 +1108,7 @@ By 2030, VLASS Portal will have demonstrated:
 
 - ✓ Production reliability (audit trails, governance, SLAs)
 
-**Strategic outcome:** When ngVLA launches, VLASS Portal is positioned as its *de facto* operations interface.
+**Strategic outcome:** When ngVLA launches, Cosmic Horizon is positioned as its *de facto* operations interface.
 
 ---
 
@@ -1333,7 +1331,7 @@ Jun–Aug 2027
 
 ### Phase 4: 2027+ (Strategic Infrastructure)
 
-**Vision:** Establish VLASS Portal as NSF-backed, multi-institutional scientific computing infrastructure
+**Vision:** Establish Cosmic Horizon as NSF-backed, multi-institutional scientific computing infrastructure
 
 **Scope:**
 
@@ -1351,11 +1349,11 @@ Jun–Aug 2027
 
 ## Competitive Differentiation
 
-### Comparison: VLASS Portal vs. Alternatives
+### Comparison: Cosmic Horizon vs. Alternatives
 
 #### **vs. Aladin (Desktop Viewer)**
 
-| Feature | Aladin | VLASS Portal |
+| Feature | Aladin | Cosmic Horizon |
 | --- | --- | --- |
 
 | **Interface** | Desktop (Java) | Web (modern browsers) |
@@ -1370,11 +1368,11 @@ Jun–Aug 2027
 
 | **Governance** | N/A | ✅ (moderation + audit logs) |
 
-**Verdict:** Aladin = data viewing; VLASS Portal = analytical platform. Complementary, not competitive.
+**Verdict:** Aladin = data viewing; Cosmic Horizon = analytical platform. Complementary, not competitive.
 
 #### **vs. Jupyter Notebooks**
 
-| Feature | Jupyter | VLASS Portal |
+| Feature | Jupyter | Cosmic Horizon |
 | --- | --- | --- |
 
 | **Computational flexibility** | ✅ Full Python | Constrained (models only) |
@@ -1389,11 +1387,11 @@ Jun–Aug 2027
 
 | **Governance** | ❌ | ✅ (access control, moderation) |
 
-**Verdict:** Jupyter = exploration; VLASS Portal = discovery + publishing + governance. Complementary.
+**Verdict:** Jupyter = exploration; Cosmic Horizon = discovery + publishing + governance. Complementary.
 
 #### **vs. Airflow / Generic Workflow Engines**
 
-| Feature | Airflow | VLASS Portal |
+| Feature | Airflow | Cosmic Horizon |
 | --- | --- | --- |
 
 | **Domain specificity** | Generic workflows | Radio astronomy (specialized) |
@@ -1406,7 +1404,7 @@ Jun–Aug 2027
 
 | **Accessibility** | ❌ (complex config) | ✅ (point-and-click) |
 
-**Verdict:** Airflow = ETL infrastructure; VLASS Portal = scientific discovery tool. Different audiences.
+**Verdict:** Airflow = ETL infrastructure; Cosmic Horizon = scientific discovery tool. Different audiences.
 
 ---
 
@@ -1414,7 +1412,7 @@ Jun–Aug 2027
 
 ### For Funding Agencies (NSF, DOE)
 
-**VLASS Portal represents:**
+**Cosmic Horizon represents:**
 
 1. **Strategic alignment** with CosmicAI (NSF-Simons funded) and ngVLA (Astro2020 decadal survey priority)
 
@@ -1430,7 +1428,7 @@ Jun–Aug 2027
 
 ### For Institutional Partners (NRAO, CosmicAI, TACC)
 
-**VLASS Portal offers:**
+**Cosmic Horizon offers:**
 
 1. **Operations interface** for CosmicAI models (addresses key gap)
 
@@ -1446,7 +1444,7 @@ Jun–Aug 2027
 
 ### For Researchers & Educators
 
-**VLASS Portal unlocks:**
+**Cosmic Horizon unlocks:**
 
 1. **Fast discovery** of radio sources (1-second first paint)
 
@@ -1468,9 +1466,9 @@ Jun–Aug 2027
 
 ### For Industry Partners (NVIDIA, Cloud Providers)
 
-**VLASS Portal demonstrates:**
+**Cosmic Horizon demonstrates:**
 
-1. **Multi-GPU orchestration** across HPC + cloud (TACC + vlass-portal hybrid)
+1. **Multi-GPU orchestration** across HPC + cloud (TACC + cosmic-horizons hybrid)
 
 2. **Real-world workflow scheduling** for science (not yet solved elegantly)
 
@@ -1532,7 +1530,7 @@ Jun–Aug 2027
 
 ## Conclusion
 
-VLASS Portal is not just a website. It's the **missing operations layer** for modern radio astronomy, bridging the gap between world-class research algorithms and the operational realities of petaflop-scale science.
+Cosmic Horizon is not just a website. It's the **missing operations layer** for modern radio astronomy, bridging the gap between world-class research algorithms and the operational realities of petaflop-scale science.
 
 **By 2028:**
 
@@ -1544,7 +1542,7 @@ VLASS Portal is not just a website. It's the **missing operations layer** for mo
 
 **By 2030:**
 
-- ngVLA launches → VLASS Portal becomes its de facto operations interface
+- ngVLA launches → Cosmic Horizon becomes its de facto operations interface
 
 - Phase 4 mature → Established as NSF strategic infrastructure
 
@@ -1564,7 +1562,7 @@ That's the opportunity. That's the vision. Let's build it.
 
 - **Contains:** Technical specifications, budget breakdowns, strategic roadmaps
 
-- **For questions:** Contact project owner (vlass-portal@github)
+- **For questions:** Contact project owner (cosmic-horizons@github)
 
 **PDF Export recommended for:**
 
@@ -1642,7 +1640,7 @@ That's the opportunity. That's the vision. Let's build it.
 
 8. **Strategic Partnership Map** (Section 9: CosmicAI)
 
-   - Network diagram: VLASS Portal at center
+   - Network diagram: Cosmic Horizon at center
 
    - Radiating connections to NSF, NRAO, CosmicAI, TACC, ngVLA
 
@@ -1664,4 +1662,4 @@ All diagrams should include:
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

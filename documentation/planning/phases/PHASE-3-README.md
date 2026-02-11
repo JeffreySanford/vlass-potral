@@ -1,6 +1,6 @@
 # Phase 3: CosmicAI Federation & ngVLA Preparation
 
-Welcome to Phase 3 planning documentation. This phase establishes vlass-portal as the scientific operations platform for CosmicAI's distributed infrastructure and prepares for ngVLA's 50-petaflop data challenge.
+Welcome to Phase 3 planning documentation. This phase establishes cosmic-horizons as the scientific operations platform for CosmicAI's distributed infrastructure and prepares for ngVLA's 50-petaflop data challenge.
 
 ## Files in This Directory
 
@@ -33,7 +33,7 @@ Welcome to Phase 3 planning documentation. This phase establishes vlass-portal a
 
 | **Key Deliverable** | Federated multi-site inference + TACC integration |
 
-| **Success Definition** | 15+ institutions using vlass-portal; 5+ peer-reviewed papers; 20%+ using TACC compute |
+| **Success Definition** | 15+ institutions using cosmic-horizons; 5+ peer-reviewed papers; 20%+ using TACC compute |
 
 ## Phase 3 Success Metrics
 
@@ -47,9 +47,9 @@ Welcome to Phase 3 planning documentation. This phase establishes vlass-portal a
 
 **User-facing:**
 
-- 15+ NSF-affiliated institutions running analyses via vlass-portal
+- 15+ NSF-affiliated institutions running analyses via cosmic-horizons
 
-- 5+ published peer-reviewed papers citing vlass-portal reproducibility
+- 5+ published peer-reviewed papers citing cosmic-horizons reproducibility
 
 - Community notebook posts using TACC compute ≥20%
 
@@ -59,9 +59,9 @@ Welcome to Phase 3 planning documentation. This phase establishes vlass-portal a
 
 - Cited in ngVLA operations planning documents
 
-- CosmicAI formally acknowledges vlass-portal as primary interface
+- CosmicAI formally acknowledges cosmic-horizons as primary interface
 
-- NRAO management identifies vlass-portal as strategic asset
+- NRAO management identifies cosmic-horizons as strategic asset
 
 ## Key Dates & Milestones
 

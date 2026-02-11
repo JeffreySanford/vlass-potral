@@ -1,4 +1,4 @@
-# VLASS Portal Logging System (MVP)
+# Cosmic Horizon Logging System (MVP)
 
 **Date:** 2026-02-07
 **Status:** DESIGN PHASE
@@ -639,7 +639,7 @@ GET /api/admin/logs/summary?from=2026-02-01&to=2026-02-07
 
 ### **1. Log Entity (TypeORM)**
 
-**File:** `apps/vlass-api/src/app/entities/log.entity.ts`
+**File:** `apps/cosmic-horizons-api/src/app/entities/log.entity.ts`
 
 ```typescript
 import {
@@ -724,7 +724,7 @@ export class Log {
 
 ### **2. Log Repository**
 
-**File:** `apps/vlass-api/src/app/repositories/log.repository.ts`
+**File:** `apps/cosmic-horizons-api/src/app/repositories/log.repository.ts`
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -865,7 +865,7 @@ export class LogRepository {
 
 ### **3. Log Service**
 
-**File:** `apps/vlass-api/src/app/services/log.service.ts`
+**File:** `apps/cosmic-horizons-api/src/app/services/log.service.ts`
 
 ```typescript
 import { Injectable, Logger } from '@nestjs/common';
@@ -1012,7 +1012,7 @@ export class LogService {
 
 ### **4. HTTP Interceptor (Backend)**
 
-**File:** `apps/vlass-api/src/app/interceptors/logging.interceptor.ts`
+**File:** `apps/cosmic-horizons-api/src/app/interceptors/logging.interceptor.ts`
 
 ```typescript
 import {
@@ -1111,7 +1111,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
 ### **5. Admin Log Controller**
 
-**File:** `apps/vlass-api/src/app/controllers/admin-logs.controller.ts`
+**File:** `apps/cosmic-horizons-api/src/app/controllers/admin-logs.controller.ts`
 
 ```typescript
 import {
@@ -1217,7 +1217,7 @@ export class AdminLogsController {
 
 ### **1. HTTP Interceptor (Angular)**
 
-**File:** `apps/vlass-web/src/app/interceptors/logging.interceptor.ts`
+**File:** `apps/cosmic-horizons-web/src/app/interceptors/logging.interceptor.ts`
 
 ```typescript
 import { Injectable } from '@angular/core';
@@ -1275,7 +1275,7 @@ export class LoggingInterceptor implements HttpInterceptor {
 
 ### **2. Logger Service (Frontend)**
 
-**File:** `apps/vlass-web/src/app/services/logger.service.ts`
+**File:** `apps/cosmic-horizons-web/src/app/services/logger.service.ts`
 
 ```typescript
 import { Injectable } from '@angular/core';
@@ -1388,7 +1388,7 @@ admin-logs-dashboard/
 
 ### **Main Dashboard Template**
 
-**File:** `apps/vlass-web/src/app/features/admin/logs/admin-logs-dashboard.component.html`
+**File:** `apps/cosmic-horizons-web/src/app/features/admin/logs/admin-logs-dashboard.component.html`
 
 ```html
 <div class="logs-dashboard">
@@ -1856,4 +1856,4 @@ LOG_SENSITIVE_FIELDS=password,token,authorization,secret
 ## **Ready to implement?** Start with Phase 1 (core logging infrastructure)
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

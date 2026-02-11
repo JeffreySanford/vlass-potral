@@ -2,7 +2,7 @@
 
 ## Overview
 
-VLASS Portal personalizes the landing page background (sky image) to the user's region. This is done with **strict privacy guarantees**:
+Cosmic Horizon personalizes the landing page background (sky image) to the user's region. This is done with **strict privacy guarantees**:
 
 - **Coarse-grained only:** Geohash precision 4 (~5km × 5km grid)
 
@@ -23,7 +23,7 @@ VLASS Portal personalizes the landing page background (sky image) to the user's 
 User visits landing page → "Want a personalized sky view? Share your location?" → User clicks OK.
 
 ```typescript
-// apps/vlass-web/src/app/landing/location.service.ts
+// apps/cosmic-horizons-web/src/app/landing/location.service.ts
 
 @Injectable({ providedIn: 'root' })
 export class LocationService {
@@ -148,7 +148,7 @@ const { latitude, longitude, error } = geohash.bounds(gh);
 After user provides location (consent + geohash computed), store in signed HTTP-only cookie:
 
 ```typescript
-// apps/vlass-api/src/app/landing/location.controller.ts
+// apps/cosmic-horizons-api/src/app/landing/location.controller.ts
 
 @Post("api/v1/location/set")
 async setLocation(
@@ -219,7 +219,7 @@ Payload (JSON):
 Server-side rendering fetches personalized sky image for landing page:
 
 ```typescript
-// apps/vlass-web/src/app/landing/landing.component.server.ts
+// apps/cosmic-horizons-web/src/app/landing/landing.component.server.ts
 
 async function renderLandingPage(req: Request, res: Response): Promise<string> {
   // Extract location from cookie
@@ -334,7 +334,7 @@ await this.audit.log({
 ### Landing Page Component
 
 ```typescript
-// apps/vlass-web/src/app/landing/landing.component.ts
+// apps/cosmic-horizons-web/src/app/landing/landing.component.ts
 
 @Component({
   selector: 'app-landing',
@@ -471,7 +471,7 @@ When user deletes account (see DATA-RETENTION.md):
 ## Part 8: Testing
 
 ```typescript
-// apps/vlass-api-e2e/src/location-privacy.spec.ts
+// apps/cosmic-horizons-api-e2e/src/location-privacy.spec.ts
 
 describe('Location Privacy', () => {
   it('should store geohash in signed cookie', async () => {
@@ -584,4 +584,4 @@ A: Yes. Geohash ≤5km is not personally identifiable (5 million cells globally)
 ## **Related:** DATA-RETENTION-DELETION.md, AUTHENTICATION.md
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

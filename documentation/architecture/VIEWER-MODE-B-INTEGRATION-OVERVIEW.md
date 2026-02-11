@@ -152,4 +152,4 @@ Recommended coordination track:
 ## If any item is unresolved, defer Mode B and continue Mode A + phased platform roadmap
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

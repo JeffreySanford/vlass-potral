@@ -10,7 +10,7 @@ ACCEPTED
 
 ## Context
 
-VLASS Portal users want FITS data access. Three models exist:
+Cosmic Horizon users want FITS data access. Three models exist:
 
 ### A) Link-Out (No Proxy) - MVP choice
 
@@ -277,4 +277,4 @@ Until then: **Link-out only** keeps MVP lean and shippable.
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

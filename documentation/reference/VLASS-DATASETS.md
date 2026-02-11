@@ -17,4 +17,4 @@ Status date: 2026-02-07
 ## All data access must remain public-only and link-out compliant
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

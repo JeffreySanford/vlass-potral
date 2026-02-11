@@ -39,7 +39,7 @@ Weighted success score: **97 / 100**
 
 - Nx reported `mvp-gates:e2e` as flaky once; reliability follow-up remains open.
 
-- `vlass-api:typecheck` still fails and is not currently part of required release gates.
+- `cosmic-horizons-api:typecheck` still fails and is not currently part of required release gates.
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

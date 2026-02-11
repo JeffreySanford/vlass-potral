@@ -1,12 +1,12 @@
-# VLASS Portal
+# Cosmic Horizon
 
 > Independent portal using public VLASS data; not affiliated with VLA/NRAO.
 
-[![Build](https://github.com/JeffreySanford/vlass-portal/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/vlass-portal/actions/workflows/build.yml)
-[![Unit Tests](https://github.com/JeffreySanford/vlass-portal/actions/workflows/unit-tests.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/vlass-portal/actions/workflows/unit-tests.yml)
-[![E2E](https://github.com/JeffreySanford/vlass-portal/actions/workflows/e2e.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/vlass-portal/actions/workflows/e2e.yml)
-[![Lint](https://github.com/JeffreySanford/vlass-portal/actions/workflows/lint.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/vlass-portal/actions/workflows/lint.yml)
-[![CodeQL](https://github.com/JeffreySanford/vlass-portal/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/vlass-portal/actions/workflows/codeql.yml)
+[![Build](https://github.com/JeffreySanford/cosmic-horizons/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/cosmic-horizons/actions/workflows/build.yml)
+[![Unit Tests](https://github.com/JeffreySanford/cosmic-horizons/actions/workflows/unit-tests.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/cosmic-horizons/actions/workflows/unit-tests.yml)
+[![E2E](https://github.com/JeffreySanford/cosmic-horizons/actions/workflows/e2e.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/cosmic-horizons/actions/workflows/e2e.yml)
+[![Lint](https://github.com/JeffreySanford/cosmic-horizons/actions/workflows/lint.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/cosmic-horizons/actions/workflows/lint.yml)
+[![CodeQL](https://github.com/JeffreySanford/cosmic-horizons/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/JeffreySanford/cosmic-horizons/actions/workflows/codeql.yml)
 
 Canonical MVP docs:
 
@@ -26,7 +26,7 @@ Strategic documents inform planning and integration direction, but do not overri
 
 ## MVP Summary
 
-VLASS Portal MVP is a three-pillar Angular + NestJS product:
+Cosmic Horizon MVP is a three-pillar Angular + NestJS product:
 
 1. SSR first paint (<1s target on 4G)
 2. Aladin viewer + permalink + snapshots
@@ -55,12 +55,12 @@ pnpm build
 ## Commands (Nx-first with pnpm wrappers)
 
 ```bash
-pnpm start:web      # nx serve vlass-web
-pnpm start:api      # nx serve vlass-api
+pnpm start:web      # nx serve cosmic-horizons-web
+pnpm start:api      # nx serve cosmic-horizons-api
 pnpm start:all      # free ports + docker infra + web/api serve
 pnpm test           # nx run-many --target=test --all
-pnpm test:web       # nx test vlass-web
-pnpm test:api       # nx test vlass-api
+pnpm test:web       # nx test cosmic-horizons-web
+pnpm test:api       # nx test cosmic-horizons-api
 pnpm e2e:mvp        # nx run mvp-gates:e2e
 pnpm lighthouse:mobile # lhci mobile audit
 pnpm lighthouse:summary # text/json summary for CI + AI consumers
@@ -70,10 +70,10 @@ pnpm lint           # nx run-many --target=lint --all
 
 ## Projects
 
-- `apps/vlass-web` - Angular SSR frontend
-- `apps/vlass-api` - NestJS backend
-- `apps/vlass-web-e2e` - Playwright E2E
-- `apps/vlass-api-e2e` - API E2E
+- `apps/cosmic-horizons-web` - Angular SSR frontend
+- `apps/cosmic-horizons-api` - NestJS backend
+- `apps/cosmic-horizons-web-e2e` - Playwright E2E
+- `apps/cosmic-horizons-api-e2e` - API E2E
 - `libs/shared/models` - Shared types
 
 ## Baseline Gate

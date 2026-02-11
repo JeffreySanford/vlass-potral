@@ -1,7 +1,7 @@
 # Funding & Cost Strategy: Phase 2 & 3
 
 **Status date:** 2026-02-10
-**Scope:** Financial planning and grant strategy for vlass-portal Phases 2 and 3
+**Scope:** Financial planning and grant strategy for cosmic-horizons Phases 2 and 3
 **Owner:** Project planning team
 
 ---
@@ -245,7 +245,7 @@ Q1 2027: Phase 3 ramping (grant-funded or extended timeline)
 **Due dates:** Usually April, August (check solicitations)
 
 **Your pitch:**
-> "vlass-portal: Scientific Operations Platform for Radio Astronomy AI Workflows"
+> "cosmic-horizons: Scientific Operations Platform for Radio Astronomy AI Workflows"
 
 >
 > **Problem:** CosmicAI has cutting-edge ML models and massive compute (TACC). Researchers still interact via Jupyter notebooks (2012-era UX). **Solution:** Web-native operations platform enabling reproducible, federated AI analysis across institutional boundaries. **Impact:** Demonstrator for ngVLA operations (2030s); aligns with NSF strategic priorities in AI + scientific computing.
@@ -304,7 +304,7 @@ Q1 2027: Phase 3 ramping (grant-funded or extended timeline)
 > "Multi-site GPU Orchestration for Astronomy: Case Study in Distributed Inference Across HPC Centers"
 
 >
-> **Problem:** Researchers want to use GPUs efficiently across institutions. **Solution:** vlass-portal demonstrates dynamic GPU allocation, job queuing, and caching across TACC + local clusters. **Value for NVIDIA:** Reference implementation; marketing materials; research impact.
+> **Problem:** Researchers want to use GPUs efficiently across institutions. **Solution:** cosmic-horizons demonstrates dynamic GPU allocation, job queuing, and caching across TACC + local clusters. **Value for NVIDIA:** Reference implementation; marketing materials; research impact.
 
 **Why you're competitive:**
 
@@ -329,7 +329,7 @@ Q1 2027: Phase 3 ramping (grant-funded or extended timeline)
 **Due dates:** Similar to SI² (check solicitations)
 
 **Your pitch (post-Phase 3):**
-> "vlass-portal: National-Scale Scientific Workflow Platform for Radio Astronomy"
+> "cosmic-horizons: National-Scale Scientific Workflow Platform for Radio Astronomy"
 
 >
 > **Problem:** 50+ astronomy institutions need shared cyberinfrastructure for AI-driven data analysis. Fragmented tools, no reproducibility, no governance. **Solution:** Federally-funded shared platform with production support, training, and community governance.
@@ -467,7 +467,7 @@ Once Phase 3 launches (mid-2027), ongoing operational expenses:
 | Distributed caching | $10K–$20K | Multi-site storage |
 | Monitoring & observability | $2K–$5K | CloudWatch, Prometheus |
 | TACC GPU allocation | ~$0 | Covered by NSF grants (CosmicAI, ngVLA) |
-| Backend hosting (vlass-portal) | $5K–$10K | If cloud-hosted; less if on-prem |
+| Backend hosting (cosmic-horizons) | $5K–$10K | If cloud-hosted; less if on-prem |
 | **Total operational** | **$22K–$45K/year** | Covered by grant renewals or NSF support |
 
 ---
@@ -561,4 +561,4 @@ Once Phase 3 launches (mid-2027), ongoing operational expenses:
 ## **Key insight:** Start Phase 2 now with internal budget. Write grant proposals Apr–Jun. If awarded, scale Phase 3 in Oct. If not, continue on extended timeline with NVIDIA credits or CIS partnership. Either way, you'll have a working system by mid-2027
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

@@ -1,11 +1,11 @@
 # Abstract Follow-Up Template
 
-Subject: `Cosmic Horizons 2026 abstract follow-up: vlass-portal infrastructure track`
+Subject: `Cosmic Horizons 2026 abstract follow-up: cosmic-horizons infrastructure track`
 
 Hello [Name],
 
 I wanted to follow up on my submitted abstract:
-`vlass-portal: A Web-Native Operational Interface for AI-Driven VLASS Data Exploration and Analysis Aligned with CosmicAI and ngVLA Infrastructure`.
+`cosmic-horizons: A Web-Native Operational Interface for AI-Driven VLASS Data Exploration and Analysis Aligned with CosmicAI and ngVLA Infrastructure`.
 
 The submission is framed as research software infrastructure that complements model and compute work with:
 
@@ -19,7 +19,7 @@ If there is a preferred track/session for infrastructure-focused contributions, 
 
 Thank you,
 [Your Name]
-## `github.com/JeffreySanford/vlass-portal`
+## `github.com/JeffreySanford/cosmic-horizons`
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

@@ -11,7 +11,7 @@ RxJS error handling prevents cascading failures. We use error boundaries to isol
 ### Basic Error Boundary
 
 ```typescript
-// apps/vlass-web/src/app/core/operators/error-boundary.operator.ts
+// apps/cosmic-horizons-web/src/app/core/operators/error-boundary.operator.ts
 
 import { Observable, catchError, of, throwError, timeout } from 'rxjs';
 import { OperatorFunction } from 'rxjs';
@@ -76,7 +76,7 @@ function isRetryableError(error: any): boolean {
 ### Usage Example
 
 ```typescript
-// apps/vlass-web/src/app/tap/tap.service.ts
+// apps/cosmic-horizons-web/src/app/tap/tap.service.ts
 
 @Injectable()
 export class TapService {
@@ -113,7 +113,7 @@ export class TapService {
 Keep streams isolated to prevent one failure from breaking others:
 
 ```typescript
-// apps/vlass-web/src/app/dashboard/dashboard.component.ts
+// apps/cosmic-horizons-web/src/app/dashboard/dashboard.component.ts
 
 @Component({
   selector: 'app-dashboard',
@@ -179,7 +179,7 @@ export class DashboardComponent implements OnInit {
 ## Pattern: Error Recovery with Fallback
 
 ```typescript
-// apps/vlass-web/src/app/core/api.service.ts
+// apps/cosmic-horizons-web/src/app/core/api.service.ts
 
 fetchDataWithFallback<T>(
   primary$: Observable<T>,
@@ -212,7 +212,7 @@ this.data$ = this.fetchDataWithFallback(
 Stop requesting a failing service temporarily:
 
 ```typescript
-// apps/vlass-api/src/app/shared/guards/circuit-breaker.ts
+// apps/cosmic-horizons-api/src/app/shared/guards/circuit-breaker.ts
 
 @Injectable()
 export class CircuitBreaker {
@@ -291,7 +291,7 @@ export class ExternalApiService {
 ## Pattern: Error Logging with Context
 
 ```typescript
-// apps/vlass-web/src/app/core/logging/error-logger.service.ts
+// apps/cosmic-horizons-web/src/app/core/logging/error-logger.service.ts
 
 @Injectable({ providedIn: 'root' })
 export class ErrorLogger {
@@ -355,7 +355,7 @@ this.api.getPosts().pipe(
 ## Testing Error Boundaries
 
 ```typescript
-// apps/vlass-web/src/app/tap/tap.service.spec.ts
+// apps/cosmic-horizons-web/src/app/tap/tap.service.spec.ts
 
 describe('TapService Error Handling', () => {
   it('should return fallback on API failure', async () => {
@@ -424,4 +424,4 @@ describe('TapService Error Handling', () => {
 ## **Key:** Isolate streams. Use fallbacks. Log with context. Retry smartly
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

@@ -49,7 +49,7 @@ Add this footer to any slide containing ecosystem-scale metrics:
 
 Add this line to title and closing slides (or presenter notes if slide space is constrained):
 
-`VLASS Portal is an independent, public-data-compatible, integration-ready web platform; it is not affiliated with, sponsored by, or operated by VLA/NRAO/VLASS.`
+`Cosmic Horizon is an independent, public-data-compatible, integration-ready web platform; it is not affiliated with, sponsored by, or operated by VLA/NRAO/VLASS.`
 
 ---
 
@@ -60,4 +60,4 @@ Apply the replacements in the editable slide source before the next export.
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

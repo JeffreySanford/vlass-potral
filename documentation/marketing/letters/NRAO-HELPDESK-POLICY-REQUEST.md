@@ -4,7 +4,7 @@ Subject: `Request for guidance: FITS access and derivative-use boundaries for in
 
 Hello NRAO Team,
 
-I am an independent developer working on an open-source project (`vlass-portal`) focused on public VLASS-compatible workflows.
+I am an independent developer working on an open-source project (`cosmic-horizons`) focused on public VLASS-compatible workflows.
 
 Before implementing any FITS-oriented features, I want to ensure full policy compliance. Could you please clarify:
 
@@ -18,10 +18,10 @@ Before implementing any FITS-oriented features, I want to ensure full policy com
 
 I am intentionally requesting guidance first so I can stay within NRAO/VLA rules.
 
-Project reference: `github.com/JeffreySanford/vlass-portal`
+Project reference: `github.com/JeffreySanford/cosmic-horizons`
 
 Best regards,
 ## Jeffrey Sanford
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

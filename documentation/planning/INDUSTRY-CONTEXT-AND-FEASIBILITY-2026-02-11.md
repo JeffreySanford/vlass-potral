@@ -2,13 +2,13 @@
 
 Status date: 2026-02-11
 Owner: Jeffrey Sanford
-Purpose: Capture the current external narrative, feasibility assumptions, and positioning for VLASS Portal planning.
+Purpose: Capture the current external narrative, feasibility assumptions, and positioning for Cosmic Horizon planning.
 
 ---
 
 ## Positioning Summary
 
-VLASS Portal is an independent software platform intended to act as a web-native operations and collaboration layer for public radio-astronomy workflows.
+Cosmic Horizon is an independent software platform intended to act as a web-native operations and collaboration layer for public radio-astronomy workflows.
 
 It is not an official NRAO/VLA/VLASS system.
 
@@ -35,7 +35,7 @@ Net: This is not only a concept. It is an operational platform with documented q
 
 ## Strategic Value Beyond Existing Viewers
 
-Compared with standalone sky viewers, VLASS Portal adds workflow and collaboration surfaces:
+Compared with standalone sky viewers, Cosmic Horizon adds workflow and collaboration surfaces:
 
 1. Persistent state sharing: permalinks + snapshots.
 2. Community notebook publishing with revisions.
@@ -92,4 +92,4 @@ Do not imply institutional endorsement before written confirmation.
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

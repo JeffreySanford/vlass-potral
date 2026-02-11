@@ -1,7 +1,7 @@
 # Viewer Component Improvements Analysis
 
 **Date:** 2026-02-11
-**Component:** `ViewerComponent` (`apps/vlass-web/src/app/features/viewer/`)
+**Component:** `ViewerComponent` (`apps/cosmic-horizons-web/src/app/features/viewer/`)
 **Status:** MVP Ready, Polish Phase Recommendations
 **Scope:** UX/polish improvements for frontend pre-deploy (no breaking changes to data model)
 
@@ -465,16 +465,16 @@ from(this.aladinView.getViewDataURL({
 
 **Files to Modify:**
 
-- `apps/vlass-web/src/app/features/viewer/viewer.component.ts` – Core logic
+- `apps/cosmic-horizons-web/src/app/features/viewer/viewer.component.ts` – Core logic
 
-- `apps/vlass-web/src/app/features/viewer/viewer.component.html` – Template
+- `apps/cosmic-horizons-web/src/app/features/viewer/viewer.component.html` – Template
 
-- `apps/vlass-web/src/app/features/viewer/viewer.component.scss` – Styles
+- `apps/cosmic-horizons-web/src/app/features/viewer/viewer.component.scss` – Styles
 ---**New Files (Optional):**
 
-- `apps/vlass-web/src/app/features/viewer/viewer-help.component.ts` – Keybinds overlay
+- `apps/cosmic-horizons-web/src/app/features/viewer/viewer-help.component.ts` – Keybinds overlay
 
-- `apps/vlass-web/src/app/features/viewer/object-type.pipe.ts` – Icon mapping
+- `apps/cosmic-horizons-web/src/app/features/viewer/object-type.pipe.ts` – Icon mapping
 
 ---
 
@@ -524,4 +524,4 @@ from(this.aladinView.getViewDataURL({
 ---
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

@@ -56,7 +56,7 @@ GET /api/ephem/mars?epoch=2026-02-10T14:30:00Z
 | **Data Policy**       | Public    | TBD (v2 phase)   |
 
 **Current MVP Promise**:
-> "VLASS Portal Mode A Viewer is a **web-based astronomical sky explorer** powered by Aladin Lite. It provides interactive HiPS-based sky map, pan, zoom, and inspection capabilities."
+> "Cosmic Horizon Mode A Viewer is a **web-based astronomical sky explorer** powered by Aladin Lite. It provides interactive HiPS-based sky map, pan, zoom, and inspection capabilities."
 
 **Does Mars not showing count as MVP failure?**
 
@@ -442,4 +442,4 @@ If Phase 2 includes:
 ## - [MARS-RESOLUTION-DEBUGGING.md](MARS-RESOLUTION-DEBUGGING.md) - Troubleshooting guide
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

@@ -32,10 +32,10 @@ export default [
     },
   },
   {
-    files: ['apps/vlass-web/src/app/**/*.ts'],
+    files: ['apps/cosmic-horizons-web/src/app/**/*.ts'],
     ignores: [
       '**/*.spec.ts',
-      'apps/vlass-web/src/app/features/viewer/hips-tile-prefetch.service.ts',
+      'apps/cosmic-horizons-web/src/app/features/viewer/hips-tile-prefetch.service.ts',
     ],
     rules: {
       'no-restricted-syntax': [
@@ -69,7 +69,7 @@ export default [
     },
   },
   {
-    files: ['apps/vlass-api/src/app/**/*.ts'],
+    files: ['apps/cosmic-horizons-api/src/app/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
       'no-restricted-imports': [

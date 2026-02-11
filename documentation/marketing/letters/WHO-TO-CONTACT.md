@@ -98,7 +98,7 @@ Helpful links:
 
 ## Positioning Statement
 
-`vlass-portal` is a web-native operational interface for AI-driven radio astronomy pipelines, intended to complement CosmicAI/NRAO backend compute with workflow orchestration, reproducibility, and human-facing domain UX.
+`cosmic-horizons` is a web-native operational interface for AI-driven radio astronomy pipelines, intended to complement CosmicAI/NRAO backend compute with workflow orchestration, reproducibility, and human-facing domain UX.
 
 ## Two-Message Sequence
 
@@ -133,4 +133,4 @@ Message B (Technical handoff):
 ## - Avoid implying authorization from background/clearance; request formal guidance instead
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

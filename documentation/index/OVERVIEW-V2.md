@@ -5,7 +5,7 @@ Scope anchor: `documentation/product/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`
 
 ## System Narrative
 
-VLASS Portal V2 evolves the MVP into a credible public-domain astronomy collaboration platform: fast SSR entry, interactive sky exploration, and notebook-style community publishing with stronger operational guardrails.
+Cosmic Horizon V2 evolves the MVP into a credible public-domain astronomy collaboration platform: fast SSR entry, interactive sky exploration, and notebook-style community publishing with stronger operational guardrails.
 
 Affiliation boundary:
 
@@ -47,8 +47,8 @@ Out of scope:
 
 ```text
 Browser
-  -> Angular SSR app (apps/vlass-web)
-    -> NestJS API (apps/vlass-api)
+  -> Angular SSR app (apps/cosmic-horizons-web)
+    -> NestJS API (apps/cosmic-horizons-api)
       -> PostgreSQL (primary data)
       -> Redis (cache/rate-limit support)
       -> External astronomy sources (public VLASS/NRAO ecosystem endpoints)
@@ -242,4 +242,4 @@ Required CI signals:
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

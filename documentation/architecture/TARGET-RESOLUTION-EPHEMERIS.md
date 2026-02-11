@@ -4,7 +4,7 @@
 **Status**: ✅ Implementation Complete (MVP v1.0) | ⚠️ Scientific Accuracy: Fallback Mode
 **Scope**: MVP (v1.0) | Future: v1.1 (Scientific Ephemeris)
 **Component**: ViewerComponent target search/resolver
-**Related**: `apps/vlass-web/src/app/features/viewer/viewer.component.ts`
+**Related**: `apps/cosmic-horizons-web/src/app/features/viewer/viewer.component.ts`
 
 ---
 
@@ -100,7 +100,7 @@ Both IMCCE endpoints are unreachable in current production environment (as of Fe
 
 ### Implementation Details
 
-**File Modified**: `apps/vlass-web/src/app/features/viewer/viewer.component.ts` (~120 lines added)
+**File Modified**: `apps/cosmic-horizons-web/src/app/features/viewer/viewer.component.ts` (~120 lines added)
 
 **Methods Added**:
 
@@ -396,4 +396,4 @@ console.log("planet_resolution_fallback")
 ## **Last Updated**: 2026-02-10
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

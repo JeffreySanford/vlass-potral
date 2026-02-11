@@ -1,6 +1,6 @@
 # Phase 2: AI Integration Foundation
 
-Welcome to Phase 2 planning documentation. This phase transforms vlass-portal into an AI-driven scientific operations platform by integrating CosmicAI algorithms for inference, reproducibility, and explainability.
+Welcome to Phase 2 planning documentation. This phase transforms cosmic-horizons into an AI-driven scientific operations platform by integrating CosmicAI algorithms for inference, reproducibility, and explainability.
 
 ## Files in This Directory
 

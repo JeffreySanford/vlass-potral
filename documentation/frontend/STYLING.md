@@ -33,7 +33,7 @@
 
 ## Design System Overview
 
-The VLASS Portal frontend uses **Angular Material 3** as the design system. This provides:
+The Cosmic Horizon frontend uses **Angular Material 3** as the design system. This provides:
 
 - **Pre-built, accessible components:** Buttons, forms, cards, tables, dialogs
 
@@ -448,7 +448,7 @@ this.snackBar.open('Action successful!', 'Dismiss', {
 ### File Organization
 
 ```scss
-apps/vlass-web/src/
+apps/cosmic-horizons-web/src/
 ├── styles.scss              # Global styles
 
 ├── styles/
@@ -937,7 +937,7 @@ Material Design 3 elevation levels:
 
 **Last Updated:** 2026-02-07
 
-## **Maintained By:** VLASS Portal Design Team
+## **Maintained By:** Cosmic Horizon Design Team
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

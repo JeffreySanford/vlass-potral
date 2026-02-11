@@ -24,9 +24,9 @@ Affiliation note:
 
 ## Components
 
-- Frontend: `apps/vlass-web` (Angular SSR)
+- Frontend: `apps/cosmic-horizons-web` (Angular SSR)
 
-- Backend: `apps/vlass-api` (NestJS + Postgres/Redis)
+- Backend: `apps/cosmic-horizons-api` (NestJS + Postgres/Redis)
 
 - Remote Compute Gateway (Phase 4): `JobsModule` integration with TACC/CosmicAI exascale compute fabric.
 
@@ -34,7 +34,7 @@ Affiliation note:
 
 ## Remote Compute & AI Integration (Phase 4)
 
-The VLASS Portal serves as the **AI Control Plane** for autonomous agents developed by the NSF-Simons CosmicAI initiative.
+The Cosmic Horizon serves as the **AI Control Plane** for autonomous agents developed by the NSF-Simons CosmicAI initiative.
 
 - **Frontend Job Console**: Enterprise-grade steering interface for monitoring AlphaCal and Radio Image Reconstruction performance.
 - **Backend Orchestration**: `TaccIntegrationService` manages job submission, status polling, and result retrieval from TACC resources.
@@ -42,8 +42,8 @@ The VLASS Portal serves as the **AI Control Plane** for autonomous agents develo
 
 ```mermaid
 flowchart LR
-    U[Browser Client] --> W[Angular SSR Web<br/>apps/vlass-web]
-    W --> A[NestJS API<br/>apps/vlass-api]
+    U[Browser Client] --> W[Angular SSR Web<br/>apps/cosmic-horizons-web]
+    W --> A[NestJS API<br/>apps/cosmic-horizons-api]
     A --> P[(PostgreSQL)]
     A --> R[(Redis)]
     W --> V[Aladin HiPS Viewer]
@@ -97,7 +97,7 @@ Mode B planning overview (timing, feasibility, permission assumptions):
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
 
 ---
 *Independent portal using public VLASS data; not affiliated with VLA/NRAO.*

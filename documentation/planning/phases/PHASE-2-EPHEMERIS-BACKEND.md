@@ -43,7 +43,7 @@ GET /api/view/ephem/search?object=mars&epoch=2026-02-10T14:30:00Z
 
 ```
 
-**NestJS Backend** (vlass-api):
+**NestJS Backend** (cosmic-horizons-api):
 
 ```text
 ├─ Controller: POST /api/view/ephem/search
@@ -281,7 +281,7 @@ const vector = Astronomy.GeoVector(Astronomy.Body.Mars, new Date(), observer);
 
 **Task 1.2**: Implement NestJS ephemeris service
 
-- Create: `apps/vlass-api/src/app/modules/ephemeris/ephemeris.service.ts`
+- Create: `apps/cosmic-horizons-api/src/app/modules/ephemeris/ephemeris.service.ts`
 
 - Implement position calculations using `Astronomy.GeoVector()` + `Astronomy.EquatorialFromVector()`
 
@@ -607,4 +607,4 @@ describe('EphemerisService', () => {
 ## **Next Step**: Create GitHub issues for Sprint 1 tasks and assign to yourself
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

@@ -366,7 +366,7 @@ These metadata fields enable:
 **Last Updated:** 2026-02-07
 **Status:** Archived (For Reference Only - MVP Uses Mode A)
 
-## **Maintained By:** VLASS Portal Architecture Team
+## **Maintained By:** Cosmic Horizon Architecture Team
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

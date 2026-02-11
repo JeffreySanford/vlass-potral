@@ -21,4 +21,4 @@ Aladin Lite is the only in-scope viewer runtime for MVP.
 ## Keep this dependency pinned and tested through Nx test/e2e targets
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

@@ -89,14 +89,14 @@ logs() {
 psql() {
   check_docker
   print_status "Connecting to Postgres..."
-  docker-compose -f "$COMPOSE_FILE" exec vlass-postgres psql -U vlass_user -d vlass_portal
+  docker-compose -f "$COMPOSE_FILE" exec vlass-postgres psql -U cosmic_horizons_user -d cosmic_horizons
 }
 
 # Access Redis CLI
 redis() {
   check_docker
   print_status "Connecting to Redis..."
-  docker-compose -f "$COMPOSE_FILE" exec vlass-redis redis-cli -a vlass_redis_dev
+  docker-compose -f "$COMPOSE_FILE" exec vlass-redis redis-cli -a cosmic_horizons_redis_dev
 }
 
 # Status

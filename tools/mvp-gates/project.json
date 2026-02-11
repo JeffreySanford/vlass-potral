@@ -8,13 +8,13 @@
     "e2e": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pnpm run start:ports:free && pnpm nx run vlass-web-e2e:e2e-mvp && pnpm nx run vlass-web-e2e:e2e-perf && pnpm nx run vlass-api-e2e:e2e"
+        "command": "pnpm run start:ports:free && pnpm nx run cosmic-horizons-web-e2e:e2e-mvp && pnpm nx run cosmic-horizons-web-e2e:e2e-perf && pnpm nx run cosmic-horizons-api-e2e:e2e"
       }
     },
     "perf": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pnpm nx run vlass-web-e2e:e2e-perf"
+        "command": "pnpm nx run cosmic-horizons-web-e2e:e2e-perf"
       }
     }
   }

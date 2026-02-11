@@ -16,9 +16,9 @@
     "target": "es2022",
     "baseUrl": ".",
     "paths": {
-      "@vlass-portal/vlass-web/*": ["apps/vlass-web/src/*"],
-      "@vlass-portal/shared/*": ["libs/shared/src/*"]
+      "@cosmic-horizons/cosmic-horizons-web/*": ["apps/cosmic-horizons-web/src/*"],
+      "@cosmic-horizons/shared/*": ["libs/shared/src/*"]
     },
-    "customConditions": ["@vlass-portal/source"]
+    "customConditions": ["@cosmic-horizons/source"]
   }
 }

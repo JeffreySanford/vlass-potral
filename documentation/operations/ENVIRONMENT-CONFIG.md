@@ -82,6 +82,7 @@ CUTOUT_SECONDARY_API_KEY_PREFIX=
 ```
 
 ## If config docs conflict with runtime code, source of truth is active code + charter/scope lock
+
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

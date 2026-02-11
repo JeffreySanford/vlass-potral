@@ -32,7 +32,7 @@ Use official event channels (CosmicAI/NRAO/Whova pages) as the source of truth f
 
 ## Strategic Framing for Abstract
 
-Position VLASS Portal as:
+Position Cosmic Horizon as:
 
 - Independent, public-data-compatible, integration-ready platform.
 - "Front-half" UX and operations layer that complements institutional compute/model backends.
@@ -59,7 +59,7 @@ Use this structure:
 2. Operational gap:
    Compute and models exist, but usable researcher-facing orchestration is underdeveloped.
 3. Platform answer:
-   VLASS Portal provides fast web access, persistent visualization context, and revision-tracked collaboration.
+   Cosmic Horizon provides fast web access, persistent visualization context, and revision-tracked collaboration.
 4. Value:
    Enables trustable, reviewable AI-assisted workflows instead of opaque batch outputs.
 
@@ -140,4 +140,4 @@ Do not claim direct ownership/control of institutional archives or compute unles
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

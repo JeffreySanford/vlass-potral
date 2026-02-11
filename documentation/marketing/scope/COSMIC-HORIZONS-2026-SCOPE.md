@@ -4,7 +4,7 @@ Status date: 2026-02-10
 
 ## Objective
 
-Position `vlass-portal` as the web-native operational interface for AI-driven VLASS and ngVLA-aligned workflows.
+Position `cosmic-horizons` as the web-native operational interface for AI-driven VLASS and ngVLA-aligned workflows.
 
 ## Conference Framing
 
@@ -30,7 +30,7 @@ Current astronomy AI ecosystems are strong in models and compute but weaker in p
 
 ## Proposed Contribution
 
-`vlass-portal` contributes the missing operations layer:
+`cosmic-horizons` contributes the missing operations layer:
 
 - role-aware workflow and policy surfaces
 
@@ -75,6 +75,7 @@ Current astronomy AI ecosystems are strong in models and compute but weaker in p
 2. Use outreach letter to validate program fit early.
 
 ## 3. Bring a concrete live demo pathway (current pillars + next integration milestone)
+
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

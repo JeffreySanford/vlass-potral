@@ -22,10 +22,10 @@ Status date: 2026-02-11
 
 ## Pillar-Specific Gate Notes
 
-- Pillar 1 performance gate (`apps/vlass-web-e2e/src/perf.spec.ts`) enforces:
+- Pillar 1 performance gate (`apps/cosmic-horizons-web-e2e/src/perf.spec.ts`) enforces:
   - `FCP < 1000ms`
   - `LCP < 2000ms`
-- Pillar 2 retention policy gate (`apps/vlass-api/src/app/viewer/viewer.service.spec.ts`) enforces:
+- Pillar 2 retention policy gate (`apps/cosmic-horizons-api/src/app/viewer/viewer.service.spec.ts`) enforces:
   - Snapshot retention floor is `>= 7` days even if environment config is lower.
 
 ## Unit/Integration Focus
@@ -49,4 +49,4 @@ Status date: 2026-02-11
 ## - FITS proxy compliance tests (v2)
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-07
 **Status:** MVP - Production Ready
-**Component:** `ViewerComponent` (`apps/vlass-web/src/app/features/viewer/`)
+**Component:** `ViewerComponent` (`apps/cosmic-horizons-web/src/app/features/viewer/`)
 **Framework:** Angular 18 + Aladin Lite (ESA Aladin Sky Atlas)
 
 ---
@@ -33,7 +33,7 @@
 
 ## Viewer Overview
 
-The VLASS Portal Mode A Viewer is a **web-based astronomical sky explorer** powered by Aladin Lite. It provides:
+The Cosmic Horizon Mode A Viewer is a **web-based astronomical sky explorer** powered by Aladin Lite. It provides:
 
 - **Interactive HiPS-based sky map:** Pan, zoom, inspect
 
@@ -479,7 +479,7 @@ private encodeState(state: ViewerStateModel): string {
 **Example URL:**
 
 ```text
-https://vlass-portal.com/view?state=eyJyYSI6MTAuNjgsImRlYyI6NDEuMjcsImZvdiI6MiwiY3V2ZXkiOiJWTEFTUyJ9
+https://cosmic-horizons.com/view?state=eyJyYSI6MTAuNjgsImRlYyI6NDEuMjcsImZvdiI6MiwiY3V2ZXkiOiJWTEFTUyJ9
 
 ```
 
@@ -543,7 +543,7 @@ Creates a **permanent, short URL** for sharing:
 
 - State saved to database with generated short ID
 
-- URL format: `https://vlass-portal.com/view/<shortid>`
+- URL format: `https://cosmic-horizons.com/view/<shortid>`
 
 - Shorter than encoded state URLs; survives link shortening
 
@@ -1233,7 +1233,7 @@ Generate FITS cutout image.
 
 **Last Updated:** 2026-02-07
 
-## **Maintained By:** VLASS Portal Frontend Team
+## **Maintained By:** Cosmic Horizon Frontend Team
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

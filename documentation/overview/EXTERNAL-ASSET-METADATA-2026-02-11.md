@@ -7,7 +7,7 @@
 
 ## Standard Non-Affiliation Statement (Required)
 
-`VLASS Portal is an independent, public-data-compatible, integration-ready web platform; it is not affiliated with, sponsored by, or operated by VLA/NRAO/VLASS.`
+`Cosmic Horizon is an independent, public-data-compatible, integration-ready web platform; it is not affiliated with, sponsored by, or operated by VLA/NRAO/VLASS.`
 
 ---
 
@@ -88,4 +88,4 @@ Required footer/description lines:
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

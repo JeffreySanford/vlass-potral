@@ -23,7 +23,7 @@ This folder contains reusable conference and proposal-facing material.
 
 - Cosmic Horizons Conference 2026 (July 13-16, 2026, Charlottesville, Virginia)
 
-- Positioning vlass-portal as the web-native operational interface for AI-driven radio astronomy workflows
+- Positioning cosmic-horizons as the web-native operational interface for AI-driven radio astronomy workflows
 
 - Outreach to program leadership, working-group leads, and research software stakeholders
 

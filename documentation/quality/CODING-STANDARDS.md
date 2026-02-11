@@ -33,4 +33,4 @@ Canonical scope: `documentation/product/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
 ## If implementing v1.1/v2 work (comments, Mode B, FITS proxy), gate with explicit roadmap updates first
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

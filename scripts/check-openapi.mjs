@@ -15,7 +15,7 @@ if (!existsSync(referencePath)) {
 try {
   console.log('Generating current OpenAPI spec...');
   // Set env var and run the api app (which should exit after generation per main.ts logic)
-  execSync('nx run vlass-api:serve', {
+  execSync('nx run cosmic-horizons-api:serve', {
     env: {
       ...process.env,
       GENERATE_OPENAPI_SPEC: 'true'

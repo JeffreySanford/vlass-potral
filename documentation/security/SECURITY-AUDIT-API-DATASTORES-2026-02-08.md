@@ -1,7 +1,7 @@
 # API Datastore Security Audit (PostgreSQL + Redis)
 
 Date: 2026-02-08
-Scope: `apps/vlass-api` runtime + datastore integration + local infra compose defaults.
+Scope: `apps/cosmic-horizons-api` runtime + datastore integration + local infra compose defaults.
 
 ## Executive Summary
 
@@ -21,9 +21,9 @@ Scope: `apps/vlass-api` runtime + datastore integration + local infra compose de
 
 - Files:
 
-  - `apps/vlass-api/src/app/viewer/viewer.controller.ts`
+  - `apps/cosmic-horizons-api/src/app/viewer/viewer.controller.ts`
 
-  - `apps/vlass-api/src/app/viewer/viewer.controller.spec.ts`
+  - `apps/cosmic-horizons-api/src/app/viewer/viewer.controller.spec.ts`
 
 ### 2) Missing abuse control on viewer state and label lookup
 
@@ -41,11 +41,11 @@ Scope: `apps/vlass-api` runtime + datastore integration + local infra compose de
 
 - Files:
 
-  - `apps/vlass-api/src/app/viewer/viewer.controller.ts`
+  - `apps/cosmic-horizons-api/src/app/viewer/viewer.controller.ts`
 
-  - `apps/vlass-api/src/app/guards/rate-limit.guard.ts`
+  - `apps/cosmic-horizons-api/src/app/guards/rate-limit.guard.ts`
 
-  - `apps/vlass-api/src/app/guards/rate-limit.guard.spec.ts`
+  - `apps/cosmic-horizons-api/src/app/guards/rate-limit.guard.spec.ts`
 
 ### 3) Redis connection hardening gaps
 
@@ -61,7 +61,7 @@ Scope: `apps/vlass-api` runtime + datastore integration + local infra compose de
 
 - File:
 
-  - `apps/vlass-api/src/app/viewer/viewer.service.ts`
+  - `apps/cosmic-horizons-api/src/app/viewer/viewer.service.ts`
 
 ### 4) Potential secret leakage via telemetry failure reasons
 
@@ -71,7 +71,7 @@ Scope: `apps/vlass-api` runtime + datastore integration + local infra compose de
 
 - File:
 
-  - `apps/vlass-api/src/app/viewer/viewer.service.ts`
+  - `apps/cosmic-horizons-api/src/app/viewer/viewer.service.ts`
 
 ### 5) Postgres logging in production can leak sensitive query params
 
@@ -85,7 +85,7 @@ Scope: `apps/vlass-api` runtime + datastore integration + local infra compose de
 
 - File:
 
-  - `apps/vlass-api/src/app/database.config.ts`
+  - `apps/cosmic-horizons-api/src/app/database.config.ts`
 
 ### 6) Local container port exposure wider than needed
 
@@ -126,4 +126,4 @@ Scope: `apps/vlass-api` runtime + datastore integration + local infra compose de
 ## - Add CI policy checks for insecure env combinations
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

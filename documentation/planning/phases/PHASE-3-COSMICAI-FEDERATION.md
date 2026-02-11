@@ -8,13 +8,13 @@
 
 ## Overview
 
-Phase 3 establishes vlass-portal as the **scientific operations platform** for CosmicAI's computational ecosystem. While Phase 2 integrated local inference, Phase 3 docks into CosmicAI's distributed infrastructure at TACC, federates multi-site datasets, and prepares the system for ngVLA's 50-petaflop data challenge.
+Phase 3 establishes cosmic-horizons as the **scientific operations platform** for CosmicAI's computational ecosystem. While Phase 2 integrated local inference, Phase 3 docks into CosmicAI's distributed infrastructure at TACC, federates multi-site datasets, and prepares the system for ngVLA's 50-petaflop data challenge.
 
 **Strategic context:**
-CosmicAI is building an open-source platform at TACC with compute fabric, data lake, and ML tooling. They lack operational UI, governance, and workflow orchestration—exactly what vlass-portal provides. This phase makes vlass-portal the "control plane" for CosmicAI, aligning with NSF and DOE infrastructure funding models.
+CosmicAI is building an open-source platform at TACC with compute fabric, data lake, and ML tooling. They lack operational UI, governance, and workflow orchestration—exactly what cosmic-horizons provides. This phase makes cosmic-horizons the "control plane" for CosmicAI, aligning with NSF and DOE infrastructure funding models.
 
 **Success definition:**
-Researchers can discover and analyze datasets from VLASS, NRAO archives, and CosmicAI curations; submit workflows to TACC GPU clusters; track reproducibility across institutional boundaries; and publish peer-reviewed analysis notebooks—all from vlass-portal.
+Researchers can discover and analyze datasets from VLASS, NRAO archives, and CosmicAI curations; submit workflows to TACC GPU clusters; track reproducibility across institutional boundaries; and publish peer-reviewed analysis notebooks—all from cosmic-horizons.
 
 ---
 
@@ -80,7 +80,7 @@ Researchers can discover and analyze datasets from VLASS, NRAO archives, and Cos
 
   - Integration with TACC Charliecloud (containerized environments)
 
-  - OAuth/OIDC bridge: vlass-portal user → TACC allocation
+  - OAuth/OIDC bridge: cosmic-horizons user → TACC allocation
 
   - Resource reservation: GPU type (V100, A100), memory, node count, wall time
 
@@ -88,7 +88,7 @@ Researchers can discover and analyze datasets from VLASS, NRAO archives, and Cos
 
 - Remote job submission API
 
-  - User submits analysis in vlass-portal UI
+  - User submits analysis in cosmic-horizons UI
 
   - Backend serializes job manifest: input dataset URI, model spec, parameters, output destination
 
@@ -102,13 +102,13 @@ Researchers can discover and analyze datasets from VLASS, NRAO archives, and Cos
 
   - Compute: run inference on remote GPU cluster
 
-  - Retrieve: pull results back to vlass-portal (caching layer for reusable artifacts)
+  - Retrieve: pull results back to cosmic-horizons (caching layer for reusable artifacts)
 
   - Cleanup: manage TACC storage quotas
 
 - Distributed caching
 
-  - Cache results at both vlass-portal and TACC (multi-site cache consistency)
+  - Cache results at both cosmic-horizons and TACC (multi-site cache consistency)
 
   - Avoid redundant transfers: "Result already cached at TACC, skip recompute"
 
@@ -118,7 +118,7 @@ Researchers can discover and analyze datasets from VLASS, NRAO archives, and Cos
 
 - Post editor: link to remote job artifacts (TACC S3 URIs)
 
-- Dashboard: aggregate multisite job metrics (vlass-portal + TACC)
+- Dashboard: aggregate multisite job metrics (cosmic-horizons + TACC)
 
 - API: Cost accounting (EST compute allocation consumed per job)
 
@@ -150,7 +150,7 @@ Researchers can discover and analyze datasets from VLASS, NRAO archives, and Cos
 
   - Input sources: (source_type: "vlass" | "cosmicai_curated" | "nrao_archive") + dataset version
 
-  - Processing source: (site: "vlass-portal" | "tacc") + GPU/CPU specification
+  - Processing source: (site: "cosmic-horizons" | "tacc") + GPU/CPU specification
 
   - Model source: (repo: "cosmicai-github" | "institutional") + commit SHA
 
@@ -162,7 +162,7 @@ Researchers can discover and analyze datasets from VLASS, NRAO archives, and Cos
 
   - Includes: all input URIs, model refs, container image hash, Slurm job ID
 
-  - Digital signature: vlass-portal certifies artifact (for provenance chains)
+  - Digital signature: cosmic-horizons certifies artifact (for provenance chains)
 
 - Replay orchestration
 
@@ -180,7 +180,7 @@ Researchers can discover and analyze datasets from VLASS, NRAO archives, and Cos
 
   - Model versions (CosmicAI releases AlphaCal v3.0, published analyses pinned to v2.9)
 
-  - Code versions (vlass-portal versioning, tagged releases)
+  - Code versions (cosmic-horizons versioning, tagged releases)
 
 **Integration points:**
 
@@ -264,7 +264,7 @@ Researchers can discover and analyze datasets from VLASS, NRAO archives, and Cos
 
 ```mermaid
 graph TB
-    subgraph User["vlass-portal (Web UX)"]
+    subgraph User["cosmic-horizons (Web UX)"]
         UI["Angular Viewer + Workflow Editor"]
 
         AUTH["Auth/Policy Service"]
@@ -335,7 +335,7 @@ graph TB
 
 - DatasetFederator: aggregates metadata from NRAO + CosmicAI + TACC
 
-- RemoteJobMonitor: polls Slurm status, syncs back to vlass-portal
+- RemoteJobMonitor: polls Slurm status, syncs back to cosmic-horizons
 
 - ExplainabilityAggregator: collects explanations from multiple sites, computes consensus
 
@@ -373,7 +373,7 @@ graph TB
 
 - ngVLA preliminary data specifications (inform data federation design)
 
-- CosmicAI dataset curation roadmap (stagger releases; vlass-portal must keep pace)
+- CosmicAI dataset curation roadmap (stagger releases; cosmic-horizons must keep pace)
 
 **Timeline:**
 
@@ -409,7 +409,7 @@ graph TB
 
 ### NSF SI² (Research Software Engineering)
 
-> "vlass-portal: A Scientific Operations Platform for Radio Astronomy AI Workflows"
+> "cosmic-horizons: A Scientific Operations Platform for Radio Astronomy AI Workflows"
 
 **Pitch:**
 
@@ -439,7 +439,7 @@ graph TB
 
 ### Industry Partnerships
 
-- NVIDIA GPU research: leverage vlass-portal as case study for multi-site GPU orchestration
+- NVIDIA GPU research: leverage cosmic-horizons as case study for multi-site GPU orchestration
 
 - Kubernetes/cloud: position as reference implementation for HPC+cloud bursting
 
@@ -457,9 +457,9 @@ graph TB
 
 2. **User-facing:**
 
-   - 15+ NSF-affiliated institutions running analyses via vlass-portal
+   - 15+ NSF-affiliated institutions running analyses via cosmic-horizons
 
-   - 5+ published peer-reviewed papers citing vlass-portal reproducibility
+   - 5+ published peer-reviewed papers citing cosmic-horizons reproducibility
 
    - Community notebook posts using TACC compute ≥20%
 
@@ -469,9 +469,9 @@ graph TB
 
    - Cited in ngVLA operations planning documents
 
-   - CosmicAI formally acknowledges vlass-portal as primary interface
+   - CosmicAI formally acknowledges cosmic-horizons as primary interface
 
-   - NRAO management identifies vlass-portal as strategic asset
+   - NRAO management identifies cosmic-horizons as strategic asset
 
 ---
 
@@ -503,7 +503,7 @@ By 2030s, ngVLA will produce:
 
 - **Reproducibility:** NSF funding mandates full provenance tracking
 
-**vlass-portal positioning:**
+**cosmic-horizons positioning:**
 
 - Proven operational interface for AI workflows (VLASS + CosmicAI pilot)
 
@@ -522,4 +522,4 @@ By 2030s, ngVLA will produce:
 ## - Iterate on TACC partnership (prove cost model, scalability, reliability)
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

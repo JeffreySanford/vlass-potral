@@ -2,7 +2,7 @@
 
 ## Project Status
 
-VLASS Portal is an independent software project created for public portfolio and community use.
+Cosmic Horizon is an independent software project created for public portfolio and community use.
 
 It is **not**:
 
@@ -32,11 +32,11 @@ When describing this repo publicly, use wording like:
 
 When contacting VLA/NRAO/CosmicAI or presenting at conferences:
 
-- Describe VLASS Portal as independent and integration-ready.
+- Describe Cosmic Horizon as independent and integration-ready.
 - Do not imply endorsement, partnership, or official status.
 - Distinguish "implemented now" from "planned integration direction."
 - Include date-stamped sources for any external trend/statistic claims.
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

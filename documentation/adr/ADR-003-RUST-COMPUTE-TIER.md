@@ -16,4 +16,4 @@ Triggers for adoption:
 ## 2. Approved v2 Mode B scope
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

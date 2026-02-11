@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-07
 **Status:** MVP - Production Ready
-**Scope:** All major Angular components in vlass-web app
+**Scope:** All major Angular components in cosmic-horizons-web app
 
 ---
 
@@ -906,7 +906,7 @@ describe('MyComponent', () => {
 
 **Last Updated:** 2026-02-07
 
-## **Maintained By:** VLASS Portal Frontend Team
+## **Maintained By:** Cosmic Horizon Frontend Team
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

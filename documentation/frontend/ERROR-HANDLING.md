@@ -1282,7 +1282,7 @@ this.api.call()
 ---
 
 **Last Updated:** 2026-02-07
-**Maintained By:** VLASS Portal Development Team
+**Maintained By:** Cosmic Horizon Development Team
 
 **Related Documentation:**
 
@@ -1293,4 +1293,4 @@ this.api.call()
 ## - [COMPONENTS.md](COMPONENTS.md) - Component catalog
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

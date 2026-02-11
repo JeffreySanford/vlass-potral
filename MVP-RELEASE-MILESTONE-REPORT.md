@@ -48,9 +48,9 @@ ngOnInit(): void {
 
 **Files Modified:**
 
-- `apps/vlass-web/src/app/features/auth/login/login.component.ts` – Performance optimization applied
-- `apps/vlass-web/src/app/features/landing/landing.component.ts` – Same pattern applied
-- `apps/vlass-web/src/app/features/landing/landing.component.html` – Updated template binding
+- `apps/cosmic-horizons-web/src/app/features/auth/login/login.component.ts` – Performance optimization applied
+- `apps/cosmic-horizons-web/src/app/features/landing/landing.component.ts` – Same pattern applied
+- `apps/cosmic-horizons-web/src/app/features/landing/landing.component.html` – Updated template binding
 
 **Impact:**
 
@@ -75,8 +75,8 @@ ngOnInit(): void {
 | Gate | Status | Details |
 |------|:------:|---------|
 | **Docs Policy** | ✅ PASS | 100% consistency check passed |
-| **Unit Tests** | ✅ PASS | 90/90 tests across 9 suites (vlass-api + shared-models + vlass-web) |
-| **E2E Tests** | ✅ PASS | 16/16 tests across 2 suites (vlass-api-e2e integration tests) |
+| **Unit Tests** | ✅ PASS | 90/90 tests across 9 suites (cosmic-horizons-api + shared-models + cosmic-horizons-web) |
+| **E2E Tests** | ✅ PASS | 16/16 tests across 2 suites (cosmic-horizons-api-e2e integration tests) |
 
 **E2E Coverage Verified:**
 
@@ -202,7 +202,7 @@ Tracked progress in `TODO.md`:
    - Store artifact baselines for trend tracking
 
 2. **Affiliation Disclaimer Standardization** ✅
-   - Add footer: "VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved."
+   - Add footer: "Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved."
    - Apply to: docs/frontend/*, architecture/ADR docs, API docs
    - Verify in `docs-policy:check`
 
@@ -273,7 +273,7 @@ pnpm run lighthouse:mobile           # Check baseline (save scores)
 
 **Latest Commits (chronological):**
 
-```
+```text
 11cc4c7 docs: add viewer improvements analysis and update TODO pre-deploy checklist
 357f310 perf: optimize landing component clock interval like login
 778663c chore: remove accidental output.txt
@@ -293,7 +293,7 @@ d3cb197 fix: remove unused imports in LoginComponent causing CI failure
 | **LCP (Largest Contentful Paint)** | <2s on 4G | ~1.5s | ✅ |
 | **Lighthouse Mobile Score** | >70 | ~72-78 (post-optimization) | ✅ |
 | **E2E Test Coverage** | 100% of critical flows | 16/16 tests | ✅ |
-| **Unit Test Coverage** | >80% | ~85% (vlass-api) | ✅ |
+| **Unit Test Coverage** | >80% | ~85% (cosmic-horizons-api) | ✅ |
 | **Documentation Alignment** | 100% policy | 100% | ✅ |
 | **API Response Times (p95)** | <500ms | ~50-100ms | ✅ |
 | **FITS Cutout Success Rate** | >95% | 95%+ (with fallbacks) | ✅ |

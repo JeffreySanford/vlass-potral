@@ -13,4 +13,4 @@ Use these as source of truth for current MVP:
 ## Legacy references to Go/Mode B/comments as MVP are superseded
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

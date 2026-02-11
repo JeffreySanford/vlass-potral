@@ -1,7 +1,7 @@
 {
-  "name": "@vlass-portal/source",
+  "name": "@cosmic-horizons/source",
   "version": "1.0.0",
-  "description": "Enterprise-grade VLASS sky browser with autonomous agent orchestration, high-precision ephemeris, and interactive research notebooks.",
+  "description": "Scientific operations platform for AI-driven radio astronomy, supporting ngVLA data orchestration and CosmicAI infrastructure.",
   "license": "MIT",
   "keywords": [
     "radio-astronomy",
@@ -13,16 +13,16 @@
     "science-operations"
   ],
   "scripts": {
-    "start:web": "nx serve vlass-web",
-    "start:api": "nx serve vlass-api",
+    "start:web": "nx serve cosmic-horizons-web",
+    "start:api": "nx serve cosmic-horizons-api",
     "start:ports:free": "node scripts/ensure-ports-free.mjs",
     "start:infra:check": "node scripts/ensure-docker-ready.mjs",
     "start:infra": "pnpm run start:infra:check && docker compose down --remove-orphans --volumes && docker compose build --pull && docker compose up -d --wait",
-    "start:all": "pnpm run start:ports:free && pnpm run start:infra && pnpm run start:ports:free && nx run-many --target=serve --projects=vlass-web,vlass-api --parallel=2 --skip-nx-cache",
+    "start:all": "pnpm run start:ports:free && pnpm run start:infra && pnpm run start:ports:free && nx run-many --target=serve --projects=cosmic-horizons-web,cosmic-horizons-api --parallel=2 --skip-nx-cache",
     "start": "pnpm start:web",
     "test": "pnpm standalone:check && nx run-many --target=test --all",
-    "test:web": "nx test vlass-web",
-    "test:api": "nx test vlass-api",
+    "test:web": "nx test cosmic-horizons-web",
+    "test:api": "nx test cosmic-horizons-api",
     "e2e:mvp": "nx run mvp-gates:e2e",
     "e2e:ci": "pnpm run start:ports:free && pnpm run start:infra && nx run mvp-gates:e2e",
     "build": "nx run-many --target=build --all",

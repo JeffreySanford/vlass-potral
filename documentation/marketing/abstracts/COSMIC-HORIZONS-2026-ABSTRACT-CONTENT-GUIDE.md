@@ -10,7 +10,7 @@ Purpose: Convert strategy notes into a concrete, submission-ready content checkl
 
 Use this positioning sentence in every abstract variant:
 
-"VLASS Portal is an independent, public-data-compatible, integration-ready web platform; it is not affiliated with, sponsored by, or operated by VLA/NRAO/VLASS."
+"Cosmic Horizon is an independent, public-data-compatible, integration-ready web platform; it is not affiliated with, sponsored by, or operated by VLA/NRAO/VLASS."
 
 This avoids stepping on institutional ownership while keeping collaboration doors open.
 
@@ -25,7 +25,7 @@ This avoids stepping on institutional ownership while keeping collaboration door
 
 2. Solution statement (front-half operations layer)
 
-- Define VLASS Portal as the front-half MLOps + UX layer that complements institutional back-end compute/model systems.
+- Define Cosmic Horizon as the front-half MLOps + UX layer that complements institutional back-end compute/model systems.
 - Emphasize interface value: browse, audit, share, and operationalize workflows.
 
 3. Evidence of readiness (implemented now)
@@ -86,12 +86,12 @@ Avoid phrasing that implies current official status:
 
 Title:
 
-`VLASS Portal: Independent Web-Native Operations Interface for AI-Driven Radio Astronomy Workflows`
+`Cosmic Horizon: Independent Web-Native Operations Interface for AI-Driven Radio Astronomy Workflows`
 
 Body template (~170-220 words):
 
 1. Open with the operational problem and workflow bottleneck.
-2. Introduce VLASS Portal as independent front-half operations UX.
+2. Introduce Cosmic Horizon as independent front-half operations UX.
 3. Prove readiness with the three implemented pillars.
 4. Map capabilities to Explorable/Observable/Explainable/Accelerated themes.
 5. Close with integration direction (job orchestration + inference observability) and clear non-affiliation language.
@@ -125,4 +125,4 @@ Closing sentence template:
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

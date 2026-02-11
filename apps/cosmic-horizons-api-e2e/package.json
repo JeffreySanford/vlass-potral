@@ -1,0 +1,27 @@
+{
+  "name": "@cosmic-horizons/cosmic-horizons-api-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "cosmic-horizons-api-e2e",
+    "implicitDependencies": [
+      "cosmic-horizons-api"
+    ],
+    "targets": {
+      "e2e": {
+        "executor": "@nx/jest:jest",
+        "outputs": [
+          "{projectRoot}/test-output/jest/coverage"
+        ],
+        "options": {
+          "jestConfig": "apps/cosmic-horizons-api-e2e/jest.config.cts",
+          "passWithNoTests": true
+        },
+        "dependsOn": [
+          "cosmic-horizons-api:build",
+          "cosmic-horizons-api:serve-e2e"
+        ]
+      }
+    }
+  }
+}

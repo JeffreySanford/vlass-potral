@@ -90,4 +90,4 @@ Loaded from `documentation/database/init.sql` (see `documentation/database/SEEDI
 ## - Backend audit logs record successful login/logout events (`AuditAction.LOGIN`, `AuditAction.LOGOUT`) with request IP/user-agent metadata when available
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

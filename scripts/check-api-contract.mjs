@@ -3,7 +3,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 /**
- * This script runs the vlass-api OpenAPI generator and compares the output
+ * This script runs the cosmic-horizons-api OpenAPI generator and compares the output
  * with the committed documentation/reference/api/openapi.json file.
  */
 
@@ -24,7 +24,7 @@ async function run() {
   try {
     console.log('Generating current OpenAPI spec...');
     // We run the nx target which now outputs to the correct location
-    execSync('pnpm nx run vlass-api:openapi', { stdio: 'inherit' });
+    execSync('pnpm nx run cosmic-horizons-api:openapi', { stdio: 'inherit' });
 
     const generatedSpec = readFileSync(committedSpecPath, 'utf8');
 

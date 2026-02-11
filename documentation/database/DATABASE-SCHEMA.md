@@ -27,4 +27,4 @@ When schema docs conflict with runtime DTOs, defer to `libs/shared/models` and a
 ## Seeding and bootstrap behavior is documented in `documentation/database/SEEDING-OPERATIONS.md`
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

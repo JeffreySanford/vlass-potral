@@ -48,9 +48,9 @@ This project keeps committed env configuration in `.env.example` only.
 
 - `JWT_EXPIRES_IN`
 
-- `VLASS_API_BASE_URL`
+- `COSMIC_HORIZONS_API_BASE_URL`
 
-- `VLASS_API_TIMEOUT`
+- `COSMIC_HORIZONS_API_TIMEOUT`
 
 - `AUDIT_RETENTION_DAYS`
 
@@ -87,4 +87,4 @@ This project keeps committed env configuration in `.env.example` only.
 ## - Use GitHub secret scanning and push protection on this repository
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

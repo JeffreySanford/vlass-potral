@@ -69,7 +69,7 @@ These three commands are the minimum quality bar for merge readiness.
 ## - SSR performance is tracked via product KPIs and operational monitoring
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
 
 ---
 *Independent portal using public VLASS data; not affiliated with VLA/NRAO.*

@@ -1,0 +1,24 @@
+{
+  "name": "@cosmic-horizons/cosmic-horizons-web-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "cosmic-horizons-web-e2e",
+    "targets": {
+      "e2e-mvp": {
+        "executor": "nx:run-commands",
+        "options": {
+          "cwd": "apps/cosmic-horizons-web-e2e",
+          "command": "playwright test src/example.spec.ts src/ssr.spec.ts --project=chromium --workers=1"
+        }
+      },
+      "e2e-ssr": {
+        "executor": "nx:run-commands",
+        "options": {
+          "cwd": "apps/cosmic-horizons-web-e2e",
+          "command": "playwright test src/ssr.spec.ts --project=chromium"
+        }
+      }
+    }
+  }
+}

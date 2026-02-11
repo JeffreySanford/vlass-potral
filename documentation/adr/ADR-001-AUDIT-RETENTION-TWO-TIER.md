@@ -10,7 +10,7 @@ ACCEPTED
 
 ## Context
 
-VLASS Portal MVP needs audit logs for:
+Cosmic Horizon MVP needs audit logs for:
 
 - Incident response & security investigation
 
@@ -148,4 +148,4 @@ Implement **90-day hot audit retention only** (MVP):
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

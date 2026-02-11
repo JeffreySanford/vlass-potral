@@ -1,10 +1,10 @@
 # Outreach Email Template (Sole Developer + Collaboration Request)
 
-Subject: `vlass-portal: operational web interface for CosmicAI/ngVLA workflows (Cosmic Horizons 2026)`
+Subject: `cosmic-horizons: operational web interface for CosmicAI/ngVLA workflows (Cosmic Horizons 2026)`
 
 Hello [Name],
 
-I am the sole developer of `vlass-portal`, an independent open-source idea/prototype built around public VLASS workflows (`github.com/JeffreySanford/vlass-portal`).
+I am the sole developer of `cosmic-horizons`, an independent open-source idea/prototype built around public VLASS workflows (`github.com/JeffreySanford/cosmic-horizons`).
 
 I recently completed three platform pillars:
 
@@ -40,7 +40,9 @@ Best regards,
 
 Jeffrey Sanford
 Architect, Designer, Developer
-## Public VLASS Portal (github.com/JeffreySanford/vlass-portal)
+
+## Public Cosmic Horizon (github.com/JeffreySanford/cosmic-horizons)
+
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

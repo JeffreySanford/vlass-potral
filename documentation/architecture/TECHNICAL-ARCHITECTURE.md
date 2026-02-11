@@ -1,8 +1,8 @@
-# VLASS Portal: Technical Architecture & Strategic Roadmap
+# Cosmic Horizon: Technical Architecture & Strategic Roadmap
 
 ## 1. Project Identity and Mission
 
-The VLASS Portal is a specialized, independent public-data platform engineered to streamline the accessibility and utility of Very Large Array Sky Survey (VLASS) datasets. It is structurally and legally independent; this project maintains no affiliation with, sponsorship from, or operational ties to the National Radio Astronomy Observatory (NRAO), the Very Large Array (VLA), or the official VLASS program.
+The Cosmic Horizon is a specialized, independent public-data platform engineered to streamline the accessibility and utility of Very Large Array Sky Survey (VLASS) datasets. It is structurally and legally independent; this project maintains no affiliation with, sponsorship from, or operational ties to the National Radio Astronomy Observatory (NRAO), the Very Large Array (VLA), or the official VLASS program.
 
 Our Minimum Viable Product (MVP) is anchored by three critical functional pillars:
 
@@ -23,13 +23,13 @@ The portal is built on an Nx monorepo architecture. This centralized approach al
 | Component | Technology | Role/Description |
 | --- | --- | --- |
 
-| **vlass-web** | Angular SSR | Performance-optimized frontend utilizing server-side pre-rendering for SEO and speed. |
+| **cosmic-horizons-web** | Angular SSR | Performance-optimized frontend utilizing server-side pre-rendering for SEO and speed. |
 
-| **vlass-api** | NestJS | Backend orchestration layer providing business logic and data aggregation. |
+| **cosmic-horizons-api** | NestJS | Backend orchestration layer providing business logic and data aggregation. |
 
-| **vlass-web-e2e** | Playwright | Frontend regression suite for UI validation and user-flow simulation. |
+| **cosmic-horizons-web-e2e** | Playwright | Frontend regression suite for UI validation and user-flow simulation. |
 
-| **vlass-api-e2e** | Playwright | API contract testing and endpoint validation. |
+| **cosmic-horizons-api-e2e** | Playwright | API contract testing and endpoint validation. |
 
 | **libs/shared/models** | Nx Library (Shared Types) | Centralized TypeScript interfaces and models shared by both web and API services. |
 
@@ -163,4 +163,4 @@ For additional architectural details and strategic planning, see:
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

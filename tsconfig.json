@@ -4,19 +4,19 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/vlass-web-e2e"
+      "path": "./apps/cosmic-horizons-web-e2e"
     },
     {
-      "path": "./apps/vlass-api-e2e"
+      "path": "./apps/cosmic-horizons-api-e2e"
     },
     {
-      "path": "./apps/vlass-api"
+      "path": "./apps/cosmic-horizons-api"
     },
     {
       "path": "./libs/shared/models"
     },
     {
-      "path": "./apps/vlass-web"
+      "path": "./apps/cosmic-horizons-web"
     }
   ]
 }

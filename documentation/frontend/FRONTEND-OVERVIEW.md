@@ -34,11 +34,11 @@
 
 ## Architecture Overview
 
-The VLASS Portal frontend follows a **Three-Pillar MVP** structure:
+The Cosmic Horizon frontend follows a **Three-Pillar MVP** structure:
 
 ```text
 ┌────────────────────────────────────────────────────────┐
-│         VLASS Portal Frontend (Angular 18)             │
+│         Cosmic Horizon Frontend (Angular 18)             │
 ├────────────────────────────────────────────────────────┤
 │                                                        │
 │  Pillar 1: Landing + Auth                            │
@@ -87,7 +87,7 @@ The VLASS Portal frontend follows a **Three-Pillar MVP** structure:
                      │
          ┌───────────▼──────────┐
          │   NestJS Backend     │
-         │   (vlass-api)        │
+         │   (cosmic-horizons-api)        │
          └──────────────────────┘
 
 ```
@@ -96,10 +96,10 @@ The VLASS Portal frontend follows a **Three-Pillar MVP** structure:
 
 ## Project Structure
 
-The frontend code is organized under `apps/vlass-web/src/app/`:
+The frontend code is organized under `apps/cosmic-horizons-web/src/app/`:
 
 ```text
-apps/vlass-web/
+apps/cosmic-horizons-web/
 ├── public/
 │   ├── favicon.ico
 │   ├── styles.globals.scss
@@ -606,7 +606,7 @@ export const environment = {
 
 // environment.prod.ts (production)
 export const environment = {
-  apiUrl: 'https://api.vlass-portal.com',
+  apiUrl: 'https://api.cosmic-horizons.com',
   logLevel: 'error',
   enableDevTools: false,
 };
@@ -725,7 +725,7 @@ test('User can create, edit, and publish a post', async ({ page }) => {
 # Generate production build analysis
 
 pnpm build:web --stats-json
-npx webpack-bundle-analyzer dist/apps/vlass-web/stats.json
+npx webpack-bundle-analyzer dist/apps/cosmic-horizons-web/stats.json
 
 ```
 
@@ -880,10 +880,10 @@ constructor(private destroyRef: DestroyRef) {
 ---
 
 **Last Updated:** 2026-02-07
-**Maintained By:** VLASS Portal Team
+**Maintained By:** Cosmic Horizon Team
 
 ## **Next Review:** Post-MVP (v1.1 planning)
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

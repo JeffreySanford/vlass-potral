@@ -30,9 +30,9 @@ This project is independently developed and publicly documented. It is not affil
 
 ## Runtime Architecture (MVP)
 
-- `apps/vlass-web` (Angular SSR)
+- `apps/cosmic-horizons-web` (Angular SSR)
 
-- `apps/vlass-api` (NestJS)
+- `apps/cosmic-horizons-api` (NestJS)
 
 - `libs/shared/models` (shared contracts)
 
@@ -49,7 +49,7 @@ Rust remains optional for future advanced rendering. It is not required to ship 
 ## Comments are not in MVP; moderation currently applies to posts and tags
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
 
 ---
 *Independent portal using public VLASS data; not affiliated with VLA/NRAO.*

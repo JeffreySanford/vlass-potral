@@ -353,4 +353,4 @@ If manual coordinates don't work:
 ## **Contact**: See respective architecture documents for detailed technical questions
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

@@ -68,12 +68,12 @@ pnpm build
 
   2. `start:infra` (`docker compose down --volumes`, build, up `--wait`)
 
-  3. `pnpm nx run-many --target=serve --projects=vlass-web,vlass-api`
+  3. `pnpm nx run-many --target=serve --projects=cosmic-horizons-web,cosmic-horizons-api`
 
 ## - Go and Mode B are deferred and not part of MVP setup
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
 
 ---
 *Independent portal using public VLASS data; not affiliated with VLA/NRAO.*

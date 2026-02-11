@@ -60,16 +60,16 @@ Show staged strategy: bridge funding -> Phase 2 execution -> larger multi-year f
 
 ## 8) Strategic Partnership Map
 
-Create a hub-and-spoke ecosystem map centered on vlass-portal.
+Create a hub-and-spoke ecosystem map centered on cosmic-horizons.
 Primary nodes: NSF NRAO, CosmicAI, TACC, ngVLA community.
 Show data, model, and operations relationships.
-Label vlass-portal as "web-native operational interface and control plane."
+Label cosmic-horizons as "web-native operational interface and control plane."
 
 ## 9) Competitive Positioning Matrix
 
-Create a 2x2 matrix comparing vlass-portal, Aladin, Jupyter, and Airflow.
+Create a 2x2 matrix comparing cosmic-horizons, Aladin, Jupyter, and Airflow.
 Axes: domain-specific astronomy UX vs workflow orchestration maturity.
-Position vlass-portal in high-high quadrant with note: "integrated domain UX + operational workflows."
+Position cosmic-horizons in high-high quadrant with note: "integrated domain UX + operational workflows."
 
 ## 10) Success Metrics Dashboard
 
@@ -78,4 +78,4 @@ job completion rate, latency targets, reproducibility coverage, user/institution
 ## Use KPI cards + trend lines + milestone markers
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

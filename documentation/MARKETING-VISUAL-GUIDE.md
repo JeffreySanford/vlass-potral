@@ -1,8 +1,8 @@
-# VLASS Portal: Visual Summary & Infographics Reference
+# Cosmic Horizon: Visual Summary & Infographics Reference
 
 ## Document Purpose
 
-This document provides **detailed specifications and Mermaid diagrams** for creating professional marketing visuals and infographics for VLASS Portal. It complements the main marketing overview and is suitable for conversion to PDF or graphic design workflows.
+This document provides **detailed specifications and Mermaid diagrams** for creating professional marketing visuals and infographics for Cosmic Horizon. It complements the main marketing overview and is suitable for conversion to PDF or graphic design workflows.
 
 ---
 
@@ -91,7 +91,7 @@ Estimated end-to-end time: approximately 3 minutes from data to publication.
 
 ## 2. Capability Pyramid: MVP → Phase 2 → Phase 3
 
-The progression of vlass-portal from static viewer to federated national infrastructure:
+The progression of cosmic-horizons from static viewer to federated national infrastructure:
 
 ```mermaid
 %%{init: {"themeVariables":{"fontSize":"22px"},"flowchart":{"nodeSpacing":70,"rankSpacing":90,"padding":24}} }%%
@@ -336,7 +336,7 @@ flowchart TB
 
 ```mermaid
 gantt
-    title VLASS Portal Roadmap (Feb 2026 - Jun 2027)
+    title Cosmic Horizon Roadmap (Feb 2026 - Jun 2027)
 
     dateFormat  YYYY-MM-DD
     axisFormat  %b %Y
@@ -452,11 +452,11 @@ gantt
 
 ## 8. Strategic Partnership Map
 
-Showing how VLASS Portal connects multiple stakeholders:
+Showing how Cosmic Horizon connects multiple stakeholders:
 
 ```mermaid
 flowchart TB
-    R["Researchers (15+ institutions)"] --> V["vlass-portal<br/>Control Plane"]
+    R["Researchers (15+ institutions)"] --> V["cosmic-horizons<br/>Control Plane"]
 
     NRAO["NSF NRAO<br/>Data + Domain"] --> V
 
@@ -475,7 +475,7 @@ flowchart TB
 
 ```
 
-| Layer | Stakeholders | Relationship to vlass-portal |
+| Layer | Stakeholders | Relationship to cosmic-horizons |
 | --- | --- | --- |
 
 | Community | Researchers (15+ institutions) | Drive use-cases and validation feedback |
@@ -500,7 +500,7 @@ Timeline summary:
 ```mermaid
 flowchart TB
     subgraph HighUse["High Ease of Use"]
-        VP["VLASS Portal (Target)"]
+        VP["Cosmic Horizon (Target)"]
         AL["Aladin"]
     end
     subgraph LowUse["Low Ease of Use"]
@@ -523,7 +523,7 @@ flowchart TB
 
 ### Positioning summary
 
-`vlass-portal` is positioned in the high-ease/high-scale quadrant compared with single-purpose tools.
+`cosmic-horizons` is positioned in the high-ease/high-scale quadrant compared with single-purpose tools.
 
 ---
 
@@ -638,7 +638,7 @@ In the primary [MARKETING-OVERVIEW.md](product/MARKETING-OVERVIEW.md) document, 
 
 | **Funding** | Waterfall + success probability | Budget allocation, grant pathways |
 
-| **Competitive Positioning** | Matrix charts | VLASS Portal vs. Aladin, Jupyter, Airflow |
+| **Competitive Positioning** | Matrix charts | Cosmic Horizon vs. Aladin, Jupyter, Airflow |
 
 ---
 
@@ -750,4 +750,4 @@ Text Light:                   #666666
 ## ## End of Visual Summary Document
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

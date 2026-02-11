@@ -30,6 +30,7 @@ git push origin --force --tags
 - Verify GitHub secret scanning alerts are resolved.
 
 ## - Confirm `.env.local` remains ignored by `.gitignore`
+
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

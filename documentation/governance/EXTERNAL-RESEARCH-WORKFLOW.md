@@ -1,7 +1,7 @@
 # External Research Workflow
 
 Status date: 2026-02-11
-Scope: Any external trend/industry/institution claim used in VLASS Portal docs, plans, demos, or outreach.
+Scope: Any external trend/industry/institution claim used in Cosmic Horizon docs, plans, demos, or outreach.
 
 ---
 
@@ -57,4 +57,4 @@ Allowed phrasing:
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

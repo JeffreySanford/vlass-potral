@@ -57,4 +57,4 @@ Capture and place screenshots in `documentation/screenshots/`:
 ## - Notebook content is reachable from the app shell
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

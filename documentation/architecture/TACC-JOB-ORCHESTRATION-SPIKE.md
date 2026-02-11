@@ -6,11 +6,11 @@
 
 ## 1. Objective
 
-Define the API contracts and communication protocols for the VLASS Portal to trigger and monitor AI-reprocessing jobs on TACC-scale resources.
+Define the API contracts and communication protocols for the Cosmic Horizon to trigger and monitor AI-reprocessing jobs on TACC-scale resources.
 
 ## 2. Proposed Architecture
 
-The Portal (`vlass-api`) will act as a client to the TACC API Gateway.
+The Portal (`cosmic-horizons-api`) will act as a client to the TACC API Gateway.
 
 ```mermaid
 sequenceDiagram
@@ -51,7 +51,7 @@ sequenceDiagram
     "gpu_count": 2,
     "max_runtime": "04:00:00"
   },
-  "webhook_url": "https://vlass-portal.org/api/webhooks/tacc"
+  "webhook_url": "https://cosmic-horizons.org/api/webhooks/tacc"
 }
 ```
 
@@ -84,6 +84,6 @@ sequenceDiagram
 
 ## 5. Next Steps
 
-- [ ] Implement `TaccIntegrationService` in `vlass-api`.
-- [ ] Scaffold `vlass-api/src/app/jobs` module.
+- [ ] Implement `TaccIntegrationService` in `cosmic-horizons-api`.
+- [ ] Scaffold `cosmic-horizons-api/src/app/jobs` module.
 - [ ] Validate TACC API Gateway connectivity via sandbox environment.

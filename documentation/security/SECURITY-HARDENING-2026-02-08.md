@@ -14,7 +14,7 @@
 
 ### 1) Removed insecure auth secret fallbacks
 
-- Added `apps/vlass-api/src/app/config/security.config.ts`.
+- Added `apps/cosmic-horizons-api/src/app/config/security.config.ts`.
 
 - `JWT_SECRET` and `SESSION_SECRET` are now required in non-test environments.
 
@@ -22,31 +22,31 @@
 
 Updated files:
 
-- `apps/vlass-api/src/main.ts`
+- `apps/cosmic-horizons-api/src/main.ts`
 
-- `apps/vlass-api/src/app/auth/auth.module.ts`
+- `apps/cosmic-horizons-api/src/app/auth/auth.module.ts`
 
-- `apps/vlass-api/src/app/auth/strategies/jwt.strategy.ts`
+- `apps/cosmic-horizons-api/src/app/auth/strategies/jwt.strategy.ts`
 
 ### 2) Removed explicit trust-bypass HTML rendering in web posts
 
 - Removed `DomSanitizer.bypassSecurityTrustHtml(...)` from:
 
-  - `apps/vlass-web/src/app/features/posts/post-detail.component.ts`
+  - `apps/cosmic-horizons-web/src/app/features/posts/post-detail.component.ts`
 
-  - `apps/vlass-web/src/app/features/posts/post-editor.component.ts`
+  - `apps/cosmic-horizons-web/src/app/features/posts/post-editor.component.ts`
 
 - Components now return plain HTML strings for Angular template sanitization at binding time.
 
 - Added stricter markdown rendering utility:
 
-  - `apps/vlass-web/src/app/features/posts/markdown-renderer.ts`
+  - `apps/cosmic-horizons-web/src/app/features/posts/markdown-renderer.ts`
 
   - Escapes HTML, sanitizes links to safe protocols, and applies secure `rel` attributes.
 
 ### 3) Hardened DB TLS verification default
 
-- `apps/vlass-api/src/app/database.config.ts` now uses:
+- `apps/cosmic-horizons-api/src/app/database.config.ts` now uses:
 
   - `DB_SSL_REJECT_UNAUTHORIZED=true` by default when `DB_SSL=true`.
 
@@ -58,15 +58,15 @@ Updated files:
 
   - `JWT_EXPIRES_IN=15m` (default)
 
-  - Configured in `apps/vlass-api/src/app/auth/auth.module.ts`.
+  - Configured in `apps/cosmic-horizons-api/src/app/auth/auth.module.ts`.
 
 - Added refresh-token rotation and revocation:
 
-  - `apps/vlass-api/src/app/auth/auth.service.ts`
+  - `apps/cosmic-horizons-api/src/app/auth/auth.service.ts`
 
-  - `apps/vlass-api/src/app/auth/dto/refresh-token.dto.ts`
+  - `apps/cosmic-horizons-api/src/app/auth/dto/refresh-token.dto.ts`
 
-  - `apps/vlass-api/src/app/auth/auth.controller.ts`
+  - `apps/cosmic-horizons-api/src/app/auth/auth.controller.ts`
 
 - Refresh tokens are random, stored hashed (`sha256`) in `auth_refresh_tokens`, and rotated on each `/api/auth/refresh`.
 
@@ -76,7 +76,7 @@ Updated files:
 
 - Added CSRF middleware in:
 
-  - `apps/vlass-api/src/main.ts`
+  - `apps/cosmic-horizons-api/src/main.ts`
 
 - Behavior:
 
@@ -92,11 +92,11 @@ Updated files:
 
 - API helmet baseline:
 
-  - `apps/vlass-api/src/main.ts`
+  - `apps/cosmic-horizons-api/src/main.ts`
 
 - Web SSR helmet + CSP tuned for Aladin/external astronomy resources:
 
-  - `apps/vlass-web/src/server.ts`
+  - `apps/cosmic-horizons-web/src/server.ts`
 
 - CSP includes secure `script-src`, `connect-src`, and image/font directives needed by viewer integrations.
 
@@ -135,4 +135,4 @@ Updated files:
 ## - Add periodic dependency SCA baseline report artifact retention in CI
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

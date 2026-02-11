@@ -27,4 +27,4 @@ Goal: Registration/login with clear failure states and immediate access to the M
 ## - FITS proxy privileges (v2 policy-gated)
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

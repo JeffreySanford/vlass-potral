@@ -4,7 +4,7 @@ Status date: 2026-02-07
 
 ## Overview
 
-VLASS Portal local infra uses Docker Compose for:
+Cosmic Horizon local infra uses Docker Compose for:
 
 - PostgreSQL 16 (`vlass-postgres`)
 
@@ -37,7 +37,7 @@ This runs:
 
 2. `pnpm run start:infra`
 
-3. `pnpm nx run-many --target=serve --projects=vlass-web,vlass-api --parallel=2`
+3. `pnpm nx run-many --target=serve --projects=cosmic-horizons-web,cosmic-horizons-api --parallel=2`
 
 `start:infra` runs:
 
@@ -74,15 +74,15 @@ docker compose logs -f
 
 From `docker-compose.yml` defaults:
 
-- `DB_USER=vlass_user`
+- `DB_USER=cosmic_horizons_user`
 
-- `DB_PASSWORD=vlass_password_dev`
+- `DB_PASSWORD=cosmic_horizons_password_dev`
 
-- `DB_NAME=vlass_portal`
+- `DB_NAME=cosmic_horizons`
 
 - `DB_PORT=15432`
 
-- `REDIS_PASSWORD=vlass_redis_dev`
+- `REDIS_PASSWORD=cosmic_horizons_redis_dev`
 
 - `REDIS_PORT=6379`
 
@@ -106,11 +106,11 @@ Key DB/API vars:
 
 - `DB_PORT` (default `15432`)
 
-- `DB_USER` (default `vlass_user`)
+- `DB_USER` (default `cosmic_horizons_user`)
 
-- `DB_PASSWORD` (default `vlass_password_dev`)
+- `DB_PASSWORD` (default `cosmic_horizons_password_dev`)
 
-- `DB_NAME` (default `vlass_portal`)
+- `DB_NAME` (default `cosmic_horizons`)
 
 Optional cutout reliability vars:
 
@@ -162,7 +162,7 @@ pnpm run start:infra
 ### Validate Postgres connectivity
 
 ```bash
-docker compose exec vlass-postgres psql -U vlass_user -d vlass_portal
+docker compose exec vlass-postgres psql -U cosmic_horizons_user -d cosmic_horizons
 
 ```
 
@@ -173,6 +173,7 @@ docker compose exec vlass-postgres psql -U vlass_user -d vlass_portal
 - `documentation/operations/QUICK-START.md`
 
 ## - `documentation/operations/ENVIRONMENT-CONFIG.md`
+
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

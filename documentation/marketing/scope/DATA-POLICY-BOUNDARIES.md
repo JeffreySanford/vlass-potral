@@ -36,7 +36,7 @@ The main constraints are data-rights/proprietary-access controls and archive/pol
 
 - NRAO data-policy pages point to Users’ Policy sections as governing source.
 
-## Operating Rule For vlass-portal Messaging
+## Operating Rule For cosmic-horizons Messaging
 
 - Public quick-look workflows: allowed baseline for current project messaging.
 
@@ -90,7 +90,8 @@ Reference channels:
 
 - NRAO data policies anchor:
 
-##   `https://science.nrao.edu/observing/proposal-types/datapolicies`
+## `https://science.nrao.edu/observing/proposal-types/datapolicies`
+
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

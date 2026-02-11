@@ -90,13 +90,26 @@ Canonical scope:
   - [ ] Implement agent performance monitoring dashboards
   - [ ] Finalize Symposium packet for Charlottesville 2026
 
+**Phase 3 (v2.0) - NRAO Radar & Messaging Integration** (Scale Focus)
+
+- [ ] **Sprint 1: Messaging Infrastructure**
+  - [ ] Integrate NestJS Microservices with RabbitMQ/Kafka transport
+  - [ ] Implement event-driven telemetry for job state changes
+- [ ] **Sprint 2: Radar Visualization & Profiling**
+  - [ ] Create specialized Range-Doppler visualization component
+  - [ ] Develop site-to-site data transit benchmarking script (100TB+ simulations)
+- [ ] **Sprint 3: Common System Software Alignment**
+  - [ ] Standardize API contracts for "Common Domain" software modules
+  - [ ] Document data-passing p95 latency targets for ngVLA scale
+  - [ ] Reference integration strategy: `documentation/planning/NRAO-RADAR-INTEGRATION.md`
+
 **MVP Pre-Deploy Checklist** (Before Public Release):
 
 - [x] Run full release gate locally and record results:
   `pnpm nx run docs-policy:check && pnpm nx run-many --target=test --all && pnpm nx run mvp-gates:e2e`
   **Results**: ✅ **All required gates PASSED** (Feb 11, 2026 12:53 UTC)
   - Docs Policy: PASSED (100% consistency)
-  - Unit/Integration Tests: PASSED (177/177 tests across shared-models, vlass-api, vlass-web)
+  - Unit/Integration Tests: PASSED (177/177 tests across shared-models, cosmic-horizons-api, cosmic-horizons-web)
   - MVP E2E Gates: PASSED (40/40 tests across web MVP/perf + api e2e)
   - Note: Nx flagged one flaky task signal for `mvp-gates:e2e`; investigate stability.
   
@@ -146,7 +159,7 @@ Completed on 2026-02-10:
   Added mouseleave handler to clear labels when cursor exits viewer canvas
   Adjusted debounce from 300ms to 1000ms (1 second) for bandwidth efficiency
   Labels now appear on hover and disappear when cursor moves off
-  See `apps/vlass-web/src/app/features/viewer/viewer.component.html` and `.ts`
+  See `apps/cosmic-horizons-web/src/app/features/viewer/viewer.component.html` and `.ts`
 
 Completed on 2026-02-07:
 

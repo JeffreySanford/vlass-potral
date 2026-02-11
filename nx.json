@@ -57,7 +57,7 @@
       "options": {
         "targetName": "test"
       },
-      "exclude": ["apps/vlass-api-e2e/**/*"]
+      "exclude": ["apps/cosmic-horizons-api-e2e/**/*"]
     },
     {
       "plugin": "@nx/vitest",

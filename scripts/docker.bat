@@ -74,14 +74,14 @@ REM Access Postgres CLI
 :psql
 call :check_docker
 echo [VLASS] Connecting to Postgres...
-docker-compose -f "%COMPOSE_FILE%" exec vlass-postgres psql -U vlass_user -d vlass_portal
+docker-compose -f "%COMPOSE_FILE%" exec vlass-postgres psql -U cosmic_horizons_user -d cosmic_horizons
 goto :eof
 
 REM Access Redis CLI
 :redis
 call :check_docker
 echo [VLASS] Connecting to Redis...
-docker-compose -f "%COMPOSE_FILE%" exec vlass-redis redis-cli -a vlass_redis_dev
+docker-compose -f "%COMPOSE_FILE%" exec vlass-redis redis-cli -a cosmic_horizons_redis_dev
 goto :eof
 
 REM Status

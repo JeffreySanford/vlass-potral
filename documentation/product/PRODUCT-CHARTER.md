@@ -301,4 +301,4 @@ Pillar 1 + 2 + 3 as defined above. ~4–6 weeks.
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

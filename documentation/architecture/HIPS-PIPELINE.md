@@ -35,4 +35,4 @@ Upstream access remains bounded and non-mirroring.
 ## - Requests are capped and cooled down to avoid burst behavior
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

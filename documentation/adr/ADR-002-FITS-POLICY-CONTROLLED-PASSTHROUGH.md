@@ -10,7 +10,7 @@ ACCEPTED
 
 ## Context
 
-VLASS Portal users need FITS data access. Three models are possible:
+Cosmic Horizon users need FITS data access. Three models are possible:
 
 ### A) Link-Out (No Proxy)
 
@@ -239,4 +239,4 @@ If NRAO is down or rate-limiting us:
 ## **Review Date:** 2026-05-06 (revisit cache hit rate, costs)
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

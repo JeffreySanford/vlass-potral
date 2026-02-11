@@ -20,7 +20,7 @@ npm install @nestjs/typeorm typeorm
 
 pnpm nx exec -- typeorm migration:create \
 
-  apps/vlass-api/src/migrations/InitialSchema
+  apps/cosmic-horizons-api/src/migrations/InitialSchema
 
 ```
 
@@ -29,7 +29,7 @@ pnpm nx exec -- typeorm migration:create \
 ## Migration Template
 
 ```typescript
-// apps/vlass-api/src/migrations/1700000000000-InitialSchema.ts
+// apps/cosmic-horizons-api/src/migrations/1700000000000-InitialSchema.ts
 
 import {
   MigrationInterface,
@@ -131,7 +131,7 @@ export class InitialSchema1700000000000 implements MigrationInterface {
 ## ormconfig.ts (Both Databases)
 
 ```typescript
-// apps/vlass-api/ormconfig.ts
+// apps/cosmic-horizons-api/ormconfig.ts
 
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { User } from './src/app/auth/user.entity';
@@ -217,7 +217,7 @@ export default config;
 
 pnpm nx exec -- typeorm migration:create \
 
-  apps/vlass-api/src/migrations/AddUserBanFields
+  apps/cosmic-horizons-api/src/migrations/AddUserBanFields
 
 # Run migrations (auto on app startup OR manual)
 
@@ -270,7 +270,7 @@ jobs:
 
       - name: Run e2e
 
-        run: pnpm nx e2e vlass-api-e2e
+        run: pnpm nx e2e cosmic-horizons-api-e2e
 
 ```
 
@@ -406,4 +406,4 @@ describe('Database Migrations', () => {
 ## 4. **Avoid DB-specific types.** Keep schema portable
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

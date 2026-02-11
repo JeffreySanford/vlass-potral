@@ -2,7 +2,7 @@
 
 ## Overview
 
-VLASS Portal lets users create community posts with **Markdown + embedded viewer blocks + images**, with revision history, snapshots, and moderation.
+Cosmic Horizon lets users create community posts with **Markdown + embedded viewer blocks + images**, with revision history, snapshots, and moderation.
 
 This is the core differentiator: users can tell stories about VLASS data, link observations to discussion.
 
@@ -213,7 +213,7 @@ Regular text follows...
 NestJS controller runs a parser **on every publish**:
 
 ```typescript
-// apps/vlass-api/src/app/community/parsers/markdown-blocks.parser.ts
+// apps/cosmic-horizons-api/src/app/community/parsers/markdown-blocks.parser.ts
 
 export function extractBlocks(rawMarkdown: string): Block[] {
   const blocks: Block[] = [];
@@ -394,7 +394,7 @@ async createPost(
 ### Async Snapshot Job (Background)
 
 ```typescript
-// apps/vlass-api/src/app/community/jobs/snapshot.job.ts
+// apps/cosmic-horizons-api/src/app/community/jobs/snapshot.job.ts
 
 @Processor('snapshot-generation')
 export class SnapshotGenerationJob {
@@ -721,7 +721,7 @@ Response:
 ## Part 6: Testing
 
 ````typescript
-// apps/vlass-api-e2e/src/community-blocks.spec.ts
+// apps/cosmic-horizons-api-e2e/src/community-blocks.spec.ts
 
 describe("Community Posts with Blocks", () => {
   it("should publish post with valid viewer block", async () => {
@@ -856,4 +856,4 @@ A: Yes, via creating a new revision. Old revision's snapshot is preserved (immut
 ## **Related:** HIPS-PIPELINE.md, MODERATION-SYSTEM.md, DATA-RETENTION-DELETION.md
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

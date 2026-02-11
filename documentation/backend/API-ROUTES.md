@@ -101,7 +101,7 @@ API payloads must align with DTOs defined in `libs/shared/models`.
 ## If docs and DTOs conflict, DTOs + charter/scope-lock win
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
 
 ---
 *Independent portal using public VLASS data; not affiliated with VLA/NRAO.*

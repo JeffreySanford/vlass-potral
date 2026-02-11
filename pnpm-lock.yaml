@@ -274,7 +274,7 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(webpack-dev-server@5.2.2)(webpack@5.105.0)
 
-  apps/vlass-api:
+  apps/cosmic-horizons-api:
     dependencies:
       '@nestjs/axios':
         specifier: ^4.0.1
@@ -311,9 +311,9 @@ importers:
         specifier: ^11.0.0
         version: 11.1.13(@nestjs/common@11.1.13(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@11.1.13)(@nestjs/platform-express@11.1.13)
 
-  apps/vlass-api-e2e: {}
+  apps/cosmic-horizons-api-e2e: {}
 
-  apps/vlass-web-e2e: {}
+  apps/cosmic-horizons-web-e2e: {}
 
   libs/shared/models: {}
 

@@ -228,11 +228,11 @@ Result: { ra: 142.847, dec: -15.234, accuracy_arcsec: 1.2 }
 
 **Implemented**:
 
-- [apps/vlass-web/src/app/features/viewer/viewer.component.html](../../../apps/vlass-web/src/app/features/viewer/viewer.component.html)
+- [apps/cosmic-horizons-web/src/app/features/viewer/viewer.component.html](../../../apps/cosmic-horizons-web/src/app/features/viewer/viewer.component.html)
 
   - Added `(mouseleave)="onCanvasMouseLeave()"` handler to clear labels
 
-- [apps/vlass-web/src/app/features/viewer/viewer.component.ts](../../../apps/vlass-web/src/app/features/viewer/viewer.component.ts)
+- [apps/cosmic-horizons-web/src/app/features/viewer/viewer.component.ts](../../../apps/cosmic-horizons-web/src/app/features/viewer/viewer.component.ts)
 
   - Implemented `onCanvasMouseLeave()` method to clear catalog labels and cancel pending debounce
 
@@ -310,7 +310,7 @@ Result: { ra: 142.847, dec: -15.234, accuracy_arcsec: 1.2 }
 
 2. **Implement NestJS Endpoint**
 
-   - Create `src/modules/ephemeris/` in vlass-api
+   - Create `src/modules/ephemeris/` in cosmic-horizons-api
 
    - Implement `POST /api/view/ephem/search` controller
 
@@ -381,4 +381,4 @@ Result: { ra: 142.847, dec: -15.234, accuracy_arcsec: 1.2 }
 ## **Next Review**: 2026-02-17 (Sprint 1 progress)
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

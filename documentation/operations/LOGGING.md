@@ -61,6 +61,7 @@ Status date: 2026-02-08
 - Avoid logging secrets or large payload bodies; prefer sizes and IDs.
 
 ## - Correlation ID is constant for now (`272762e810cea2de53a2f`) and should become a per-request value in future work
+
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

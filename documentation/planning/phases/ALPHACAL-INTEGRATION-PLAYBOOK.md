@@ -8,7 +8,7 @@
 
 ## Purpose
 
-This document defines how AlphaCal-class AI agents are expected to interact with `vlass-portal` as the operational UI and control-plane layer, without overstating current implementation status.
+This document defines how AlphaCal-class AI agents are expected to interact with `cosmic-horizons` as the operational UI and control-plane layer, without overstating current implementation status.
 
 Use this as the canonical answer for:
 
@@ -30,9 +30,9 @@ This playbook is a planning/operations reference. It does not by itself claim sh
 
 ---
 
-## Interaction Model: AlphaCal <-> VLASS Portal
+## Interaction Model: AlphaCal <-> Cosmic Horizon
 
-AlphaCal provides calibration intelligence and compute-side processing. `vlass-portal` provides researcher-facing orchestration, observability, and trust controls.
+AlphaCal provides calibration intelligence and compute-side processing. `cosmic-horizons` provides researcher-facing orchestration, observability, and trust controls.
 
 ### 1. Operational UI and Monitoring
 
@@ -158,4 +158,4 @@ Related:
 
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

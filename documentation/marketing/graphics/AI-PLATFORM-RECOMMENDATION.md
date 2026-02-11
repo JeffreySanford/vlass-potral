@@ -59,4 +59,4 @@ If you want fast polished visuals and less technical control, use `Canva Magic D
 ## - Canva Magic Studio: <https://www.canva.com/magic-studio/>
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

@@ -8,13 +8,13 @@
 
 ## Overview
 
-Phase 2 transforms vlass-portal from a **static data browser** into an **AI-driven scientific operations platform**. The MVP established the UI/UX layer and community collaboration model. Phase 2 adds the inference orchestration, algorithm integration, and reproducibility tracking that makes the platform indispensable for AI-assisted radio astronomy.
+Phase 2 transforms cosmic-horizons from a **static data browser** into an **AI-driven scientific operations platform**. The MVP established the UI/UX layer and community collaboration model. Phase 2 adds the inference orchestration, algorithm integration, and reproducibility tracking that makes the platform indispensable for AI-assisted radio astronomy.
 
 **Strategic context:**
-CosmicAI is producing state-of-the-art algorithms for radio image reconstruction, calibration anomaly detection, hyperspectral analysis, and interferometric processing. NSF NRAO presented these at the 247th AAS meeting. Phase 2 makes vlass-portal the control plane for these algorithms—providing workflow orchestration, UI, policy enforcement, and auditability that the research community lacks.
+CosmicAI is producing state-of-the-art algorithms for radio image reconstruction, calibration anomaly detection, hyperspectral analysis, and interferometric processing. NSF NRAO presented these at the 247th AAS meeting. Phase 2 makes cosmic-horizons the control plane for these algorithms—providing workflow orchestration, UI, policy enforcement, and auditability that the research community lacks.
 
 **Success definition:**
-Users can submit VLASS data to AI analysis workflows, monitor results, reproduce experiments, and publish findings—all without leaving vlass-portal.
+Users can submit VLASS data to AI analysis workflows, monitor results, reproduce experiments, and publish findings—all without leaving cosmic-horizons.
 
 ---
 
@@ -22,7 +22,7 @@ Users can submit VLASS data to AI analysis workflows, monitor results, reproduce
 
 ### Pillar 1: Inference Service Layer
 
-**Goal:** Integrate production-grade ML models as first-class services in vlass-portal.
+**Goal:** Integrate production-grade ML models as first-class services in cosmic-horizons.
 
 **Scope:**
 
@@ -93,7 +93,7 @@ Users can submit VLASS data to AI analysis workflows, monitor results, reproduce
 
 ### Pillar 2: GPU Job Orchestration
 
-**Goal:** Transform vlass-portal into a reliable job submission and monitoring interface.
+**Goal:** Transform cosmic-horizons into a reliable job submission and monitoring interface.
 
 **Scope:**
 
@@ -237,7 +237,7 @@ Users can submit VLASS data to AI analysis workflows, monitor results, reproduce
 
 ```mermaid
 graph LR
-    U[User in vlass-portal]
+    U[User in cosmic-horizons]
     V[Angular Viewer + UI]
 
     API[NestJS API Gateway]
@@ -379,4 +379,4 @@ graph LR
 ## - [../funding/FUNDING-AND-COSTS.md](../funding/FUNDING-AND-COSTS.md) — Funding strategy and cost breakdown
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

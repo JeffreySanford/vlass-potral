@@ -16,7 +16,7 @@ This document explains what `documentation/database/init.sql` does during local 
 
 - Seed local development users for JWT/RBAC testing
 
-- Grant table/sequence/schema privileges to `vlass_user`
+- Grant table/sequence/schema privileges to `cosmic_horizons_user`
 
 The script is designed to be idempotent where practical (`IF NOT EXISTS`, `ON CONFLICT`).
 
@@ -57,4 +57,4 @@ Passwords are inserted as bcrypt hashes via PostgreSQL `crypt(..., gen_salt('bf'
 ## - `documentation/setup/DOCKER-BOOTSTRAP.md`
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

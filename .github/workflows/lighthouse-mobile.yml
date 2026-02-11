@@ -30,7 +30,7 @@ jobs:
         run: pnpm run start:ports:free
       - name: Start web app for Lighthouse
         run: |
-          pnpm nx run vlass-web:serve:development > /tmp/vlass-web-lighthouse.log 2>&1 &
+          pnpm nx run cosmic-horizons-web:serve:development > /tmp/cosmic-horizons-web-lighthouse.log 2>&1 &
       - name: Wait for web app
         run: node scripts/wait-for-url.mjs http://localhost:4200 180000
       - name: Run Lighthouse CI
@@ -46,5 +46,5 @@ jobs:
           path: |
             test-output/lighthouse
             .lighthouseci
-            /tmp/vlass-web-lighthouse.log
+            /tmp/cosmic-horizons-web-lighthouse.log
           if-no-files-found: ignore

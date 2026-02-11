@@ -201,6 +201,6 @@ SET
   deleted_at = NULL;
 
 -- Grant permissions
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO vlass_user;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO vlass_user;
-GRANT USAGE ON SCHEMA public TO vlass_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO cosmic_horizons_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO cosmic_horizons_user;
+GRANT USAGE ON SCHEMA public TO cosmic_horizons_user;

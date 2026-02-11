@@ -45,4 +45,4 @@ MVP cache layers:
 ## - Policy: performance-only cache; not an archive or redistribution layer
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

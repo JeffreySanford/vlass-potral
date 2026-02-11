@@ -4,9 +4,9 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug vlass-api with Nx",
+      "name": "Debug cosmic-horizons-api with Nx",
       "runtimeExecutable": "pnpm exec",
-      "runtimeArgs": ["nx", "serve", "vlass-api"],
+      "runtimeArgs": ["nx", "serve", "cosmic-horizons-api"],
       "env": {
         "NODE_OPTIONS": "--inspect=9229"
       },
@@ -15,7 +15,7 @@
       "skipFiles": ["<node_internals>/**"],
       "sourceMaps": true,
       "outFiles": [
-        "${workspaceFolder}/apps/vlass-api/dist/**/*.(m|c|)js",
+        "${workspaceFolder}/apps/cosmic-horizons-api/dist/**/*.(m|c|)js",
         "!**/node_modules/**"
       ]
     }

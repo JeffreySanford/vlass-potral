@@ -1,0 +1,88 @@
+{
+  "name": "cosmic-horizons-web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/cosmic-horizons-web/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/cosmic-horizons-web",
+        "browser": "apps/cosmic-horizons-web/src/main.ts",
+        "tsConfig": "apps/cosmic-horizons-web/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/cosmic-horizons-web/src/styles"]
+        },
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/cosmic-horizons-web/public"
+          }
+        ],
+        "styles": ["apps/cosmic-horizons-web/src/styles.scss"],
+        "server": "apps/cosmic-horizons-web/src/main.server.ts",
+        "ssr": {
+          "entry": "apps/cosmic-horizons-web/src/server.ts"
+        },
+        "outputMode": "server"
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "12kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "cosmic-horizons-web:build:production"
+        },
+        "development": {
+          "buildTarget": "cosmic-horizons-web:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {}
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "cosmic-horizons-web:build",
+        "port": 4200,
+        "staticFilePath": "dist/apps/cosmic-horizons-web/browser",
+        "spa": true
+      }
+    }
+  }
+}

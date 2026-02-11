@@ -17,7 +17,7 @@ Three-tier rate limiting:
 ### Guards
 
 ```typescript
-// apps/vlass-api/src/app/guards/throttle.guard.ts
+// apps/cosmic-horizons-api/src/app/guards/throttle.guard.ts
 
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
@@ -115,7 +115,7 @@ export class EndpointThrottleGuard implements CanActivate {
 ### Usage in Controller
 
 ```typescript
-// apps/vlass-api/src/app/community/community.controller.ts
+// apps/cosmic-horizons-api/src/app/community/community.controller.ts
 
 import { UseGuards } from '@nestjs/common';
 import {
@@ -222,7 +222,7 @@ if (current > limit) {
 ## Testing
 
 ```typescript
-// apps/vlass-api-e2e/src/rate-limiting.spec.ts
+// apps/cosmic-horizons-api-e2e/src/rate-limiting.spec.ts
 
 describe('Rate Limiting', () => {
   it('should reject after 100 posts/min', async () => {
@@ -274,4 +274,4 @@ describe('Rate Limiting', () => {
 ## **Strategy:** IP → User → Endpoint. Bypass for premium/service accounts
 ---
 
-*VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
