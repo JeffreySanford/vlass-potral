@@ -8,11 +8,25 @@ Status date: 2026-02-10
 
 - Docs overview (current architecture and status): `documentation/index/OVERVIEW-V2.md`
 
+- Overview asset alignment audit: `documentation/overview/OVERVIEW-ASSET-ALIGNMENT-AUDIT-2026-02-11.md`
+
+- Exascale deck wording patch: `documentation/overview/EXASCALE-DECK-WORDING-PATCH-2026-02-11.md`
+
+- External claims references appendix: `documentation/overview/EXTERNAL-CLAIMS-REFERENCES-APPENDIX-2026-02-11.md`
+
+- External asset metadata pack: `documentation/overview/EXTERNAL-ASSET-METADATA-2026-02-11.md`
+
 - Product charter and scope lock: `documentation/product/PRODUCT-CHARTER.md`, `SCOPE-LOCK.md`
 
 - Agent operating guidance and CosmicAI docking brief: `AGENTS.md`
 
 - Phase 3 CosmicAI federation plan: `documentation/planning/phases/PHASE-3-COSMICAI-FEDERATION.md`
+
+- AlphaCal integration playbook: `documentation/planning/phases/ALPHACAL-INTEGRATION-PLAYBOOK.md`
+
+- Pillar 3 implementation checklist: `documentation/planning/phases/PILLAR-3-IMPLEMENTATION-CHECKLIST.md`
+
+- Pillar 3 execution backlog: `documentation/planning/phases/PILLAR-3-EXECUTION-BACKLOG.md`
 
 - Target resolution & ephemeris architecture: `documentation/architecture/TARGET-RESOLUTION-EPHEMERIS.md`
 
