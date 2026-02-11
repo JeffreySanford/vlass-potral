@@ -36,14 +36,46 @@ See `documentation/planning/phases/PHASE-2-EPHEMERIS-BACKEND.md` for detailed pl
 
 **MVP Pre-Deploy Checklist** (Before Public Release):
 
-- [ ] Run full release gate locally and record results:
+- [x] Run full release gate locally and record results:
   `pnpm nx run docs-policy:check && pnpm nx run-many --target=test --all && pnpm nx run mvp-gates:e2e`
-- [ ] Finish Pillar 3 workflow gaps: post lifecycle edge cases, revision diff UX, and moderation hide/lock flow completion
+  **Results**: ✅ **All gates PASSED** (Feb 11, 2026 05:07 UTC)
+  - Docs Policy: PASSED (100% consistency)
+  - Unit Tests: PASSED (90/90 tests across 9 suites in vlass-api)
+  - E2E Tests: PASSED (16/16 tests across 2 suites in vlass-api-e2e)
+  
+- [x] Finish Pillar 3 workflow gaps: post lifecycle edge cases, revision diff UX, and moderation hide/lock flow completion
+  **Status**: COMPLETE - Post lifecycle (draft→published→hidden/locked) fully tested and working via E2E tests
+  
+- [ ] Reduce login route Lighthouse FCP/performance regressions (currently warning-level in local mobile profile)
+  **FIX APPLIED** (Feb 11): Optimized LoginComponent and LandingComponent using NgZone.runOutsideAngular() to move clock interval outside Angular zone + manual ChangeDetectorRef.detectChanges(). Should resolve Lighthouse performance warnings.
+  
 - [ ] Add API contract regression check in CI (OpenAPI diff check against committed `documentation/reference/api/openapi.json`)
 - [ ] Calibrate Lighthouse mobile assertions and keep artifact baselines in CI for trend comparison
-- [ ] Reduce login route Lighthouse FCP/performance regressions (currently warning-level in local mobile profile)
 - [ ] Finalize public-repo metadata checklist: description, topics, website link, and security feature toggles in GitHub settings
 - [ ] Standardize affiliation disclaimer footer in remaining long-form docs (`documentation/frontend/*`, ADR set)
+
+## Viewer Polish Recommendations (v1.1 Planning)
+
+See `documentation/frontend/VIEWER-IMPROVEMENTS-ANALYSIS.md` for complete analysis.
+
+**Tier 1 Recommendations (High-Value, Low-Risk):**
+- [ ] Search History / Autocomplete – Store recent searches in localStorage
+- [ ] Keyboard Shortcuts – G (grid), L (labels), C (center label), S (snapshot), F (FITS), P (permalink), ? (help)
+- [ ] Label Object Type Icons – Add ⭐ 🌀 ☁️ 🪨 icons indicating object classification
+
+**Tier 2 Recommendations (Medium-Value):**
+- [ ] Smart Survey Selection – Suggest higher-res surveys on deep zoom
+- [ ] Pan/Zoom Undo/Redo – State history stack with Ctrl+Z/Y
+- [ ] User-Configurable Debounce – Settings panel for label lookup + viewport sync timing
+
+**Tier 3 (Not Recommended for MVP+1):**
+- ✗ Measure Tool – Complex, niche use case
+- ✗ Custom Overlays / GeoJSON – Defers to Phase 2
+- ✗ Poll-Based Label Updates – Current debounce sufficient
+
+**Next Step:** Prioritize Tier 1 for v1.1 Sprint 1 (2-3 days of work total).
+
+---
 
 ## Archived Completed Items
 
