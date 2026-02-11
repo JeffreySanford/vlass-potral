@@ -36,6 +36,7 @@ Current astronomy AI ecosystems are strong in models and compute but weaker in p
 - Current messaging is anchored to public-data-compatible workflows.
 - FITS-oriented expansion is treated as permission-gated until explicit guidance is received.
 - Proprietary/archive constraints must be respected before implementing any advanced FITS pipeline path.
+- NRAO Helpdesk is the first channel for permission-sensitive FITS/policy questions.
 - See `documentation/marketing/scope/DATA-POLICY-BOUNDARIES.md`.
 
 ## Next Pillars (2-3 Year Alignment)

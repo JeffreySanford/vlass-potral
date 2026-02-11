@@ -14,7 +14,11 @@ I recently completed three platform pillars:
 
 Based on CosmicAI and Cosmic Horizons priorities, I believe this aligns as research software infrastructure: a web-native operations/control-plane layer for AI-driven radio pipelines (calibration, reconstruction, anomaly detection), complementary to backend compute ecosystems.
 
-To make the next step meaningful, I would likely need to support FITS-oriented workflows. I understand there may be fair-use/policy constraints around FITS access and derivative handling, so I do not want to proceed without guidance.
+To make the next step meaningful, I would likely need to support FITS-oriented workflows.
+
+Before I implement any FITS-oriented features, could you please confirm what access and derivative-use patterns are permitted, and whether written approval is required?
+
+I am also opening this question through NRAO Helpdesk to ensure I follow the official policy path first.
 
 If this direction is potentially useful, would you be open to connecting me with a software engineer or technical lead to discuss:
 

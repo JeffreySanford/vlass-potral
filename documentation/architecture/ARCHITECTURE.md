@@ -3,14 +3,23 @@
 Status date: 2026-02-07
 
 Canonical scope is defined by:
+
 - `documentation/product/PRODUCT-CHARTER.md`
 - `SCOPE-LOCK.md`
 
 Affiliation note:
+
 - This architecture describes an independent project that consumes public VLASS data.
 - It is not an official system owned or operated by VLA/NRAO.
 
+**Related Documentation**:
+
+- Target resolution & ephemeris architecture: [TARGET-RESOLUTION-EPHEMERIS.md](TARGET-RESOLUTION-EPHEMERIS.md)
+- Scope decision (MVP vs. scientific): [EPHEMERIS-SCOPE-DECISION.md](EPHEMERIS-SCOPE-DECISION.md)
+- Debugging guide for planet resolution: [MARS-RESOLUTION-DEBUGGING.md](MARS-RESOLUTION-DEBUGGING.md)
+
 ## Components
+
 - Frontend: `apps/vlass-web` (Angular SSR)
 - Backend: `apps/vlass-api` (NestJS + Postgres/Redis)
 - Shared models: `libs/shared/models`
@@ -26,21 +35,25 @@ flowchart LR
 ```
 
 Frontend runtime note:
+
 - Mode A viewer includes short-lived client-side HiPS tile prefetch/cache (window-scoped, TTL/LRU bounded) for UX performance only.
 
 ## Boundaries
+
 - Browser does not directly own policy decisions.
 - NestJS enforces auth, RBAC, auditing, and rate limits.
 - Viewer is Mode A only (Aladin) for MVP.
 - SSR is the user entry path; API remains the policy and data control plane.
 
 ## Data Policy
+
 - Public VLASS usage only.
 - FITS is link-out only.
 - No mirror-like proxy in MVP.
 - Viewer tile prefetch is transient and non-mirroring (not persisted, bounded by policy).
 
 ## Rust and Go Decision
+
 - Go microservice is removed from MVP.
 - Rust rendering is optional and deferred.
 - Because Mode B is deferred, no heavy rendering tier is required for MVP success.
@@ -50,5 +63,5 @@ Frontend runtime note:
   3. v2 Mode B is approved.
 
 Mode B planning overview (timing, feasibility, permission assumptions):
-- `documentation/architecture/VIEWER-MODE-B-INTEGRATION-OVERVIEW.md`
 
+- `documentation/architecture/VIEWER-MODE-B-INTEGRATION-OVERVIEW.md`

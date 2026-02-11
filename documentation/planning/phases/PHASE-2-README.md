@@ -4,7 +4,23 @@ Welcome to Phase 2 planning documentation. This phase transforms vlass-portal in
 
 ## Files in This Directory
 
-- **[PHASE-2-AI-INTEGRATION.md](PHASE-2-AI-INTEGRATION.md)** — Complete Phase 2 technical planning document
+**Pre-Phase 2 (v1.1 - Starting Now):**
+
+- **[PHASE-2-EPHEMERIS-BACKEND.md](PHASE-2-EPHEMERIS-BACKEND.md)** — Interim scientific ephemeris feature
+  - Astropy-based planet/asteroid position calculations
+  - Replaces hardcoded fallback with time-dependent science-grade accuracy
+  - 3-6 week implementation (builds foundation for Phase 2 AI calibration)
+  - Prepares backend for coordinate calibration features
+
+- **[MVP-COMPLETE-PHASE2-KICKOFF.md](MVP-COMPLETE-PHASE2-KICKOFF.md)** — Status summary and kickoff
+  - MVP v1.0 completion checklist
+  - Label hover feature implementation
+  - Phase 2 ephemeris backend overview
+  - Next action items
+
+**Phase 2 (Full AI Integration):**
+
+- **[PHASE-2-AI-INTEGRATION.md](PHASE-2-AI-INTEGRATION.md)** — Complete Phase 2 AI technical planning
   - Four core pillars (Inference, Job Orchestration, Reproducibility, Explainability)
   - Technical architecture and backend services
   - Success criteria and timeline
