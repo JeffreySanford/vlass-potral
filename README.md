@@ -16,6 +16,14 @@ Canonical MVP docs:
 
 If any other doc conflicts, treat `PRODUCT-CHARTER.md` + `SCOPE-LOCK.md` as source of truth.
 
+Strategic AI control-plane direction:
+
+- `AGENTS.md` (`CosmicAI Docking & AI Control Plane`)
+- `documentation/planning/phases/PHASE-3-COSMICAI-FEDERATION.md`
+- `documentation/marketing/scope/COSMIC-HORIZONS-2026-SCOPE.md`
+
+Strategic documents inform planning and integration direction, but do not override MVP scope locks.
+
 ## MVP Summary
 
 VLASS Portal MVP is a three-pillar Angular + NestJS product:
@@ -81,7 +89,9 @@ pnpm nx run mvp-gates:e2e
 
 - `documentation/product/PRODUCT-CHARTER.md`
 - `SCOPE-LOCK.md`
+- `AGENTS.md`
 - `documentation/governance/STATUS.md`
+- `documentation/governance/SOURCE-OF-TRUTH.md`
 - `documentation/product/AFFILIATION.md`
 - `documentation/governance/EXTERNAL-RESEARCH-WORKFLOW.md`
 - `documentation/operations/ENV.md`

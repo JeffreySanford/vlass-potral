@@ -28,6 +28,14 @@ When conflicts exist:
 
 - External context docs: strategy/trend inputs that are not themselves implementation truth.
 
+## CosmicAI and ngVLA Context Classification
+
+- `AGENTS.md` (`CosmicAI Docking & AI Control Plane`) is strategic operating context for agent behavior and integration intent.
+
+- `documentation/planning/phases/PHASE-3-COSMICAI-FEDERATION.md` and conference/marketing scope docs are planning references.
+
+- These documents guide roadmap direction but do not override implementation scope truth in the charter/scope lock.
+
 ## External Claims Governance
 
 - External trend/institution statements follow `documentation/governance/EXTERNAL-RESEARCH-WORKFLOW.md`.

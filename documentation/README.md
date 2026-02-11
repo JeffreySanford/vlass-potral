@@ -10,6 +10,10 @@ Status date: 2026-02-10
 
 - Product charter and scope lock: `documentation/product/PRODUCT-CHARTER.md`, `SCOPE-LOCK.md`
 
+- Agent operating guidance and CosmicAI docking brief: `AGENTS.md`
+
+- Phase 3 CosmicAI federation plan: `documentation/planning/phases/PHASE-3-COSMICAI-FEDERATION.md`
+
 - Target resolution & ephemeris architecture: `documentation/architecture/TARGET-RESOLUTION-EPHEMERIS.md`
 
 ## Folder Layout
@@ -79,3 +83,11 @@ Status date: 2026-02-10
 - Start conference/proposal materials: `documentation/marketing/README.md`
 
 - Viewer controls & target search: `documentation/frontend/VIEWER-CONTROLS.md` + `documentation/architecture/TARGET-RESOLUTION-EPHEMERIS.md`
+
+## Scope vs. Strategy
+
+- Scope and implementation truth is defined by `documentation/product/PRODUCT-CHARTER.md` and `SCOPE-LOCK.md`.
+
+- CosmicAI/ngVLA planning docs and `AGENTS.md` define strategic direction and integration targets.
+
+- If statements conflict, follow charter + scope lock for implementation decisions.

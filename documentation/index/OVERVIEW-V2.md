@@ -215,6 +215,8 @@ Required CI signals:
 ## Doc Map
 
 - Charter and scope: `documentation/product/PRODUCT-CHARTER.md`, `SCOPE-LOCK.md`
+- Agent operating and strategic control-plane context: `AGENTS.md`
+- Phase 3 CosmicAI federation strategy: `documentation/planning/phases/PHASE-3-COSMICAI-FEDERATION.md`
 
 - Current architecture: `documentation/architecture/ARCHITECTURE.md`
 

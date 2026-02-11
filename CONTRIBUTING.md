@@ -24,6 +24,8 @@
 - Architecture: `documentation/architecture/ARCHITECTURE.md`
 - Demo path: `documentation/operations/DEMO.md`
 - API contract artifact: `documentation/reference/api/openapi.json`
+- Scope truth: `documentation/product/PRODUCT-CHARTER.md`, `SCOPE-LOCK.md`
+- Strategic AI control-plane context: `AGENTS.md`, `documentation/planning/phases/PHASE-3-COSMICAI-FEDERATION.md`
 
 ## Style and Safety
 

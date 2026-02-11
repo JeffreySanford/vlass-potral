@@ -1,6 +1,7 @@
 {
   "config": {
-    "extends": "markdownlint/style/prettier",
+    // Keep this config self-contained for editor and CLI compatibility.
+    // The previous external extends target was not present in this repo.
     "MD013": false,
     "MD036": false,
     "MD060": false,
