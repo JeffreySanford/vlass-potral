@@ -49,7 +49,7 @@ describe('HipsTilePrefetchService', () => {
 
     const second = await globalThis.fetch(tileUrl);
     expect(second.ok).toBe(true);
-    expect(second.headers.get('X-Vlass-Tile-Cache')).toBe('HIT');
+    expect(second.headers.get('X-Cosmic-Tile-Cache')).toBe('HIT');
   });
 
   it('restores original fetch behavior after deactivation', async () => {

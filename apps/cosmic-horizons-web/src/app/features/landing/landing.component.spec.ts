@@ -52,7 +52,7 @@ describe('LandingComponent', () => {
     authSessionService = {
       getUser: vi.fn(() => ({
         username: 'testuser',
-        email: 'test@vlass.local',
+        email: 'test@cosmic.local',
         display_name: 'Test User',
         role: 'admin' as const,
       })),

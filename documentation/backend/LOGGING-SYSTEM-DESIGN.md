@@ -160,7 +160,7 @@ Comprehensive request/event logging system with:
   method: 'POST',
   path: '/api/posts',
   user_id: 'user-123',
-  user_email: 'jane@vlass.local',
+  user_email: 'jane@cosmic.local',
   status_code: 201,
   duration_ms: 145,
   ip_address: '192.168.1.100',
@@ -197,7 +197,7 @@ Comprehensive request/event logging system with:
   event_name: 'USER_LOGIN',
   severity: 'INFO',
   user_id: 'user-123',
-  user_email: 'jane@vlass.local',
+  user_email: 'jane@cosmic.local',
   ip_address: '192.168.1.100',
   timestamp: '2026-02-07T22:30:45.123Z',
   details: {
@@ -552,7 +552,7 @@ GET /api/admin/logs?
       status_code: 201,
       severity: 'INFO',
       user_id: 'user-123',
-      user_email: 'jane@vlass.local',
+      user_email: 'jane@cosmic.local',
       duration_ms: 234,
       created_at: '2026-02-07T22:30:45.123Z',
       details: { ... }

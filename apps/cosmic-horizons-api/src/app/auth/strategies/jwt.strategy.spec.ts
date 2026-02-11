@@ -19,7 +19,7 @@ describe('JwtStrategy', () => {
 
     const result = await strategy.validate({
       sub: 'user-1',
-      email: 'test@vlass.local',
+      email: 'test@cosmic.local',
       username: 'testuser',
       role: 'user',
     });

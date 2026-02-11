@@ -1,6 +1,6 @@
 @echo off
-REM VLASS Portal Docker Manager Script for Windows
-REM Provides convenient commands for managing Docker containers with vlass- prefix
+REM Cosmic Horizons Docker Manager Script for Windows
+REM Provides convenient commands for managing Docker containers with cosmic- prefix
 
 setlocal enabledelayedexpansion
 
@@ -19,31 +19,31 @@ goto :eof
 REM Start containers
 :start
 call :check_docker
-echo [VLASS] Starting VLASS containers...
+echo [Cosmic Horizons] Starting Cosmic Horizons containers...
 docker-compose -f "%COMPOSE_FILE%" up -d
-echo [VLASS] Containers started successfully!
+echo [Cosmic Horizons] Containers started successfully!
 timeout /t 2 /nobreak
 docker-compose -f "%COMPOSE_FILE%" ps
-echo [VLASS] Waiting for databases to be ready...
+echo [Cosmic Horizons] Waiting for databases to be ready...
 timeout /t 5 /nobreak
-echo [VLASS] ✓ Postgres: localhost:5432
-echo [VLASS] ✓ Redis: localhost:6379
+echo [Cosmic Horizons] ✓ Postgres: localhost:5432
+echo [Cosmic Horizons] ✓ Redis: localhost:6379
 goto :eof
 
 REM Stop containers
 :stop
 call :check_docker
-echo [VLASS] Stopping VLASS containers...
+echo [Cosmic Horizons] Stopping Cosmic Horizons containers...
 docker-compose -f "%COMPOSE_FILE%" down
-echo [VLASS] Containers stopped.
+echo [Cosmic Horizons] Containers stopped.
 goto :eof
 
 REM Restart containers
 :restart
 call :check_docker
-echo [VLASS] Restarting VLASS containers...
+echo [Cosmic Horizons] Restarting Cosmic Horizons containers...
 docker-compose -f "%COMPOSE_FILE%" restart
-echo [VLASS] Containers restarted.
+echo [Cosmic Horizons] Containers restarted.
 goto :eof
 
 REM Clean containers and volumes
@@ -52,11 +52,11 @@ call :check_docker
 echo [WARN] This will delete containers and volumes. Continue? (y/n)
 set /p response=
 if /i "!response!"=="y" (
-  echo [VLASS] Removing containers and volumes...
+  echo [Cosmic Horizons] Removing containers and volumes...
   docker-compose -f "%COMPOSE_FILE%" down -v
-  echo [VLASS] Cleaned successfully.
+  echo [Cosmic Horizons] Cleaned successfully.
 ) else (
-  echo [VLASS] Cancelled.
+  echo [Cosmic Horizons] Cancelled.
 )
 goto :eof
 
@@ -73,28 +73,28 @@ goto :eof
 REM Access Postgres CLI
 :psql
 call :check_docker
-echo [VLASS] Connecting to Postgres...
-docker-compose -f "%COMPOSE_FILE%" exec vlass-postgres psql -U cosmic_horizons_user -d cosmic_horizons
+echo [Cosmic Horizons] Connecting to Postgres...
+docker-compose -f "%COMPOSE_FILE%" exec cosmic-postgres psql -U cosmic_horizons_user -d cosmic_horizons
 goto :eof
 
 REM Access Redis CLI
 :redis
 call :check_docker
-echo [VLASS] Connecting to Redis...
-docker-compose -f "%COMPOSE_FILE%" exec vlass-redis redis-cli -a cosmic_horizons_redis_dev
+echo [Cosmic Horizons] Connecting to Redis...
+docker-compose -f "%COMPOSE_FILE%" exec cosmic-redis redis-cli -a cosmic_horizons_redis_dev
 goto :eof
 
 REM Status
 :status
 call :check_docker
-echo [VLASS] Container Status:
+echo [Cosmic Horizons] Container Status:
 docker-compose -f "%COMPOSE_FILE%" ps
 goto :eof
 
 REM Help
 :help
 (
-  echo VLASS Portal Docker Manager
+  echo Cosmic Horizons Docker Manager
   echo.
   echo Usage: docker.bat ^<command^>
   echo.
@@ -111,7 +111,7 @@ REM Help
   echo.
   echo Examples:
   echo   docker.bat start
-  echo   docker.bat logs vlass-postgres
+  echo   docker.bat logs cosmic-postgres
   echo   docker.bat psql
   echo   docker.bat redis
 )

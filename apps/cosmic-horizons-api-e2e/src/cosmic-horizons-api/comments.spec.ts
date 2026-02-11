@@ -7,7 +7,7 @@ describe('comments e2e', () => {
   beforeAll(async () => {
     // Login as test user
     const loginRes = await axios.post('/api/auth/login', {
-      email: 'test@vlass.local',
+      email: 'test@cosmic.local',
       password: 'Password123!',
     });
     authToken = loginRes.data.access_token;

@@ -6,11 +6,12 @@ import {
   Post,
   Revision,
   Comment,
+  CommentReport,
   Snapshot,
   ViewerState,
   ViewerSnapshot,
   AuditLog,
-  VlassTileCache,
+  CosmicTileCache,
 } from './entities';
 
 function readEnvFile(): Record<string, string> {
@@ -81,7 +82,7 @@ export const databaseConfig = (): TypeOrmModuleOptions => ({
   username: envValue('DB_USER', 'cosmic_horizons_user'),
   password: requiredEnv('DB_PASSWORD', 'cosmic_horizons_password_dev'),
   database: envValue('DB_NAME', 'cosmic_horizons'),
-  entities: [User, Post, Revision, Comment, Snapshot, ViewerState, ViewerSnapshot, AuditLog, VlassTileCache],
+  entities: [User, Post, Revision, Comment, CommentReport, Snapshot, ViewerState, ViewerSnapshot, AuditLog, CosmicTileCache],
   synchronize: false,
   logging: loggingEnabled,
   ssl: process.env.DB_SSL === 'true'

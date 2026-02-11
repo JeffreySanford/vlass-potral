@@ -25,7 +25,7 @@ describe('cosmic-horizons-api e2e', () => {
       const nonce = Date.now();
       const response = await axios.post('/api/auth/register', {
         username: `new_user_${nonce}`,
-        email: `new_${nonce}@vlass.local`,
+        email: `new_${nonce}@cosmic.local`,
         password: 'Password123!',
       });
 
@@ -33,13 +33,13 @@ describe('cosmic-horizons-api e2e', () => {
       expect(response.data).toHaveProperty('access_token');
       expect(response.data.user).toMatchObject({
         username: `new_user_${nonce}`,
-        email: `new_${nonce}@vlass.local`,
+        email: `new_${nonce}@cosmic.local`,
       });
     });
 
     it('POST /api/auth/login returns token for seeded user', async () => {
       const response = await axios.post('/api/auth/login', {
-        email: 'test@vlass.local',
+        email: 'test@cosmic.local',
         password: 'Password123!',
       });
 
@@ -47,14 +47,14 @@ describe('cosmic-horizons-api e2e', () => {
       expect(response.data).toHaveProperty('access_token');
       expect(response.data.user).toMatchObject({
         username: 'testuser',
-        email: 'test@vlass.local',
+        email: 'test@cosmic.local',
       });
     });
 
     it('POST /api/auth/login rejects invalid credentials', async () => {
       try {
         await axios.post('/api/auth/login', {
-          email: 'test@vlass.local',
+          email: 'test@cosmic.local',
           password: 'wrong-password',
         });
         throw new Error('Expected login request to fail with 401');
@@ -77,7 +77,7 @@ describe('cosmic-horizons-api e2e', () => {
             '/api/users',
             {
               username: `ratelimit_user_${nonce}_${i}`,
-              email: `ratelimit_${nonce}_${i}@vlass.local`,
+              email: `ratelimit_${nonce}_${i}@cosmic.local`,
               display_name: `Rate Limit User ${i}`,
               github_id: nonce + i,
             },
@@ -206,7 +206,7 @@ describe('cosmic-horizons-api e2e', () => {
   describe('posts authorization and revision flow', () => {
     it('creates, updates, and publishes a post as owner', async () => {
       const nonce = Date.now();
-      const owner = await registerUser(`post_owner_${nonce}`, `post_owner_${nonce}@vlass.local`);
+      const owner = await registerUser(`post_owner_${nonce}`, `post_owner_${nonce}@cosmic.local`);
       const authHeader = { Authorization: `Bearer ${owner.access_token}` };
 
       const createResponse = await axios.post(
@@ -258,8 +258,8 @@ describe('cosmic-horizons-api e2e', () => {
 
     it('rejects non-owner post modification with 403', async () => {
       const nonce = Date.now() + 1;
-      const owner = await registerUser(`post_owner2_${nonce}`, `post_owner2_${nonce}@vlass.local`);
-      const otherUser = await registerUser(`post_other_${nonce}`, `post_other_${nonce}@vlass.local`);
+      const owner = await registerUser(`post_owner2_${nonce}`, `post_owner2_${nonce}@cosmic.local`);
+      const otherUser = await registerUser(`post_other_${nonce}`, `post_other_${nonce}@cosmic.local`);
 
       const createResponse = await axios.post(
         '/api/posts',
@@ -288,7 +288,7 @@ describe('cosmic-horizons-api e2e', () => {
 
     it('supports owner moderation actions: hide/unhide and lock/unlock', async () => {
       const nonce = Date.now() + 2;
-      const owner = await registerUser(`post_owner3_${nonce}`, `post_owner3_${nonce}@vlass.local`);
+      const owner = await registerUser(`post_owner3_${nonce}`, `post_owner3_${nonce}@cosmic.local`);
       const authHeader = { Authorization: `Bearer ${owner.access_token}` };
 
       const createResponse = await axios.post(

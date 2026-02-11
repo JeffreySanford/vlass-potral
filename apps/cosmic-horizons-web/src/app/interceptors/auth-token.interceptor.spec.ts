@@ -108,7 +108,7 @@ describe('AuthTokenInterceptor', () => {
         user: {
           id: 'user-1',
           username: 'test',
-          email: 'test@vlass.local',
+          email: 'test@cosmic.local',
           display_name: 'Test',
           role: 'user',
           created_at: '2026-02-08T00:00:00.000Z',

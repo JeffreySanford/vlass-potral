@@ -48,7 +48,7 @@ test('shows error for invalid credentials', async ({ page }) => {
 
   await page.goto('/auth/login');
 
-  await page.locator('input[formcontrolname="email"]').fill('test@vlass.local');
+  await page.locator('input[formcontrolname="email"]').fill('test@cosmic.local');
   await page.locator('input[formcontrolname="password"]').fill('wrong');
   await page.getByRole('button', { name: 'Login' }).click();
 
@@ -84,7 +84,7 @@ test('logs in and allows logout', async ({ page }) => {
         user: {
           id: 'user-1',
           username: 'testuser',
-          email: 'test@vlass.local',
+          email: 'test@cosmic.local',
           display_name: 'Test User',
           role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
@@ -104,7 +104,7 @@ test('logs in and allows logout', async ({ page }) => {
         user: {
           id: 'user-1',
           username: 'testuser',
-          email: 'test@vlass.local',
+          email: 'test@cosmic.local',
           display_name: 'Test User',
           role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
@@ -117,9 +117,9 @@ test('logs in and allows logout', async ({ page }) => {
   const loginEmail = page.locator('input[formcontrolname="email"]');
   const loginPassword = page.locator('input[formcontrolname="password"]');
   await expect(page.locator('h1')).toContainText('Login');
-  await loginEmail.fill('test@vlass.local');
+  await loginEmail.fill('test@cosmic.local');
   await loginPassword.fill('Password123!');
-  await expect(loginEmail).toHaveValue('test@vlass.local');
+  await expect(loginEmail).toHaveValue('test@cosmic.local');
   await expect(loginPassword).toHaveValue('Password123!');
   await Promise.all([
     page.waitForResponse(
@@ -168,7 +168,7 @@ test('blocks access to logs when backend confirms non-admin role', async ({ page
         user: {
           id: 'user-1',
           username: 'testuser',
-          email: 'test@vlass.local',
+          email: 'test@cosmic.local',
           display_name: 'Test User',
           role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
@@ -187,7 +187,7 @@ test('blocks access to logs when backend confirms non-admin role', async ({ page
         user: {
           id: 'user-1',
           username: 'testuser',
-          email: 'test@vlass.local',
+          email: 'test@cosmic.local',
           display_name: 'Test User',
           role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
@@ -200,9 +200,9 @@ test('blocks access to logs when backend confirms non-admin role', async ({ page
   const loginEmail = page.locator('input[formcontrolname="email"]');
   const loginPassword = page.locator('input[formcontrolname="password"]');
   await expect(loginEmail).toBeVisible();
-  await loginEmail.fill('test@vlass.local');
+  await loginEmail.fill('test@cosmic.local');
   await loginPassword.fill('Password123!');
-  await expect(loginEmail).toHaveValue('test@vlass.local');
+  await expect(loginEmail).toHaveValue('test@cosmic.local');
   await Promise.all([
     page.waitForResponse(
       (response) =>
@@ -247,7 +247,7 @@ test('allows admin user to open logs when backend confirms admin role', async ({
         user: {
           id: 'admin-1',
           username: 'adminuser',
-          email: 'admin@vlass.local',
+          email: 'admin@cosmic.local',
           display_name: 'Admin User',
           role: 'admin',
           created_at: '2026-02-07T00:00:00.000Z',
@@ -266,7 +266,7 @@ test('allows admin user to open logs when backend confirms admin role', async ({
         user: {
           id: 'admin-1',
           username: 'adminuser',
-          email: 'admin@vlass.local',
+          email: 'admin@cosmic.local',
           display_name: 'Admin User',
           role: 'admin',
           created_at: '2026-02-07T00:00:00.000Z',
@@ -279,9 +279,9 @@ test('allows admin user to open logs when backend confirms admin role', async ({
   const loginEmail = page.getByRole('textbox', { name: 'Email' });
   const loginPassword = page.locator('input[formcontrolname="password"]');
   await expect(loginEmail).toBeVisible();
-  await loginEmail.fill('admin@vlass.local');
+  await loginEmail.fill('admin@cosmic.local');
   await loginPassword.fill('AdminPassword123!');
-  await expect(loginEmail).toHaveValue('admin@vlass.local');
+  await expect(loginEmail).toHaveValue('admin@cosmic.local');
   await page.getByRole('button', { name: 'Login' }).click();
   await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });
 
@@ -420,7 +420,7 @@ test('creates a notebook post from pillar 3 flow', async ({ page }) => {
         user: {
           id: 'user-1',
           username: 'astro',
-          email: 'astro@vlass.local',
+          email: 'astro@cosmic.local',
           display_name: 'Astro User',
           role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
@@ -514,7 +514,7 @@ test('creates a notebook post from pillar 3 flow', async ({ page }) => {
   const loginEmail = page.locator('input[formcontrolname="email"]');
   const loginPassword = page.locator('input[formcontrolname="password"]');
   await expect(page.locator('h1')).toContainText('Login');
-  await loginEmail.fill('astro@vlass.local');
+  await loginEmail.fill('astro@cosmic.local');
   await loginPassword.fill('Password123!');
   await Promise.all([
     page.waitForResponse(
@@ -583,10 +583,10 @@ test('syncs RA/Dec/FOV fields from Aladin view events', async ({ page }) => {
 
     (
       window as unknown as {
-        __vlassFakeAladin: typeof fakeView;
+        __cosmicFakeAladin: typeof fakeView;
         A: { init: Promise<void>; aladin: () => typeof fakeView };
       }
-    ).__vlassFakeAladin = fakeView;
+    ).__cosmicFakeAladin = fakeView;
 
     (
       window as unknown as {
@@ -602,26 +602,26 @@ test('syncs RA/Dec/FOV fields from Aladin view events', async ({ page }) => {
   await expect(page).toHaveURL(/\/view/);
   await page.waitForFunction(() => {
     const holder = window as unknown as {
-      __vlassFakeAladin: {
+      __cosmicFakeAladin: {
         listeners?: Record<string, Array<() => void>>;
       };
     };
-    const listeners = holder.__vlassFakeAladin.listeners ?? {};
+    const listeners = holder.__cosmicFakeAladin.listeners ?? {};
     return (listeners.positionChanged?.length ?? 0) > 0 && (listeners.zoomChanged?.length ?? 0) > 0;
   });
 
   await page.evaluate(() => {
     const holder = window as unknown as {
-      __vlassFakeAladin: {
+      __cosmicFakeAladin: {
         position: [number, number];
         fov: number;
         emit: (event: string) => void;
       };
     };
-    holder.__vlassFakeAladin.position = [188.5, 3.75];
-    holder.__vlassFakeAladin.fov = 2.35;
-    holder.__vlassFakeAladin.emit('positionChanged');
-    holder.__vlassFakeAladin.emit('zoomChanged');
+    holder.__cosmicFakeAladin.position = [188.5, 3.75];
+    holder.__cosmicFakeAladin.fov = 2.35;
+    holder.__cosmicFakeAladin.emit('positionChanged');
+    holder.__cosmicFakeAladin.emit('zoomChanged');
   });
 
   await expect(page.locator('input[formcontrolname="ra"]')).toHaveValue('188.5', { timeout: 10000 });
@@ -664,10 +664,10 @@ test('auto-selects higher-resolution survey when VLASS is deeply zoomed', async 
 
     (
       window as unknown as {
-        __vlassFakeAladin: typeof fakeView;
+        __cosmicFakeAladin: typeof fakeView;
         A: { init: Promise<void>; aladin: () => typeof fakeView };
       }
-    ).__vlassFakeAladin = fakeView;
+    ).__cosmicFakeAladin = fakeView;
 
     (
       window as unknown as {
@@ -687,7 +687,7 @@ test('auto-selects higher-resolution survey when VLASS is deeply zoomed', async 
   await expect
     .poll(async () => {
       return page.evaluate(() => {
-        return (window as unknown as { __vlassFakeAladin: { lastSurvey: string } }).__vlassFakeAladin.lastSurvey;
+        return (window as unknown as { __cosmicFakeAladin: { lastSurvey: string } }).__cosmicFakeAladin.lastSurvey;
       });
     })
     .toBe('P/PanSTARRS/DR1/color-z-zg-g');
@@ -721,7 +721,7 @@ test('registers a user and redirects to landing', async ({ page }) => {
         user: {
           id: 'user-2',
           username: 'newuser',
-          email: 'new@vlass.local',
+          email: 'new@cosmic.local',
           display_name: 'newuser',
           role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
@@ -741,7 +741,7 @@ test('registers a user and redirects to landing', async ({ page }) => {
         user: {
           id: 'user-2',
           username: 'newuser',
-          email: 'new@vlass.local',
+          email: 'new@cosmic.local',
           display_name: 'newuser',
           role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
@@ -758,7 +758,7 @@ test('registers a user and redirects to landing', async ({ page }) => {
   await expect(page.locator('h1')).toContainText('Create Account');
 
   await registerUsername.fill('newuser');
-  await registerEmail.fill('new@vlass.local');
+  await registerEmail.fill('new@cosmic.local');
   await registerPassword.fill('Password123!');
   await registerConfirmPassword.fill('Password123!');
   await Promise.all([
@@ -799,7 +799,7 @@ test('shows conflict errors on duplicate registration', async ({ page }) => {
 
   await page.goto('/auth/register');
   await page.getByRole('textbox', { name: 'Username' }).fill('testuser');
-  await page.getByRole('textbox', { name: 'Email' }).fill('test@vlass.local');
+  await page.getByRole('textbox', { name: 'Email' }).fill('test@cosmic.local');
   await page.locator('input[formcontrolname="password"]').fill('Password123!');
   await page.locator('input[formcontrolname="confirmPassword"]').fill('Password123!');
   await page.getByRole('button', { name: 'Create Account' }).click();

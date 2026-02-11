@@ -162,7 +162,7 @@ export class HipsTilePrefetchService implements OnDestroy {
   private createResponseFromCache(entry: TileCacheEntry): Response {
     const headers = new Headers({
       'Content-Type': entry.contentType,
-      'X-Vlass-Tile-Cache': 'HIT',
+      'X-Cosmic-Tile-Cache': 'HIT',
     });
 
     return new Response(entry.body.slice(0), {

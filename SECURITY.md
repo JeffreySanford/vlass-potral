@@ -7,7 +7,7 @@ This repository tracks `master` as the supported development branch.
 ## Reporting a Vulnerability
 
 1. Do not open public issues for exploitable vulnerabilities.
-2. Email: `security@vlassportal.example` (replace with your real mailbox).
+2. Email: `security@cosmichorizons.example` (replace with your real mailbox).
 3. Include:
    - Description and impact
    - Reproduction steps

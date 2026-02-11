@@ -5,7 +5,7 @@ import { SkyPreviewService } from './sky-preview.service';
 
 describe('SkyPreviewService', () => {
   afterEach(() => {
-    document.cookie = 'vlass_region=; Max-Age=0; Path=/';
+    document.cookie = 'cosmic_region=; Max-Age=0; Path=/';
     vi.restoreAllMocks();
     TestBed.resetTestingModule();
   });
@@ -23,8 +23,8 @@ describe('SkyPreviewService', () => {
     expect(service.toGeohash(40.7128, -74.006, 4)).toBe('dr5r');
   });
 
-  it('uses vlass_region cookie when available', () => {
-    document.cookie = 'vlass_region=u09t; Path=/';
+  it('uses cosmic_region cookie when available', () => {
+    document.cookie = 'cosmic_region=u09t; Path=/';
 
     TestBed.configureTestingModule({
       providers: [
@@ -96,7 +96,7 @@ describe('SkyPreviewService', () => {
         expect(preview).not.toBeNull();
         expect(preview?.source).toBe('browser');
         expect(preview?.geohash).toHaveLength(4);
-        expect(document.cookie).toContain('vlass_region=');
+        expect(document.cookie).toContain('cosmic_region=');
       },
     });
   });

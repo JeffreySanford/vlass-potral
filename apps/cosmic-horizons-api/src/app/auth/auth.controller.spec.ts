@@ -54,7 +54,7 @@ describe('AuthController', () => {
       const user = {
         id: 'user-id',
         username: 'testuser',
-        email: 'test@vlass.local',
+        email: 'test@cosmic.local',
         display_name: 'Test User',
         role: 'user',
         created_at: new Date(),
@@ -67,7 +67,7 @@ describe('AuthController', () => {
 
       const result = await controller.login(
         {
-          email: 'test@vlass.local',
+          email: 'test@cosmic.local',
           password: 'Password123!',
         },
         {
@@ -79,7 +79,7 @@ describe('AuthController', () => {
       );
 
       expect(authService.loginWithCredentials).toHaveBeenCalledWith({
-        email: 'test@vlass.local',
+        email: 'test@cosmic.local',
         password: 'Password123!',
       });
       expect(result).toEqual({
@@ -89,7 +89,7 @@ describe('AuthController', () => {
         user: {
           id: 'user-id',
           username: 'testuser',
-          email: 'test@vlass.local',
+          email: 'test@cosmic.local',
           display_name: 'Test User',
           role: 'user',
           created_at: expect.any(Date),
@@ -114,7 +114,7 @@ describe('AuthController', () => {
 
       await expect(
         controller.login({
-          email: 'bad@vlass.local',
+          email: 'bad@cosmic.local',
           password: 'wrong-password',
         })
       ).rejects.toBeInstanceOf(UnauthorizedException);
@@ -127,7 +127,7 @@ describe('AuthController', () => {
       const user = {
         id: 'user-id',
         username: 'newuser',
-        email: 'new@vlass.local',
+        email: 'new@cosmic.local',
         display_name: 'New User',
         role: 'user',
         created_at: new Date(),
@@ -141,7 +141,7 @@ describe('AuthController', () => {
       const result = await controller.register(
         {
           username: 'newuser',
-          email: 'new@vlass.local',
+          email: 'new@cosmic.local',
           password: 'Password123!',
         },
         {
@@ -154,7 +154,7 @@ describe('AuthController', () => {
 
       expect(authService.registerWithCredentials).toHaveBeenCalledWith({
         username: 'newuser',
-        email: 'new@vlass.local',
+        email: 'new@cosmic.local',
         password: 'Password123!',
       });
       expect(result).toEqual({
@@ -164,7 +164,7 @@ describe('AuthController', () => {
         user: {
           id: 'user-id',
           username: 'newuser',
-          email: 'new@vlass.local',
+          email: 'new@cosmic.local',
           display_name: 'New User',
           role: 'user',
           created_at: expect.any(Date),
@@ -188,7 +188,7 @@ describe('AuthController', () => {
       await expect(
         controller.register({
           username: 'newuser',
-          email: 'new@vlass.local',
+          email: 'new@cosmic.local',
           password: 'Password123!',
         }),
       ).rejects.toBeInstanceOf(ConflictException);
@@ -201,7 +201,7 @@ describe('AuthController', () => {
         user: {
           id: 'user-id',
           username: 'testuser',
-          email: 'test@vlass.local',
+          email: 'test@cosmic.local',
           display_name: 'Test User',
           role: 'user',
           created_at: new Date(),

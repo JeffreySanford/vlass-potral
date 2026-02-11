@@ -221,7 +221,7 @@ VALUES (
   NULL,
   'testuser',
   'Test User',
-  'test@vlass.local',
+  'test@cosmic.local',
   'user',
   crypt('Password123!', gen_salt('bf')),
   NULL
@@ -248,7 +248,7 @@ VALUES (
   NULL,
   'adminuser',
   'Admin User',
-  'admin@vlass.local',
+  'admin@cosmic.local',
   'admin',
   crypt('AdminPassword123!', gen_salt('bf')),
   NULL

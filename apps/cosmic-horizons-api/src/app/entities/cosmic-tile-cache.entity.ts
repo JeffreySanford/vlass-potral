@@ -8,7 +8,7 @@ import {
 
 @Entity('vlass_tile_cache')
 @Unique(['ra', 'dec'])
-export class VlassTileCache {
+export class CosmicTileCache {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 

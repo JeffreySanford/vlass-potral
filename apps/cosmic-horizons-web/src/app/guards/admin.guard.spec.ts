@@ -43,7 +43,7 @@ describe('AdminGuard', () => {
         user: {
           id: 'admin-id',
           username: 'admin',
-          email: 'admin@vlass.local',
+          email: 'admin@cosmic.local',
           display_name: 'Admin',
           role: 'admin',
           created_at: '2026-02-08T00:00:00.000Z',
@@ -73,7 +73,7 @@ describe('AdminGuard', () => {
         user: {
           id: 'user-id',
           username: 'user',
-          email: 'test@vlass.local',
+          email: 'test@cosmic.local',
           display_name: 'User',
           role: 'user',
           created_at: '2026-02-08T00:00:00.000Z',

@@ -60,16 +60,16 @@ describe('AuthService', () => {
 
   describe('loginWithCredentials', () => {
     it('authenticates with normalized email', async () => {
-      const user = { id: 'user-1', username: 'testuser', email: 'test@vlass.local' };
+      const user = { id: 'user-1', username: 'testuser', email: 'test@cosmic.local' };
       userRepository.findByEmailAndPassword.mockResolvedValue(user);
 
       const result = await service.loginWithCredentials({
-        email: 'TEST@VLASS.LOCAL',
+        email: 'TEST@COSMIC.LOCAL',
         password: 'Password123!',
       });
 
       expect(userRepository.findByEmailAndPassword).toHaveBeenCalledWith(
-        'test@vlass.local',
+        'test@cosmic.local',
         'Password123!'
       );
       expect(result).toBe(user);
@@ -80,7 +80,7 @@ describe('AuthService', () => {
 
       await expect(
         service.loginWithCredentials({
-          email: 'missing@vlass.local',
+          email: 'missing@cosmic.local',
           password: 'invalid',
         })
       ).rejects.toBeInstanceOf(UnauthorizedException);
@@ -93,7 +93,7 @@ describe('AuthService', () => {
       const user = {
         id: 'user-1',
         username: 'testuser',
-        email: 'test@vlass.local',
+        email: 'test@cosmic.local',
         role: 'admin',
       };
 
@@ -101,7 +101,7 @@ describe('AuthService', () => {
 
       expect(jwtService.sign).toHaveBeenCalledWith({
         sub: 'user-1',
-        email: 'test@vlass.local',
+        email: 'test@cosmic.local',
         username: 'testuser',
         role: 'admin',
       });
@@ -114,7 +114,7 @@ describe('AuthService', () => {
       const created = {
         id: 'user-2',
         username: 'newuser',
-        email: 'new@vlass.local',
+        email: 'new@cosmic.local',
         display_name: 'newuser',
       };
       userRepository.findByUsername.mockResolvedValue(null);
@@ -123,14 +123,14 @@ describe('AuthService', () => {
 
       const result = await service.registerWithCredentials({
         username: 'newuser',
-        email: 'NEW@VLASS.LOCAL',
+        email: 'NEW@COSMIC.LOCAL',
         password: 'Password123!',
       });
 
       expect(userRepository.createWithPassword).toHaveBeenCalledWith({
         username: 'newuser',
         display_name: 'newuser',
-        email: 'new@vlass.local',
+        email: 'new@cosmic.local',
         password: 'Password123!',
       });
       expect(result).toBe(created);
@@ -142,7 +142,7 @@ describe('AuthService', () => {
       await expect(
         service.registerWithCredentials({
           username: 'testuser',
-          email: 'new@vlass.local',
+          email: 'new@cosmic.local',
           password: 'Password123!',
         }),
       ).rejects.toBeInstanceOf(ConflictException);
@@ -156,7 +156,7 @@ describe('AuthService', () => {
       const user = {
         id: 'user-1',
         username: 'testuser',
-        email: 'test@vlass.local',
+        email: 'test@cosmic.local',
         role: 'user',
       };
 

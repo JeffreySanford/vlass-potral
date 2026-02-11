@@ -19,7 +19,7 @@ interface GeolocationCoordinatesLike {
 
 const GEOHASH_BASE32 = '0123456789bcdefghjkmnpqrstuvwxyz';
 const GEOHASH_PRECISION = 4;
-const LOCATION_COOKIE_NAME = 'vlass_region';
+const LOCATION_COOKIE_NAME = 'cosmic_region';
 const PREVIEW_ASSET_VERSION = '20260207';
 
 @Injectable({

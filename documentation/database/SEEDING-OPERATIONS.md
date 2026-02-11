@@ -24,9 +24,9 @@ The script is designed to be idempotent where practical (`IF NOT EXISTS`, `ON CO
 
 `init.sql` seeds two local-only users:
 
-- `test@vlass.local` / `Password123!` with role `user`
+- `test@cosmic.local` / `Password123!` with role `user`
 
-- `admin@vlass.local` / `AdminPassword123!` with role `admin`
+- `admin@cosmic.local` / `AdminPassword123!` with role `admin`
 
 Passwords are inserted as bcrypt hashes via PostgreSQL `crypt(..., gen_salt('bf'))`.
 

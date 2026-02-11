@@ -61,7 +61,7 @@ Loaded from `documentation/database/init.sql` (see `documentation/database/SEEDI
 
 - Standard user
 
-  - Email: `test@vlass.local`
+  - Email: `test@cosmic.local`
 
   - Password: `Password123!`
 
@@ -69,7 +69,7 @@ Loaded from `documentation/database/init.sql` (see `documentation/database/SEEDI
 
 - Admin user
 
-  - Email: `admin@vlass.local`
+  - Email: `admin@cosmic.local`
 
   - Password: `AdminPassword123!`
 

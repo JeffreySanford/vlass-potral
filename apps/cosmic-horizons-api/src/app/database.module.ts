@@ -10,7 +10,7 @@ import {
   ViewerState,
   ViewerSnapshot,
   AuditLog,
-  VlassTileCache,
+  CosmicTileCache,
 } from './entities';
 import { UserRepository, PostRepository, AuditLogRepository, RevisionRepository } from './repositories';
 
@@ -26,7 +26,7 @@ import { UserRepository, PostRepository, AuditLogRepository, RevisionRepository 
       ViewerState,
       ViewerSnapshot,
       AuditLog,
-      VlassTileCache,
+      CosmicTileCache,
     ]),
   ],
   providers: [UserRepository, PostRepository, AuditLogRepository, RevisionRepository],

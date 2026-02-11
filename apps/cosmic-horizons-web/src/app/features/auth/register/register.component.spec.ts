@@ -70,7 +70,7 @@ describe('RegisterComponent', () => {
         user: {
           id: 'u-1',
           username: 'newuser',
-          email: 'new@vlass.local',
+          email: 'new@cosmic.local',
           display_name: 'newuser',
           role: 'user',
           created_at: '2026-02-07T00:00:00.000Z',
@@ -81,7 +81,7 @@ describe('RegisterComponent', () => {
     const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     component.registerForm.setValue({
       username: 'newuser',
-      email: 'new@vlass.local',
+      email: 'new@cosmic.local',
       password: 'Password123!',
       confirmPassword: 'Password123!',
     });
@@ -90,7 +90,7 @@ describe('RegisterComponent', () => {
 
     expect(authApiService.register).toHaveBeenCalledWith({
       username: 'newuser',
-      email: 'new@vlass.local',
+      email: 'new@cosmic.local',
       password: 'Password123!',
       display_name: 'newuser',
     });
@@ -105,7 +105,7 @@ describe('RegisterComponent', () => {
 
     component.registerForm.setValue({
       username: 'testuser',
-      email: 'test@vlass.local',
+      email: 'test@cosmic.local',
       password: 'Password123!',
       confirmPassword: 'Password123!',
     });
