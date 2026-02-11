@@ -131,9 +131,9 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   private hasUserZoomedIn = false;
   private zoomEventCount = 0;
   private gridToggleStartedAt: number | null = null;
-  private readonly viewerSyncDebounceMs = 1000;
-  private readonly nearbyLookupDebounceMs = 1000;
-  private readonly cursorLookupDebounceMs = 1000;
+  private readonly viewerSyncDebounceMs = 250;
+  private readonly nearbyLookupDebounceMs = 400;
+  private readonly cursorLookupDebounceMs = 150;
   private readonly supportedAladinSurveys = new Set<string>([
     'P/VLASS/QL',
     'P/DSS2/color',
@@ -1166,13 +1166,17 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.nearbyLookupTimer = setTimeout(() => {
       this.viewerApi.getNearbyLabels(state.ra, state.dec, radius, 16).subscribe({
         next: (labels) => {
-          this.lastNearbyLookupKey = lookupKey;
-          this.catalogLabels = this.selectNearbyLabels(labels);
+          this.ngZone.run(() => {
+            this.lastNearbyLookupKey = lookupKey;
+            this.catalogLabels = this.selectNearbyLabels(labels);
+          });
         },
         error: () => {
-          // Keep retries available when provider/network is temporarily unavailable.
-          this.lastNearbyLookupKey = '';
-          this.catalogLabels = [];
+          this.ngZone.run(() => {
+            // Keep retries available when provider/network is temporarily unavailable.
+            this.lastNearbyLookupKey = '';
+            this.catalogLabels = [];
+          });
         },
       });
     }, this.nearbyLookupDebounceMs);
