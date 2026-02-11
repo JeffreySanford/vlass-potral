@@ -51,7 +51,22 @@ h1 { font-size: 22pt; line-height: 1.2; margin: 0.4em 0 0.3em; }
 h2 { font-size: 16pt; line-height: 1.25; margin: 0.9em 0 0.35em; }
 h3 { font-size: 13pt; line-height: 1.3; margin: 0.7em 0 0.3em; }
 pre, table, ul, ol, blockquote { break-inside: avoid-page; page-break-inside: avoid; }
-pre.mermaid { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; page-break-inside: avoid; }
+pre.mermaid {
+  width: 100%;
+  background: #f8fbff;
+  border: 1px solid #d9e4f2;
+  border-radius: 8px;
+  padding: 14px;
+  page-break-inside: avoid;
+  overflow: visible;
+}
+pre.mermaid svg {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
+}
 table { border-collapse: collapse; width: 100%; }
 th, td { border: 1px solid #d0d0d0; padding: 6px; text-align: left; }
 </style>
@@ -79,28 +94,27 @@ try {
       // @ts-ignore
       mermaid.initialize({
         startOnLoad: false,
-        theme: 'default',
+        theme: 'base',
         securityLevel: 'loose',
+        themeVariables: {
+          fontFamily: '"Lucida Sans", "Lucida Grande", "Segoe UI", Arial, sans-serif',
+          primaryColor: '#eaf3ff',
+          primaryTextColor: '#123455',
+          primaryBorderColor: '#5e89b8',
+          lineColor: '#4a6f99',
+          secondaryColor: '#f4f9ff',
+          tertiaryColor: '#fff4e8',
+          background: '#ffffff',
+        },
         flowchart: { htmlLabels: true, curve: 'linear' },
       });
       // @ts-ignore
       await mermaid.run({ querySelector: '.mermaid' });
-      // Increase the visual size of the "Capability Pyramid" diagram specifically.
-      document.querySelectorAll('pre.mermaid').forEach((pre) => {
-        let marker = pre.previousElementSibling;
-        while (marker && !/^H[1-6]$/.test(marker.tagName)) {
-          marker = marker.previousElementSibling;
-        }
-        const heading = (marker?.textContent || '').toLowerCase();
-        if (heading.includes('capability pyramid')) {
-          const svg = pre.querySelector('svg');
-          if (svg) {
-            svg.style.width = '120%';
-            svg.style.maxWidth = '120%';
-            svg.style.height = 'auto';
-            svg.style.transform = 'translateX(-8%)';
-          }
-        }
+      // Enforce full-width diagram rendering in the generated PDF.
+      document.querySelectorAll('pre.mermaid svg').forEach((svg) => {
+        svg.style.width = '100%';
+        svg.style.maxWidth = '100%';
+        svg.style.height = 'auto';
       });
       const rendered = document.querySelectorAll('svg[id^="mermaid-"]').length;
       const hasSyntaxText = [...document.querySelectorAll('svg')].some((s) =>
