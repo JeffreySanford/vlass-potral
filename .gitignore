@@ -54,3 +54,7 @@ vitest.config.*.timestamp*
 
 # logs
 *.log
+
+# local test scratch outputs
+e2e-output.txt
+test-output-*.txt

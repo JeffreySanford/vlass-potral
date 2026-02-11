@@ -7,6 +7,7 @@ This folder contains reusable conference and proposal-facing material.
 ## Structure
 
 - `documentation/marketing/abstracts/` - abstract drafts and submission variants
+  - `documentation/marketing/abstracts/COSMIC-HORIZONS-2026-SUBMISSION-PLAYBOOK.md` - deadline and submission execution plan
 
 - `documentation/marketing/letters/` - outreach/contact templates and target lists
 
@@ -33,6 +34,7 @@ This folder contains reusable conference and proposal-facing material.
 2. Confirm policy guardrails in `documentation/marketing/scope/DATA-POLICY-BOUNDARIES.md`.
 
 3. Use `documentation/marketing/abstracts/COSMIC-HORIZONS-2026-ABSTRACT.md`.
+   Optional: use `documentation/marketing/abstracts/COSMIC-HORIZONS-2026-SUBMISSION-PLAYBOOK.md` for submission and demo workflow.
 
 4. Personalize and send `documentation/marketing/letters/OUTREACH-EMAIL-TEMPLATE.md`.
 
