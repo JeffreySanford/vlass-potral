@@ -36,4 +36,3 @@ Weighted success score: **99.5 / 100**
   baseline).
 - Pillar 2 is complete and operationally hardened.
 - Pillar 3 is now complete (post/revision workflow + moderation hide/lock flow).
-
