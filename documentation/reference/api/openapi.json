@@ -1146,7 +1146,7 @@
     }
   },
   "info": {
-    "title": "VLASS Portal API",
+    "title": "Cosmic Horizons API",
     "description": "Independent VLASS public-data browsing and community API (not affiliated with VLA/NRAO).",
     "version": "1.0.0",
     "contact": {}

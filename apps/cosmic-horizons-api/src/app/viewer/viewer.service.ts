@@ -877,11 +877,11 @@ export class ViewerService implements OnModuleInit, OnModuleDestroy {
   }
 
   private nearbyLabelsCacheKey(ra: number, dec: number, radius: number, limit: number): string {
-    return ['nearby', ra.toFixed(5), dec.toFixed(5), radius.toFixed(5), limit].join('|');
+    return ['nearby', ra.toFixed(4), dec.toFixed(4), radius.toFixed(4), limit].join('|');
   }
 
   private nearbyLabelsCacheTtlMs(): number {
-    return Number(process.env['NEARBY_LABELS_CACHE_TTL_MS'] || 30_000);
+    return Number(process.env['NEARBY_LABELS_CACHE_TTL_MS'] || 300_000);
   }
 
   private cutoutCacheTtlMs(): number {

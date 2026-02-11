@@ -511,7 +511,7 @@ downloadScienceData(): void {
   const url = this.viewerApi.scienceDataUrl(state, undefined, detail);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `vlass_cutout_${Date.now()}.fits`;
+  link.download = `cosmic_cutout_${Date.now()}.fits`;
   link.click();
   link.remove();
 
@@ -634,7 +634,7 @@ async saveSnapshot(): Promise<void> {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `vlass_snapshot_${Date.now()}.png`;
+      link.download = `cosmic_snapshot_${Date.now()}.png`;
       link.click();
       URL.revokeObjectURL(url);
       link.remove();

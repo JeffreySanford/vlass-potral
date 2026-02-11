@@ -6,7 +6,7 @@ import {
   Unique,
 } from 'typeorm';
 
-@Entity('vlass_tile_cache')
+@Entity('cosmic_tile_cache')
 @Unique(['ra', 'dec'])
 export class CosmicTileCache {
   @PrimaryGeneratedColumn('uuid')

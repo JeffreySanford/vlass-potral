@@ -805,5 +805,5 @@ test('shows conflict errors on duplicate registration', async ({ page }) => {
   await page.getByRole('button', { name: 'Create Account' }).click();
 
   await expect(page).toHaveURL(/\/auth\/register/);
-  await expect(page.getByText(/already/i)).toBeVisible();
+  await expect(page.locator('.error-message').getByText(/already/i)).toBeVisible();
 });

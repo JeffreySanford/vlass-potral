@@ -4,7 +4,7 @@
 **Scope audited:**
 
 - `documentation/overview/AI_and_the_Data_Tsunami.mp4`
-- `documentation/overview/Architecting_the_VLASS_Portal_for_Sub-Second_Speed.m4a`
+- `documentation/overview/Architecting_Cosmic_Horizons_for_Sub-Second_Speed.m4a`
 - `documentation/overview/Bringing_Enterprise_Rigor_to_Astronomy_Software.m4a`
 - `documentation/overview/Steering_the_Twenty_Petabyte_Telescope.m4a`
 - `documentation/overview/The_Exascale_Control_Plane.pdf`
@@ -54,7 +54,7 @@ Required action:
 
 ---
 
-## 2) `Architecting_the_VLASS_Portal_for_Sub-Second_Speed.m4a`
+## 2) `Architecting_Cosmic_Horizons_for_Sub-Second_Speed.m4a`
 
 Status: **GREEN**
 

@@ -8,9 +8,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = resolve(__dirname, '..');
 
 const sourceMd = resolve(workspaceRoot, 'documentation', 'MARKETING-VISUAL-GUIDE.md');
-const htmlOut = resolve(workspaceRoot, 'documentation', 'marketing', 'vlass-marketing-visuals.html');
-const pdfOut = resolve(workspaceRoot, 'documentation', 'marketing', 'vlass-marketing-visuals.pdf');
-const canonicalPdfOut = resolve(workspaceRoot, 'documentation', 'marketing', 'vlass-marketing.pdf');
+const htmlOut = resolve(workspaceRoot, 'documentation', 'marketing', 'cosmic-horizons-marketing-visuals.html');
+const pdfOut = resolve(workspaceRoot, 'documentation', 'marketing', 'cosmic-horizons-marketing-visuals.pdf');
+const canonicalPdfOut = resolve(workspaceRoot, 'documentation', 'marketing', 'cosmic-horizons-marketing.pdf');
 
 const pandocResult = spawnSync(
   'pandoc',
@@ -20,7 +20,7 @@ const pandocResult = spawnSync(
     '--to=html5',
     '--standalone',
     '--toc',
-    '--metadata=title:VLASS Portal Marketing Visuals',
+    '--metadata=title:Cosmic Horizons Marketing Visuals',
     '-o',
     htmlOut,
   ],
@@ -144,7 +144,7 @@ try {
     headerTemplate: `<div></div>`,
     footerTemplate: `
       <div style="width:100%; font-size:9px; color:#666; padding:0 0.45in; display:flex; justify-content:space-between;">
-        <span>VLASS Portal Marketing Visuals</span>
+        <span>Cosmic Horizons Marketing Visuals</span>
         <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
       </div>
     `,

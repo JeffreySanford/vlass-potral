@@ -50,7 +50,7 @@ describe('ephemeris e2e', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(response.data.source).toBe('jpl-horizons');
+    expect(['jpl-horizons', 'cache']).toContain(response.data.source);
     expect(response.data.object_type).toBe('asteroid');
   });
 

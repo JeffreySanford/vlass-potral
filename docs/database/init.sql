@@ -1,4 +1,4 @@
--- VLASS Portal Database Schema
+-- Cosmic Horizons Database Schema
 -- Initialized on container startup
 
 -- Enable UUID extension
@@ -158,7 +158,7 @@ CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_logs(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_logs(user_id);
 
 -- VLASS cache table for tile data
-CREATE TABLE IF NOT EXISTS vlass_tile_cache (
+CREATE TABLE IF NOT EXISTS cosmic_tile_cache (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   ra FLOAT NOT NULL,
   dec FLOAT NOT NULL,

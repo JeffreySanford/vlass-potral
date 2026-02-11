@@ -16,7 +16,7 @@ This document is aligned to MVP entities and shared model contracts.
 
 - audit_logs
 
-- vlass_tile_cache (if enabled)
+- cosmic_tile_cache (if enabled)
 
 ## Deferred Tables
 

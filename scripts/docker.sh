@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# VLASS Portal Docker Manager Script
-# Provides convenient commands for managing Docker containers with vlass- prefix
+# Cosmic Horizons Docker Manager Script
+# Provides convenient commands for managing Docker containers with cosmic-horizons- prefix
 
 set -e
 
@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 
 # Function to print colored output
 print_status() {
-  echo -e "${GREEN}[VLASS]${NC} $1"
+  echo -e "${GREEN}[Cosmic Horizons]${NC} $1"
 }
 
 print_error() {
@@ -38,7 +38,7 @@ check_docker() {
 # Start containers
 start() {
   check_docker
-  print_status "Starting VLASS containers..."
+  print_status "Starting Cosmic Horizons containers..."
   docker-compose -f "$COMPOSE_FILE" up -d
   print_status "Containers started successfully!"
   sleep 2
@@ -52,7 +52,7 @@ start() {
 # Stop containers
 stop() {
   check_docker
-  print_status "Stopping VLASS containers..."
+  print_status "Stopping Cosmic Horizons containers..."
   docker-compose -f "$COMPOSE_FILE" down
   print_status "Containers stopped."
 }
@@ -60,7 +60,7 @@ stop() {
 # Restart containers
 restart() {
   check_docker
-  print_status "Restarting VLASS containers..."
+  print_status "Restarting Cosmic Horizons containers..."
   docker-compose -f "$COMPOSE_FILE" restart
   print_status "Containers restarted."
 }
@@ -89,14 +89,14 @@ logs() {
 psql() {
   check_docker
   print_status "Connecting to Postgres..."
-  docker-compose -f "$COMPOSE_FILE" exec vlass-postgres psql -U cosmic_horizons_user -d cosmic_horizons
+  docker-compose -f "$COMPOSE_FILE" exec cosmic-horizons-postgres psql -U cosmic_horizons_user -d cosmic_horizons
 }
 
 # Access Redis CLI
 redis() {
   check_docker
   print_status "Connecting to Redis..."
-  docker-compose -f "$COMPOSE_FILE" exec vlass-redis redis-cli -a cosmic_horizons_redis_dev
+  docker-compose -f "$COMPOSE_FILE" exec cosmic-horizons-redis redis-cli -a cosmic_horizons_redis_dev
 }
 
 # Status
@@ -109,7 +109,7 @@ status() {
 # Help
 show_help() {
   cat << EOF
-VLASS Portal Docker Manager
+Cosmic Horizons Docker Manager
 
 Usage: ./scripts/docker.sh <command>
 
@@ -126,7 +126,7 @@ Commands:
 
 Examples:
   ./scripts/docker.sh start
-  ./scripts/docker.sh logs vlass-postgres
+  ./scripts/docker.sh logs cosmic-horizons-postgres
   ./scripts/docker.sh psql
   ./scripts/docker.sh redis
 

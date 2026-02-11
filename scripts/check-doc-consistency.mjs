@@ -22,11 +22,11 @@ const checks = [
   {
     file: 'documentation/architecture/ARCHITECTURE.md',
     required: [/Canonical scope/i],
-    banned: [/apps\/vlass-go.*part of MVP/i, /Mode B.*part of MVP/i],
+    banned: [/apps\/cosmic-horizons-go.*part of MVP/i, /Mode B.*part of MVP/i],
   },
   {
     file: 'documentation/operations/QUICK-START.md',
-    banned: [/apps\/vlass-go.*run/i, /Mode B.*required/i],
+    banned: [/apps\/cosmic-horizons-go.*run/i, /Mode B.*required/i],
   },
   {
     file: 'documentation/quality/TESTING-STRATEGY.md',

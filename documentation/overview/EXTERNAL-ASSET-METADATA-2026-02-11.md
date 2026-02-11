@@ -53,7 +53,7 @@ Required footer/description lines:
 
 ---
 
-### `documentation/overview/Architecting_the_VLASS_Portal_for_Sub-Second_Speed.m4a`
+### `documentation/overview/Architecting_Cosmic_Horizons_for_Sub-Second_Speed.m4a`
 
 Description:
 

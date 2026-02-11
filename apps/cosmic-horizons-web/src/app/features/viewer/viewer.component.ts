@@ -1032,7 +1032,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const existingScript = document.querySelector(
-      'script[data-vlass-aladin="true"]',
+      'script[data-cosmic-aladin="true"]',
     ) as HTMLScriptElement | null;
     const scriptReady$ =
       existingScript && getFactory()
@@ -1044,7 +1044,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
               script.src = 'https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js';
               script.async = true;
               script.defer = true;
-              script.dataset['vlassAladin'] = 'true';
+              script.dataset['cosmicAladin'] = 'true';
               document.body.appendChild(script);
               return this.waitForScriptLoad$(script);
             });
@@ -1113,9 +1113,19 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       this.hasUserZoomedIn = true;
     }
 
+    const hasChanges = Object.keys(patchState).length > 0;
+    const nextState = { ...current, ...patchState };
+    const radius = this.lookupRadiusForState(nextState);
+    const lookupKey = `${nextState.ra.toFixed(4)}|${nextState.dec.toFixed(4)}|${radius.toFixed(4)}`;
+    const needsLookup = this.labelsOverlayEnabled && this.hasUserZoomedIn && lookupKey !== this.lastNearbyLookupKey;
+
+    if (!hasChanges && !needsLookup) {
+      return;
+    }
+
     this.ngZone.run(() => {
       this.syncingFromViewer = true;
-      if (Object.keys(patchState).length > 0) {
+      if (hasChanges) {
         this.stateForm.patchValue(patchState, { emitEvent: false });
       }
       this.scheduleNearbyLabelLookup(this.currentState());
@@ -1345,7 +1355,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const anchor = document.createElement('a');
     anchor.href = dataUrl;
-    anchor.download = `vlass-snapshot-${id}.png`;
+    anchor.download = `cosmic-snapshot-${id}.png`;
     anchor.click();
   }
 

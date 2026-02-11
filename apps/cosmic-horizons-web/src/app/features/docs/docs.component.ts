@@ -22,7 +22,7 @@ export class DocsComponent {
     'components': 'documentation/frontend/COMPONENTS.md',
     'agents': 'AGENTS.md',
     'tacc': 'documentation/architecture/TACC-JOB-ORCHESTRATION-SPIKE.md',
-    'vlass-datasets': 'documentation/reference/VLASS-DATASETS.md',
+    'cosmic-datasets': 'documentation/reference/COSMIC-DATASETS.md',
     'testing': 'documentation/quality/TESTING-STRATEGY.md',
     'coding-standards': 'documentation/quality/CODING-STANDARDS.md',
     'audit': 'documentation/adr/ADR-001-AUDIT-RETENTION-TWO-TIER.md'
@@ -53,7 +53,7 @@ export class DocsComponent {
       links: [
         { label: 'CosmicAI Integration', path: '/docs/agents' },
         { label: 'TACC Orchestration', path: '/docs/tacc' },
-        { label: 'VLASS Datasets', path: '/docs/vlass-datasets' }
+        { label: 'Cosmic Datasets', path: '/docs/cosmic-datasets' }
       ]
     },
     {
