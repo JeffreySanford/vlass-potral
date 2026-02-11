@@ -10,19 +10,20 @@
     "start:infra": "pnpm run start:infra:check && docker compose down --remove-orphans --volumes && docker compose build --pull && docker compose up -d --wait",
     "start:all": "pnpm run start:ports:free && pnpm run start:infra && pnpm run start:ports:free && nx run-many --target=serve --projects=vlass-web,vlass-api --parallel=2 --skip-nx-cache",
     "start": "pnpm start:web",
-    "test": "nx run-many --target=test --all",
+    "test": "pnpm standalone:check && nx run-many --target=test --all",
     "test:web": "nx test vlass-web",
     "test:api": "nx test vlass-api",
     "e2e:mvp": "nx run mvp-gates:e2e",
     "e2e:ci": "pnpm run start:ports:free && pnpm run start:infra && nx run mvp-gates:e2e",
     "build": "nx run-many --target=build --all",
     "lint": "nx run-many --target=lint --all",
+    "standalone:check": "node scripts/check-angular-standalone-false.mjs",
     "lighthouse:mobile": "pnpm dlx @lhci/cli@0.14.0 autorun --config=.github/lighthouse/lighthouserc.json",
     "lighthouse:summary": "node scripts/summarize-lighthouse.mjs",
     "openapi:check": "node scripts/check-openapi.mjs",
     "security:audit": "pnpm audit --prod --audit-level=high",
     "docs:check": "node scripts/check-doc-consistency.mjs",
-    "quality:ci": "nx run docs-policy:check && pnpm openapi:check && nx run-many --target=test --all && nx run mvp-gates:e2e"
+    "quality:ci": "nx run docs-policy:check && pnpm openapi:check && pnpm standalone:check && nx run-many --target=test --all && nx run mvp-gates:e2e"
   },
   "private": true,
   "devDependencies": {

@@ -15,6 +15,9 @@ Canonical scope: `documentation/product/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
 
 - Favor RxJS observables (hot/live streams) over ad-hoc Promises for UI + service flows; keep request/stream lifecycles explicit.
 
+- Angular module-mode policy: all `@Component` and `@Directive` declarations must explicitly set `standalone: false` (enforced by `pnpm standalone:check`).
+
+
 ## MVP Boundaries in Code
 
 - Viewer Mode A only

@@ -10,6 +10,7 @@ Canonical scope:
 - [x] Complete Pillar 2 operational telemetry dashboarding for cutout provider reliability
 - [x] Complete post and revision workflows
 - [x] Complete post moderation path (hide/lock)
+- [ ] Complete Pillar 3 Documentation Hub (Markdown rendering + Repo guides integration)
 - [x] Align all documentation with source-of-truth models (SCOPE-LOCK/ROADMAP)
 
 ## Next Steps (Local Pre-Deploy)
@@ -57,7 +58,7 @@ Canonical scope:
   - [x] Build interactive comment component with recursive threading
   - [x] Integration with Auth context (user identities, roles)
   - [x] Optimistic UI updates (handled via full reload for state consistency)
-- [x] Sprint 3: Moderation and Polish (Weeks 5-6)
+- [ ] Sprint 3: Moderation, Polish, and Documentation (Weeks 5-6)
   - [x] Implement User Profile page (backend + frontend)
   - [x] Link to profiles from posts and comments
   - [x] Added comprehensive testing for Ephemeris and Profile modules
@@ -65,6 +66,10 @@ Canonical scope:
   - [x] Extend Post moderation (hide/lock) to comments
   - [x] Rate limiting and anti-spam measures
   - [x] Admin Moderation Dashboard (UI to view/resolve reports)
+  - [ ] **Technical Documentation Hub**:
+    - [x] Scaffold `/docs` route and layout
+    - [ ] Integrate Markdown rendering for internal guides
+    - [ ] Link system-level architectural ADRs to frontend viewer
 
 **Phase 4 (v1.2) - Remote Compute & TACC Integration**: IN-PROGRESS
 

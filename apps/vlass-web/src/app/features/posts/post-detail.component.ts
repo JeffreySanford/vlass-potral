@@ -11,7 +11,7 @@ import { AuthSessionService } from '../../services/auth-session.service';
   selector: 'app-post-detail',
   templateUrl: './post-detail.component.html',
   styleUrls: ['./post-detail.component.scss'],
-  standalone: false, // eslint-disable-line @angular-eslint/prefer-standalone
+  standalone: false,
 })
 export class PostDetailComponent implements OnInit {
   post: PostModel | null = null;

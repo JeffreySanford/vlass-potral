@@ -1,46 +1,62 @@
 .profile-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #f8f9fa;
 }
 
 .profile-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(90deg, #1a237e 0%, #0d47a1 100%);
+  color: white;
+
   .spacer {
     flex: 1 1 auto;
   }
 }
 
 .profile-shell {
-  padding: 24px;
-  max-width: 1000px;
+  padding: 32px 16px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
 .profile-grid {
   display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 24px;
+  grid-template-columns: 320px 1fr;
+  gap: 32px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     grid-template-columns: 1fr;
   }
 }
 
 .user-info-card {
   height: fit-content;
+  border-top: 4px solid #1a237e;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+  mat-card-header {
+    margin-bottom: 16px;
+  }
 }
 
 .avatar-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #e0e0e0;
+  background-color: #e3f2fd;
   border-radius: 50%;
   overflow: hidden;
+  border: 2px solid #bbdefb;
+  width: 64px;
+  height: 64px;
 
   mat-icon {
-    font-size: 40px;
-    width: 40px;
-    height: 40px;
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #1a237e;
   }
 
   img {
@@ -51,24 +67,32 @@
 }
 
 .bio {
-  margin: 16px 0;
-  white-space: pre-wrap;
-  font-style: italic;
+  margin: 20px 0;
+  line-height: 1.6;
+  color: #444;
   
   &.empty {
-    color: #888;
+    color: #9e9e9e;
+    font-style: italic;
   }
 }
 
 .meta {
-  margin-top: 16px;
-  font-size: 0.8rem;
-  color: #666;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+  font-size: 0.85rem;
+  color: #757575;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .profile-form {
-  display: grid;
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
 
   mat-form-field {
     width: 100%;
@@ -77,32 +101,60 @@
 
 .profile-form-actions {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   justify-content: flex-end;
+  margin-top: 8px;
 }
 
 .save-message {
-  margin-top: 12px;
-  color: #0a7a43;
-  font-weight: 600;
+  margin-top: 16px;
+  padding: 10px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 0.9rem;
 }
 
 .user-posts {
   h3 {
     margin-top: 0;
     margin-bottom: 24px;
-    border-bottom: 2px solid #3f51b5;
-    padding-bottom: 8px;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #1a237e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #e0e0e0;
+    }
+  }
+
+  .post-item {
+    background: white;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border-left: 4px solid #1a237e;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: translateX(4px);
+    }
   }
 }
 
 .empty-message {
-  padding: 40px;
+  padding: 60px 20px;
   text-align: center;
-  background: white;
-  border: 1px dashed #ccc;
-  border-radius: 8px;
-  color: #888;
+  background: #fff;
+  border-radius: 12px;
+  border: 2px dashed #e0e0e0;
+  color: #757575;
 }
 
 .error-card {

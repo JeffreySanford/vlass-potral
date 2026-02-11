@@ -8,7 +8,7 @@ import { PostsApiService, PostModel } from './posts-api.service';
   selector: 'app-posts-list',
   templateUrl: './posts-list.component.html',
   styleUrls: ['./posts-list.component.scss'],
-  standalone: false, // eslint-disable-line @angular-eslint/prefer-standalone
+  standalone: false,
 })
 export class PostsListComponent implements OnInit {
   posts: PostModel[] = [];

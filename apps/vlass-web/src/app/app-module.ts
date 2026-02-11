@@ -1,12 +1,8 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
-import {
-  BrowserModule,
-  provideClientHydration,
-  withEventReplay,
-} from '@angular/platform-browser';
+import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import { RouterModule, provideRouter } from '@angular/router';
 import { App } from './app';
 import { appRoutes } from './app.routes';
 import { MaterialModule } from './shared/material/material.module';
@@ -18,12 +14,13 @@ import { HttpLoggerInterceptor } from './interceptors/http-logger.interceptor';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    RouterModule.forRoot(appRoutes),
+    RouterModule,
     MaterialModule,
   ],
   providers: [
+    provideRouter(appRoutes),
     provideBrowserGlobalErrorListeners(),
-    provideClientHydration(withEventReplay()),
+    provideClientHydration(),
     provideHttpClient(withFetch(), withInterceptorsFromDi()),
     {
       provide: HTTP_INTERCEPTORS,

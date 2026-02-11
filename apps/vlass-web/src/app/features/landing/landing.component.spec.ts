@@ -112,9 +112,14 @@ describe('LandingComponent', () => {
 
   it('renders MVP pillar titles', () => {
     const text = fixture.nativeElement.textContent as string;
-    expect(text).toContain('Instant SSR First Paint');
     expect(text).toContain('Viewer, Permalinks, and Snapshots');
+    expect(text).toContain('Scientific Ephemeris & Target Search');
     expect(text).toContain('Community Research Notebook');
+    expect(text).toContain('Mission Routes');
+    expect(text).toContain('Job Console');
+    expect(text).toContain('My Profile');
+    expect(text).toContain('Moderation Console');
+    expect(text).toContain('System Logs');
     expect(text).toContain('Personalize background');
   });
 
@@ -142,6 +147,29 @@ describe('LandingComponent', () => {
 
     expect(component.isAdmin).toBe(true);
     expect(navigateSpy).toHaveBeenCalledWith('/logs');
+  });
+
+  it('hides admin-only route links for non-admin users', () => {
+    const userRole = 'user' as const;
+    component.user.role = userRole;
+
+    const routeTitles = component.visibleRouteLinks.map((link) => link.title);
+    expect(routeTitles).toContain('Job Console');
+    expect(routeTitles).toContain('My Profile');
+    expect(routeTitles).not.toContain('Moderation Console');
+    expect(routeTitles).not.toContain('System Logs');
+  });
+
+  it('navigates when opening a mission route card', () => {
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+
+    component.openRouteLink({
+      icon: 'workspaces',
+      title: 'Job Console',
+      route: '/jobs',
+    });
+
+    expect(navigateSpy).toHaveBeenCalledWith('/jobs');
   });
 
   it('personalizes preview and shows region notice', () => {

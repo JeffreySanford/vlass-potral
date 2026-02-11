@@ -132,8 +132,7 @@ test('logs in and allows logout', async ({ page }) => {
   ]);
 
   await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });
-  await expect(page.locator('h1')).toContainText('Welcome back, Test User');
-  await expect(page.getByRole('heading', { name: 'Instant SSR First Paint', exact: true })).toBeVisible();
+  await expect(page.locator('h1')).toContainText('Scientific Operations Gateway');
   await expect(
     page.getByRole('heading', { name: 'Viewer, Permalinks, and Snapshots', exact: true })
   ).toBeVisible();
@@ -771,7 +770,7 @@ test('registers a user and redirects to landing', async ({ page }) => {
   ]);
 
   await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });
-  await expect(page.locator('h1')).toContainText('Welcome back');
+  await expect(page.locator('h1')).toContainText('Scientific Operations Gateway');
 });
 
 test('shows conflict errors on duplicate registration', async ({ page }) => {

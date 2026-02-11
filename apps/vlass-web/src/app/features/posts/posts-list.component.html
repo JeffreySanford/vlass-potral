@@ -1,9 +1,16 @@
 <div class="posts-page">
   <mat-toolbar color="primary" class="posts-toolbar">
+    <mat-icon>menu_book</mat-icon>
     <span>Community Research Notebook</span>
     <span class="spacer"></span>
-    <button mat-stroked-button type="button" (click)="createDraft()">New Draft</button>
-    <a mat-flat-button routerLink="/landing">Back to landing</a>
+    <button mat-button type="button" (click)="createDraft()">
+      <mat-icon>add_circle</mat-icon>
+      New Draft
+    </button>
+    <a mat-button routerLink="/landing">
+      <mat-icon>home</mat-icon>
+      Home
+    </a>
   </mat-toolbar>
 
   <section class="posts-content">

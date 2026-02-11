@@ -1,0 +1,69 @@
+<div class="docs-container">
+  <mat-toolbar color="primary" class="docs-toolbar">
+    <mat-icon>description</mat-icon>
+    <span>Project Documentation</span>
+    <span class="spacer"></span>
+    <a mat-button routerLink="/landing">
+      <mat-icon>home</mat-icon>
+      Home
+    </a>
+  </mat-toolbar>
+
+  <div class="docs-hero">
+    <h1>Documentation & Science Guides</h1>
+    <p>Technical reference for the VLASS Portal AI Control Plane.</p>
+  </div>
+
+  @if (docId$ | async; as docId) {
+    <div class="doc-viewer-container">
+      <mat-card class="doc-viewer-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>article</mat-icon>
+          <mat-card-title>{{ docId | titlecase }}</mat-card-title>
+          <span class="spacer"></span>
+          <button mat-icon-button routerLink="/docs">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="markdown-placeholder">
+            <mat-icon>hourglass_empty</mat-icon>
+            <p>Rendering <code>{{ docMap[docId] || docId }}</code>...</p>
+            <p class="hint">Markdown rendering (ngx-markdown) is currently being integrated in the v1.2 Documentation Spike.</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  } @else {
+    <div class="docs-grid">
+      @for (section of sections; track section.title) {
+        <mat-card class="section-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>{{ section.icon }}</mat-icon>
+            <mat-card-title>{{ section.title }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-nav-list>
+              @for (link of section.links; track link.label) {
+                <a mat-list-item class="doc-link" [routerLink]="link.path">
+                  <mat-icon matListItemIcon>article</mat-icon>
+                  <div matListItemTitle>{{ link.label }}</div>
+                  <mat-icon matListItemMeta>chevron_right</mat-icon>
+                </a>
+              }
+            </mat-nav-list>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+
+  <div class="docs-footer">
+    <mat-card class="disclaimer-card">
+      <mat-card-content>
+        <mat-icon>warning</mat-icon>
+        <p><strong>Heavier Lift:</strong> Full Markdown rendering and repository-linked guides are currently in development as part of the v1.2 Documentation Spike.</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

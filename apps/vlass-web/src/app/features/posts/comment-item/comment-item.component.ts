@@ -6,7 +6,7 @@ import { AuthSessionService } from '../../../services/auth-session.service';
   selector: 'app-comment-item',
   templateUrl: './comment-item.component.html',
   styleUrls: ['./comment-item.component.scss'],
-  standalone: false, // eslint-disable-line @angular-eslint/prefer-standalone
+  standalone: false,
 })
 export class CommentItemComponent {
   @Input({ required: true }) comment!: CommentModel;

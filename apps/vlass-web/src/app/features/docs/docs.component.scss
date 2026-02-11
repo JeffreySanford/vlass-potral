@@ -1,0 +1,127 @@
+.docs-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.docs-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  .spacer {
+    flex: 1 1 auto;
+  }
+}
+
+.docs-hero {
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+  color: white;
+  text-align: center;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+
+  p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+  }
+}
+
+.doc-viewer-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+
+  .doc-viewer-card {
+    border-top: 4px solid #1a237e;
+    
+    .markdown-placeholder {
+      padding: 60px 20px;
+      text-align: center;
+      color: #666;
+
+      mat-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 24px;
+        color: #1a237e;
+      }
+
+      code {
+        background: #eee;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+
+      .hint {
+        margin-top: 24px;
+        font-size: 0.95rem;
+        font-style: italic;
+      }
+    }
+  }
+}
+
+.docs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-card {
+  border-top: 4px solid #1a237e;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+  mat-card-title {
+    font-size: 1.2rem;
+    color: #1a237e;
+    font-weight: 500;
+  }
+}
+
+.doc-link {
+  transition: background-color 0.2s;
+  border-radius: 4px;
+  
+  &:hover {
+    background-color: #f0f2ff;
+  }
+}
+
+.docs-footer {
+  max-width: 1200px;
+  margin: 0 auto 60px;
+  padding: 0 20px;
+}
+
+.disclaimer-card {
+  background-color: #fff9c4;
+  border-left: 6px solid #fbc02d;
+
+  mat-card-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+
+    mat-icon {
+      color: #f57f17;
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+
+    p {
+      margin: 0;
+      color: #5d4037;
+    }
+  }
+}

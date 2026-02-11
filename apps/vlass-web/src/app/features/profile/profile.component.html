@@ -1,11 +1,18 @@
 <div class="profile-page">
   <mat-toolbar color="primary" class="profile-toolbar">
-    <span>Profile</span>
+    <mat-icon>account_box</mat-icon>
+    <span>Researcher Profile</span>
     <span class="spacer"></span>
     @if (isOwner && !editing) {
-      <button mat-stroked-button type="button" (click)="startEdit()">Edit Profile</button>
+      <button mat-button type="button" (click)="startEdit()">
+        <mat-icon>edit</mat-icon>
+        Edit Profile
+      </button>
     }
-    <a mat-flat-button routerLink="/posts">Back to feed</a>
+    <a mat-button routerLink="/posts">
+      <mat-icon>forum</mat-icon>
+      Community
+    </a>
   </mat-toolbar>
 
   <section class="profile-shell">
@@ -65,12 +72,12 @@
               </form>
             } @else {
               <p class="bio" [class.empty]="!profile.user.bio">
-                {{ profile.user.bio || 'No bio provided.' }}
+                {{ profile.user.bio || 'This researcher has not provided a biographical statement yet.' }}
               </p>
-              <mat-divider></mat-divider>
-              <p class="meta">
-                Joined {{ profile.user.created_at | date: 'mediumDate' }}
-              </p>
+              <div class="meta">
+                <mat-icon>calendar_today</mat-icon>
+                <span>Member since {{ profile.user.created_at | date: 'MMMM yyyy' }}</span>
+              </div>
             }
             @if (saveMessage) {
               <p class="save-message">{{ saveMessage }}</p>
@@ -79,13 +86,18 @@
         </mat-card>
 
         <section class="user-posts">
-          <h3>Published Notebooks ({{ profile.posts.length }})</h3>
+          <h3>
+            <mat-icon>science</mat-icon>
+            Research Notebooks ({{ profile.posts.length }})
+          </h3>
+          
           @if (profile.posts.length > 0) {
             <mat-nav-list>
               @for (post of profile.posts; track post.id) {
-                <a mat-list-item [routerLink]="['/posts', post.id]">
-                  <span matListItemTitle>{{ post.title }}</span>
-                  <span matListItemLine>{{ post.published_at | date: 'shortDate' }}</span>
+                <a mat-list-item [routerLink]="['/posts', post.id]" class="post-item">
+                  <mat-icon matListItemIcon>description</mat-icon>
+                  <div matListItemTitle>{{ post.title }}</div>
+                  <div matListItemLine>Published {{ post.published_at | date: 'mediumDate' }}</div>
                 </a>
               }
             </mat-nav-list>

@@ -72,7 +72,10 @@ The VLASS Portal frontend follows a **Three-Pillar MVP** structure:
 │  Admin Features                                       │
 │  ├─ System logs dashboard (filtered + searchable)    │
 
-│  ├─ Moderation controls (hide/lock posts)            │
+│  ├─ Moderation Dashboard (content governance queue)  │
+
+│  ├─ Jobs Console (remote AI compute orchestration)   │
+
 │  └─ Configuration management                         │
 │                                                        │
 └────────────────────────────────────────────────────────┘
@@ -351,6 +354,28 @@ User → Login → Email+Password → Backend validates → JWT issued → Store
 **Features:** Count tiles (all, error, info), Material DataTable, RBAC gated
 **See:** [LOGGING-SYSTEM-DESIGN.md](../backend/LOGGING-SYSTEM-DESIGN.md) for comprehensive logging architecture
 
+### Moderation Dashboard
+
+**Location:** `features/moderation/moderation.component.ts`
+**Purpose:** Centralized administrative interface for managing community health and content standards.
+**Key Features:**
+
+- **Shared Moderation Queue:** Unified view of reported content across posts and threaded comments.
+- **Content Lifecycle Controls:** Ability to hide/unhide and lock/unlock posts to prevent spam or off-topic discussions.
+- **Report Resolution:** Workflow to review user-submitted reports and mark them as resolved after action is taken.
+- **RBAC Gated:** Restricted to users with the `admin` role to ensure secure governance.
+
+### Jobs Console
+
+**Location:** `features/jobs/jobs-console.component.ts`
+**Purpose:** Enterprise-grade control plane for remote TACC-scale compute jobs and AI agent steering.
+**Key Features:**
+
+- **Job lifecycle monitoring:** Real-time visibility into job status (submitted, running, completed, cancelled, failed).
+- **Agent Steering:** Interactive interface to configure and launch autonomous interferometric agents (e.g., AlphaCal, CosmicAI).
+- **Resource Visualization:** Progress bars and duration tracking for long-running exascale computations.
+- **Audit Integration:** Links job outputs to persistent Science Ready Data Products (SRDPs) and Aladin snapshots for verification.
+
 ---
 
 ## State Management
@@ -463,6 +488,22 @@ HTTP Response
 
 - `GET /api/admin/logs/summary` → Log count summary (admin only)
 
+**Jobs API:**
+
+- `GET /api/jobs` → List all background compute jobs
+
+- `POST /api/jobs` → Submit a new remote compute task
+
+- `DELETE /api/jobs/<id>` → Cancel a running job
+
+**Moderation API:**
+
+- `GET /api/comments/reports` → List reported comments
+
+- `POST /api/comments/<id>/resolve` → Mark a report as resolved
+
+- `PUT /api/posts/<id>/lifecycle` → Update post status (hide/lock)
+
 ---
 
 ## Routing Strategy
@@ -502,6 +543,7 @@ const routes = [
     children: [
       { path: 'logs', component: AdminLogsDashboardComponent },
       { path: 'moderation', component: ModerationComponent },
+      { path: 'jobs', component: JobsConsoleComponent },
     ],
   },
   { path: '**', redirectTo: '/landing' }, // 404 fallback
@@ -841,6 +883,7 @@ constructor(private destroyRef: DestroyRef) {
 **Maintained By:** VLASS Portal Team
 
 ## **Next Review:** Post-MVP (v1.1 planning)
+
 ---
 
 *VLASS Portal Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

@@ -6,7 +6,7 @@ import { CommentsApiService, CommentReportModel } from '../posts/comments-api.se
   selector: 'app-moderation',
   templateUrl: './moderation.component.html',
   styleUrls: ['./moderation.component.scss'],
-  standalone: false, // eslint-disable-line @angular-eslint/prefer-standalone
+  standalone: false,
 })
 export class ModerationComponent implements OnInit {
   reports: CommentReportModel[] = [];

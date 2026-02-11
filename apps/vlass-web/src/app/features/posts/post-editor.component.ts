@@ -15,7 +15,7 @@ interface ParsedViewerBlock {
   selector: 'app-post-editor',
   templateUrl: './post-editor.component.html',
   styleUrls: ['./post-editor.component.scss'],
-  standalone: false, // eslint-disable-line @angular-eslint/prefer-standalone
+  standalone: false,
 })
 export class PostEditorComponent {
   readonly editorForm = inject(FormBuilder).group({

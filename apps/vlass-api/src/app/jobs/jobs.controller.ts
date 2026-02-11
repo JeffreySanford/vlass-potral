@@ -8,7 +8,8 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { TaccIntegrationService, TaccJobSubmission } from './tacc-integration.service';
+import { TaccIntegrationService } from './tacc-integration.service';
+import type { TaccJobSubmission } from './tacc-integration.service';
 import { AuthenticatedGuard } from '../auth/guards/authenticated.guard';
 import type { AuthenticatedRequest } from '../types/http.types';
 

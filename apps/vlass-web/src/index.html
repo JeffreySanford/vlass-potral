@@ -15,6 +15,30 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <script>
+      /**
+       * Global shim to address non-passive event listener violations from third-party libraries.
+       * Forces 'touchstart', 'touchmove', and 'wheel' events to be passive by default unless explicitly specified otherwise.
+       */
+      (function() {
+        var originalAddEventListener = EventTarget.prototype.addEventListener;
+        EventTarget.prototype.addEventListener = function(type, listener, options) {
+          var passiveEvents = ['touchstart', 'touchmove', 'wheel'];
+          if (passiveEvents.indexOf(type) !== -1) {
+            if (typeof options === 'boolean') {
+              options = { capture: options, passive: true };
+            } else if (typeof options === 'object') {
+              if (options.passive === undefined) {
+                options.passive = true;
+              }
+            } else if (options === undefined) {
+              options = { passive: true };
+            }
+          }
+          return originalAddEventListener.call(this, type, listener, options);
+        };
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>

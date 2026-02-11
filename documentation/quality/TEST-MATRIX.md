@@ -10,6 +10,9 @@ Status date: 2026-02-11
 
 - `pnpm nx run mvp-gates:e2e`
 
+- `pnpm standalone:check`
+
+
 ## Current Validation Snapshot (2026-02-11)
 
 - `docs-policy:check`: pass

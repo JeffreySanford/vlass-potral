@@ -15,11 +15,18 @@ interface LandingPillar {
   route: string;
 }
 
+interface LandingRouteLink {
+  icon: string;
+  title: string;
+  route: string;
+  adminOnly?: boolean;
+}
+
 @Component({
   selector: 'app-landing',
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss'],
-  standalone: false, // eslint-disable-line @angular-eslint/prefer-standalone
+  standalone: false,
 })
 export class LandingComponent implements OnInit, OnDestroy {
   user = {
@@ -30,19 +37,48 @@ export class LandingComponent implements OnInit, OnDestroy {
   };
   pillars: LandingPillar[] = [
     {
-      icon: 'speed',
-      title: 'Instant SSR First Paint',
-      route: '/landing',
-    },
-    {
       icon: 'travel_explore',
       title: 'Viewer, Permalinks, and Snapshots',
+      route: '/view',
+    },
+    {
+      icon: 'auto_graph',
+      title: 'Scientific Ephemeris & Target Search',
       route: '/view',
     },
     {
       icon: 'menu_book',
       title: 'Community Research Notebook',
       route: '/posts',
+    },
+  ];
+  routeLinks: LandingRouteLink[] = [
+    {
+      icon: 'workspaces',
+      title: 'Job Console',
+      route: '/jobs',
+    },
+    {
+      icon: 'description',
+      title: 'Project Documentation',
+      route: '/docs',
+    },
+    {
+      icon: 'person',
+      title: 'My Profile',
+      route: '/profile',
+    },
+    {
+      icon: 'gavel',
+      title: 'Moderation Console',
+      route: '/moderation',
+      adminOnly: true,
+    },
+    {
+      icon: 'list_alt',
+      title: 'System Logs',
+      route: '/logs',
+      adminOnly: true,
     },
   ];
   preview: SkyPreview;
@@ -102,6 +138,10 @@ export class LandingComponent implements OnInit, OnDestroy {
     return this.user.role === 'admin';
   }
 
+  get visibleRouteLinks(): LandingRouteLink[] {
+    return this.routeLinks.filter((link) => !link.adminOnly || this.isAdmin);
+  }
+
   logout(): void {
     this.logger.info('auth', 'logout_requested', {
       current_role: this.user.role,
@@ -129,6 +169,10 @@ export class LandingComponent implements OnInit, OnDestroy {
 
   openPillar(pillar: LandingPillar): void {
     this.router.navigateByUrl(pillar.route);
+  }
+
+  openRouteLink(link: LandingRouteLink): void {
+    this.router.navigateByUrl(link.route);
   }
 
   openLogs(): void {

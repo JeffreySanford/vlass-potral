@@ -28,6 +28,7 @@ export default [
           ],
         },
       ],
+      '@angular-eslint/prefer-standalone': 'off',
     },
   },
   {
@@ -97,7 +98,9 @@ export default [
       '**/*.cjs',
       '**/*.mjs',
     ],
-    // Override or add rules here
-    rules: {},
+    // Global overrides to align with module-based Angular architecture.
+    rules: {
+      '@angular-eslint/prefer-standalone': 'off',
+    },
   },
 ];

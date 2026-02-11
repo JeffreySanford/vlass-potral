@@ -40,7 +40,7 @@ Tracking rule:
 
 - Status: complete (Mode A + state/permalink/snapshot/cutout + reliability hardening + telemetry dashboarding)
 
-1. Pillar 3: Community notebooks
+1. Pillar 3: Community notebooks & Documentation
 
 - Post create/edit/read
 
@@ -48,9 +48,9 @@ Tracking rule:
 
 - Moderation controls for posts
 
-- Tag workflow
+- **Internal Documentation Hub**: Centralized technical and scientific guides within the portal UI.
 
-- Status: complete (post create/edit/publish + revisions + hide/lock moderation flow are implemented and tested)
+- Status: In-Progress (Posts and moderation complete; Documentation hub scaffolded)
 
 1. Foundations
 

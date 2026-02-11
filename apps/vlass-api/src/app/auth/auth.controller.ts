@@ -19,7 +19,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthenticatedGuard } from './guards/authenticated.guard';
 import { AuditLogRepository } from '../repositories/audit-log.repository';
 import { randomBytes } from 'node:crypto';
-import { RequestWithUser, ResponseWithJsonAndRedirect } from '../types/http.types';
+import type { RequestWithUser, ResponseWithJsonAndRedirect } from '../types/http.types';
 
 @Controller('auth')
 export class AuthController {

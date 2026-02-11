@@ -16,7 +16,7 @@ import { CreateViewerStateDto } from './dto/create-viewer-state.dto';
 import { CreateViewerSnapshotDto } from './dto/create-viewer-snapshot.dto';
 import { RateLimitGuard } from '../guards/rate-limit.guard';
 import { AuthenticatedGuard } from '../auth/guards/authenticated.guard';
-import { RequestWithUser } from '../types/http.types';
+import type { RequestWithUser } from '../types/http.types';
 
 @Controller('view')
 export class ViewerController {

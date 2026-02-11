@@ -13,6 +13,12 @@
       color: #eec976;
       margin: 0;
     }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
   }
 
   .reports-card {

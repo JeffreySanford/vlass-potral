@@ -10,6 +10,7 @@ import {
   PLATFORM_ID,
   ViewChild,
   inject,
+  NgZone,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -83,7 +84,7 @@ const DSS_COLOR_HIPS_URL = 'https://skies.esac.esa.int/DSSColor';
   selector: 'app-viewer',
   templateUrl: './viewer.component.html',
   styleUrls: ['./viewer.component.scss'],
-  standalone: false, // eslint-disable-line @angular-eslint/prefer-standalone
+  standalone: false,
 })
 export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('aladinHost')
@@ -150,6 +151,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly appLogger = inject(AppLoggerService);
   private readonly authSessionService = inject(AuthSessionService);
   private readonly http = inject(HttpClient);
+  private readonly ngZone = inject(NgZone);
   private readonly labelsStorageKey = 'vlass.viewer.labels.v1';
 
   constructor() {
@@ -278,6 +280,21 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
             grid_enabled: this.gridOverlayEnabled,
             pdss_enabled: this.pdssColorEnabled,
           });
+
+          // Set up mouse interaction outside Angular zone to avoid excessive change detection
+          this.ngZone.runOutsideAngular(() => {
+            const host = this.aladinHost?.nativeElement;
+            if (host) {
+              fromEvent<MouseEvent>(host, 'mousemove')
+                .pipe(takeUntilDestroyed(this.destroyRef))
+                .subscribe((e) => this.onCanvasMouseMove(e));
+
+              fromEvent(host, 'mouseleave')
+                .pipe(takeUntilDestroyed(this.destroyRef))
+                .subscribe(() => this.onCanvasMouseLeave());
+            }
+          });
+
           this.schedulePrefetchActivation();
           this.scheduleNearbyLabelLookup(this.currentState());
         },
@@ -794,13 +811,15 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onCanvasMouseLeave(): void {
-    // Clear labels and cancel pending lookups when cursor leaves canvas
-    if (this.cursorLookupTimer) {
-      clearTimeout(this.cursorLookupTimer);
-      this.cursorLookupTimer = null;
-    }
-    // Immediately clear catalog labels for responsive UX
-    this.catalogLabels = [];
+    this.ngZone.run(() => {
+      // Clear labels and cancel pending lookups when cursor leaves canvas
+      if (this.cursorLookupTimer) {
+        clearTimeout(this.cursorLookupTimer);
+        this.cursorLookupTimer = null;
+      }
+      // Immediately clear catalog labels for responsive UX
+      this.catalogLabels = [];
+    });
   }
 
   private scheduleNearbyLabelLookupAtCursor(state: ViewerStateModel): void {
@@ -817,11 +836,15 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       const radius = this.lookupRadiusForState(state);
       this.viewerApi.getNearbyLabels(state.ra, state.dec, radius, 16).subscribe({
         next: (labels) => {
-          this.catalogLabels = this.selectNearbyLabels(labels);
+          this.ngZone.run(() => {
+            this.catalogLabels = this.selectNearbyLabels(labels);
+          });
         },
         error: () => {
-          // Silently ignore errors for cursor lookups
-          this.catalogLabels = [];
+          this.ngZone.run(() => {
+            // Silently ignore errors for cursor lookups
+            this.catalogLabels = [];
+          });
         },
       });
     }, this.nearbyLookupDebounceMs); // 1-second debounce for bandwidth efficiency
@@ -948,21 +971,23 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
           return throwError(() => new Error('Aladin factory missing'));
         }
 
-        this.aladinView = aladinFactory.aladin(host, {
-          target: `${this.stateForm.value.ra} ${this.stateForm.value.dec}`,
-          fov: Number(this.stateForm.value.fov),
-          survey: this.resolveEffectiveSurvey(this.currentState()),
-          showCooGrid: this.gridOverlayEnabled,
-          showFullscreenControl: false,
-          showLayersControl: false,
-        });
+        this.ngZone.runOutsideAngular(() => {
+          this.aladinView = aladinFactory.aladin(host, {
+            target: `${this.stateForm.value.ra} ${this.stateForm.value.dec}`,
+            fov: Number(this.stateForm.value.fov),
+            survey: this.resolveEffectiveSurvey(this.currentState()),
+            showCooGrid: this.gridOverlayEnabled,
+            showFullscreenControl: false,
+            showLayersControl: false,
+          });
 
-        this.aladinView.on('positionChanged', () => {
-          this.scheduleFormSyncFromAladin();
-        });
-        this.aladinView.on('zoomChanged', () => {
-          this.zoomEventCount += 1;
-          this.scheduleFormSyncFromAladin();
+          this.aladinView.on('positionChanged', () => {
+            this.scheduleFormSyncFromAladin();
+          });
+          this.aladinView.on('zoomChanged', () => {
+            this.zoomEventCount += 1;
+            this.scheduleFormSyncFromAladin();
+          });
         });
 
         this.applySurveyToAladin(this.resolveEffectiveSurvey(this.currentState()));
@@ -1052,8 +1077,6 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.syncingFromViewer = true;
-
     const [ra, dec] = this.aladinView.getRaDec();
     const rawFov = this.aladinView.getFov();
     const fov = Array.isArray(rawFov) ? rawFov[0] : rawFov;
@@ -1078,12 +1101,14 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       this.hasUserZoomedIn = true;
     }
 
-    if (Object.keys(patchState).length > 0) {
-      this.stateForm.patchValue(patchState, { emitEvent: false });
-    }
-    this.scheduleNearbyLabelLookup(this.currentState());
-
-    this.syncingFromViewer = false;
+    this.ngZone.run(() => {
+      this.syncingFromViewer = true;
+      if (Object.keys(patchState).length > 0) {
+        this.stateForm.patchValue(patchState, { emitEvent: false });
+      }
+      this.scheduleNearbyLabelLookup(this.currentState());
+      this.syncingFromViewer = false;
+    });
   }
 
   private scheduleFormSyncFromAladin(): void {

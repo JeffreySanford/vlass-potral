@@ -14,7 +14,7 @@ import { AppLoggerService } from '../../../services/app-logger.service';
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
-  standalone: false, // eslint-disable-line @angular-eslint/prefer-standalone
+  standalone: false,
 })
 export class RegisterComponent {
   registerForm: FormGroup;

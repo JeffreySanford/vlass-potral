@@ -37,6 +37,12 @@ export const appRoutes: Route[] = [
     canActivate: [AuthGuard],
   },
   {
+    path: 'docs',
+    loadChildren: () =>
+      import('./features/docs/docs.module').then((m) => m.DocsModule),
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'moderation',
     loadChildren: () =>
       import('./features/moderation/moderation.module').then((m) => m.ModerationModule),

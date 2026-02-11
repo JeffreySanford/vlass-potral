@@ -1,9 +1,15 @@
 <div class="moderation-container">
   <div class="header">
     <h1>Moderation Dashboard</h1>
-    <button mat-icon-button (click)="loadReports()" [disabled]="loading">
-      <mat-icon>refresh</mat-icon>
-    </button>
+    <div class="actions">
+      <button mat-icon-button (click)="loadReports()" [disabled]="loading" matTooltip="Refresh reports">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <a mat-button routerLink="/landing">
+        <mat-icon>home</mat-icon>
+        Home
+      </a>
+    </div>
   </div>
 
   @if (error) {

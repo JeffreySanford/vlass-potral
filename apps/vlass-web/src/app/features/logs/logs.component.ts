@@ -28,7 +28,7 @@ interface LogRow {
   selector: 'app-logs',
   templateUrl: './logs.component.html',
   styleUrls: ['./logs.component.scss'],
-  standalone: false, // eslint-disable-line @angular-eslint/prefer-standalone
+  standalone: false,
 })
 export class LogsComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly displayedColumns = ['at', 'level', 'area', 'event', 'message', 'status', 'user', 'context'];

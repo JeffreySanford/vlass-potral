@@ -14,7 +14,7 @@ import { AppLoggerService } from '../../../services/app-logger.service';
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  standalone: false, // eslint-disable-line @angular-eslint/prefer-standalone
+  standalone: false,
 })
 export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;

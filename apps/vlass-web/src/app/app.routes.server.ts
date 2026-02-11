@@ -37,7 +37,23 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
   },
   {
+    path: 'profile',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'profile/:username',
+    renderMode: RenderMode.Server,
+  },
+  {
     path: 'logs',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'moderation',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'jobs',
     renderMode: RenderMode.Server,
   },
   {
