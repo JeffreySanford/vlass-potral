@@ -14,25 +14,38 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 
-const MATERIAL_MODULES = [
-  MatToolbarModule,
-  MatButtonModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatCardModule,
-  MatMenuModule,
-  MatIconModule,
-  MatProgressSpinnerModule,
-  MatSnackBarModule,
-  MatDividerModule,
-  MatListModule,
-  MatSlideToggleModule,
-  MatTableModule,
-  MatSortModule,
-];
-
 @NgModule({
-  imports: MATERIAL_MODULES,
-  exports: MATERIAL_MODULES,
+  imports: [
+    MatToolbarModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCardModule,
+    MatMenuModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+    MatDividerModule,
+    MatListModule,
+    MatSlideToggleModule,
+    MatTableModule,
+    MatSortModule,
+  ],
+  exports: [
+    MatToolbarModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCardModule,
+    MatMenuModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+    MatDividerModule,
+    MatListModule,
+    MatSlideToggleModule,
+    MatTableModule,
+    MatSortModule,
+  ],
 })
 export class MaterialModule {}

@@ -35,6 +35,7 @@ This folder contains reusable conference and proposal-facing material.
 
 3. Use `documentation/marketing/abstracts/COSMIC-HORIZONS-2026-ABSTRACT.md`.
    Optional: use `documentation/marketing/abstracts/COSMIC-HORIZONS-2026-SUBMISSION-PLAYBOOK.md` for submission and demo workflow.
+   For content-level framing and claim hygiene, use `documentation/marketing/abstracts/COSMIC-HORIZONS-2026-ABSTRACT-CONTENT-GUIDE.md`.
 
 4. Personalize and send `documentation/marketing/letters/OUTREACH-EMAIL-TEMPLATE.md`.
 
