@@ -80,7 +80,8 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
       await this.setupChannels();
       this.logger.log('RabbitMQ connection established');
     } catch (error) {
-      this.logger.error(`Failed to connect to RabbitMQ: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to connect to RabbitMQ: ${errorMessage}`);
       this.isConnecting = false;
       throw error;
     }
@@ -125,23 +126,14 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
       const messageId = uuidv4();
       const timestamp = new Date();
 
-      const publishPayload = {
-        messageId,
-        timestamp,
-        correlationId: options.correlationId || messageId,
-        contentType: options.contentType || 'application/json',
-        headers: options.headers || {},
-        persistent: options.persistent !== false,
-        payload: message,
-      };
-
       this.logger.debug(
-        `Publishing message to ${options.exchange}/${options.routingKey}: ${messageId}`
+        `Publishing message to ${options.exchange}/${options.routingKey}: ${messageId} at ${timestamp}`
       );
 
       return true;
     } catch (error) {
-      this.logger.error(`Failed to publish message: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to publish message: ${errorMessage}`);
       throw error;
     }
   }
@@ -209,7 +201,8 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
       this.logger.log(`Sent to DLQ: ${message.headers.messageId}`);
     } catch (error) {
-      this.logger.error(`Failed to send to DLQ: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to send to DLQ: ${errorMessage}`);
     }
   }
 
