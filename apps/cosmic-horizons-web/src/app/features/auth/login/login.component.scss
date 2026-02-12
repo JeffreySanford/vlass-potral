@@ -10,13 +10,14 @@
   gap: 1rem;
   padding: 1.25rem;
   background-image:
-    linear-gradient(135deg, rgba(8, 14, 26, 0.24) 0%, rgba(15, 24, 41, 0.28) 48%, rgba(18, 12, 38, 0.32) 100%),
-    radial-gradient(circle at 85% 10%, rgba(255, 182, 72, 0.1) 0%, transparent 36%),
-    radial-gradient(circle at 12% 88%, rgba(86, 122, 255, 0.12) 0%, transparent 42%),
+    linear-gradient(135deg, rgba(8, 14, 26, 0.12) 0%, rgba(15, 24, 41, 0.14) 48%, rgba(18, 12, 38, 0.16) 100%),
+    radial-gradient(circle at 85% 10%, rgba(255, 182, 72, 0.05) 0%, transparent 36%),
+    radial-gradient(circle at 12% 88%, rgba(86, 122, 255, 0.06) 0%, transparent 42%),
     var(--sky-preview-url, url('/previews/region-default.png'));
   background-size: cover, auto, auto, cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-attachment: fixed;
   font-family: 'Space Grotesk', 'Avenir Next', 'Segoe UI', sans-serif;
 }
 
