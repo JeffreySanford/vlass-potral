@@ -607,7 +607,7 @@ test('syncs RA/Dec/FOV fields from Aladin view events', async ({ page }) => {
       };
     };
     const listeners = holder.__cosmicFakeAladin.listeners ?? {};
-    return (listeners.positionChanged?.length ?? 0) > 0 && (listeners.zoomChanged?.length ?? 0) > 0;
+    return (listeners['positionChanged']?.length ?? 0) > 0 && (listeners['zoomChanged']?.length ?? 0) > 0;
   });
 
   await page.evaluate(() => {

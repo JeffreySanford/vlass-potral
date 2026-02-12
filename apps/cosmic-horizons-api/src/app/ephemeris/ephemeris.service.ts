@@ -53,7 +53,7 @@ export class EphemerisService {
     try {
       const equatorial = Astronomy.Equator(body, epoch, observer, false, true);
 
-      const result = {
+      const result: EphemerisResult = {
         ra: equatorial.ra * 15,          // Right ascension: convert hours (astronomy-engine) to degrees
         dec: equatorial.dec,             // Declination in degrees
         accuracy_arcsec: 0.1,            // Typical accuracy of astronomy-engine
@@ -152,7 +152,7 @@ export class EphemerisService {
       const decDeg = Math.abs(parseFloat(parts[5])) + parseFloat(parts[6]) / 60 + parseFloat(parts[7]) / 3600;
       const finalDec = decDeg * decSign;
 
-      const result = {
+      const result: EphemerisResult = {
         ra: raDeg,
         dec: finalDec,
         accuracy_arcsec: 1.0, 

@@ -99,7 +99,9 @@ describe('EphemerisController', () => {
 
     await controller.search({ target: 'saturn' });
 
-    expect(service.calculatePosition).toHaveBeenCalledWith('saturn', expect.stringContaining('2026-02-11'));
+    // Check that calculatePosition was called with saturn and a date string in ISO format (today's date)
+    const today = new Date().toISOString().split('T')[0];
+    expect(service.calculatePosition).toHaveBeenCalledWith('saturn', expect.stringContaining(today));
   });
 
   it('should throw NotFoundException if neither target nor object_name is provided', async () => {

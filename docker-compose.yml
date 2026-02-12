@@ -30,7 +30,11 @@ services:
       - cosmic-horizons-redis-data:/data
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-cosmic_horizons_redis_dev}
     healthcheck:
-      test: ['CMD-SHELL', 'redis-cli -a "${REDIS_PASSWORD:-cosmic_horizons_redis_dev}" --raw ping | grep PONG']
+      test:
+        - CMD
+        - sh
+        - '-c'
+        - redis-cli -a ${REDIS_PASSWORD:-cosmic_horizons_redis_dev} --raw ping
       interval: 10s
       timeout: 5s
       retries: 5

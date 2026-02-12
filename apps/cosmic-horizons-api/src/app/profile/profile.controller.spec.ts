@@ -39,7 +39,22 @@ describe('ProfileController', () => {
 
   it('should return profile data', async () => {
     const mockProfile: Awaited<ReturnType<ProfileService['getProfile']>> = {
-      user: { id: '1', username: 'testuser', display_name: 'Test User' },
+      user: {
+        id: '1',
+        username: 'testuser',
+        display_name: 'Test User',
+        avatar_url: null,
+        role: 'user',
+        bio: null,
+        github_profile_url: null,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+        posts: [],
+        revisions: [],
+        comments: [],
+        auditLogs: [],
+      },
       posts: [],
     };
     service.getProfile.mockResolvedValue(mockProfile);

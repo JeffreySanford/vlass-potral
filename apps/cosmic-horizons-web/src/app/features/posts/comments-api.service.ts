@@ -60,8 +60,8 @@ export class CommentsApiService {
     });
   }
 
-  reportComment(id: string, payload: { reason: string; description?: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiBaseUrl}/api/comments/${encodeURIComponent(id)}/report`, payload, {
+  reportComment(id: string, payload: { reason: string; description?: string }): Observable<CommentReportModel> {
+    return this.http.post<CommentReportModel>(`${this.apiBaseUrl}/api/comments/${encodeURIComponent(id)}/report`, payload, {
       headers: this.authHeaders(),
     });
   }
@@ -84,8 +84,8 @@ export class CommentsApiService {
     });
   }
 
-  resolveReport(id: string, status: 'reviewed' | 'dismissed'): Observable<any> {
-    return this.http.patch<any>(`${this.apiBaseUrl}/api/comments/reports/${encodeURIComponent(id)}/resolve`, { status }, {
+  resolveReport(id: string, status: 'reviewed' | 'dismissed'): Observable<CommentReportModel> {
+    return this.http.patch<CommentReportModel>(`${this.apiBaseUrl}/api/comments/reports/${encodeURIComponent(id)}/resolve`, { status }, {
       headers: this.authHeaders(),
     });
   }
