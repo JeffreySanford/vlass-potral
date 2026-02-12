@@ -37,8 +37,8 @@ describe('LoggingService', () => {
   describe('add', () => {
     it('should add log entry to buffer', async () => {
       const entry = {
-        type: 'ACTION' as const,
-        severity: 'INFO' as const,
+        type: 'system' as const,
+        severity: 'info' as const,
         message: 'Test message',
       };
 
@@ -51,14 +51,14 @@ describe('LoggingService', () => {
 
     it('should generate unique IDs for log entries', async () => {
       const entry1 = {
-        type: 'ACTION' as const,
-        severity: 'INFO' as const,
+        type: 'system' as const,
+        severity: 'info' as const,
         message: 'Message 1',
       };
 
       const entry2 = {
-        type: 'ACTION' as const,
-        severity: 'INFO' as const,
+        type: 'system' as const,
+        severity: 'info' as const,
         message: 'Message 2',
       };
 
@@ -74,8 +74,8 @@ describe('LoggingService', () => {
       const before = new Date();
 
       const entry = {
-        type: 'ACTION' as const,
-        severity: 'INFO' as const,
+        type: 'system' as const,
+        severity: 'info' as const,
         message: 'Timestamped message',
       };
 
@@ -93,8 +93,8 @@ describe('LoggingService', () => {
 
     it('should include custom data in log entry', async () => {
       const entry = {
-        type: 'ACTION' as const,
-        severity: 'INFO' as const,
+        type: 'system' as const,
+        severity: 'info' as const,
         message: 'Message with data',
         data: { userId: '123', action: 'view' },
       };
@@ -106,11 +106,11 @@ describe('LoggingService', () => {
     });
 
     it('should handle different severity levels', async () => {
-      const severities = ['DEBUG', 'INFO', 'WARN', 'ERROR'] as const;
+      const severities = ['debug', 'info', 'warn', 'error'] as const;
 
       for (const severity of severities) {
         await service.add({
-          type: 'ACTION' as const,
+          type: 'system' as const,
           severity,
           message: `${severity} message`,
         });
@@ -118,16 +118,16 @@ describe('LoggingService', () => {
 
       const recent = await service.getRecent(10, 0);
       expect(recent).toHaveLength(4);
-      expect(recent.map(e => e.severity)).toEqual(['ERROR', 'WARN', 'INFO', 'DEBUG']);
+      expect(recent.map(e => e.severity)).toEqual(['error', 'warn', 'info', 'debug']);
     });
 
     it('should handle different log types', async () => {
-      const types = ['ACTION', 'SYSTEM', 'ERROR'] as const;
+      const types = ['http', 'redis', 'system'] as const;
 
       for (const type of types) {
         await service.add({
           type,
-          severity: 'INFO' as const,
+          severity: 'info' as const,
           message: `${type} message`,
         });
       }
@@ -142,8 +142,8 @@ describe('LoggingService', () => {
       // Add multiple entries
       for (let i = 1; i <= 10; i++) {
         await service.add({
-          type: 'ACTION' as const,
-          severity: 'INFO' as const,
+          type: 'system' as const,
+          severity: 'info' as const,
           message: `Message ${i}`,
         });
       }
@@ -193,20 +193,20 @@ describe('LoggingService', () => {
   describe('getSummary', () => {
     beforeEach(async () => {
       await service.add({
-        type: 'ACTION' as const,
-        severity: 'INFO' as const,
+        type: 'system' as const,
+        severity: 'info' as const,
         message: 'Info action',
       });
 
       await service.add({
-        type: 'ACTION' as const,
-        severity: 'ERROR' as const,
+        type: 'system' as const,
+        severity: 'error' as const,
         message: 'Error action',
       });
 
       await service.add({
-        type: 'SYSTEM' as const,
-        severity: 'WARN' as const,
+        type: 'system' as const,
+        severity: 'warn' as const,
         message: 'System warning',
       });
     });
@@ -219,10 +219,10 @@ describe('LoggingService', () => {
 
     it('should count by severity', async () => {
       const summary = await service.getSummary();
-      // Severity values are uppercase in the entries
-      expect(summary.INFO).toBe(1);
-      expect(summary.ERROR).toBe(1);
-      expect(summary.WARN).toBe(1);
+      // Severity values are lowercase in the entries
+      expect(summary.info).toBe(1);
+      expect(summary.error).toBe(1);
+      expect(summary.warn).toBe(1);
     });
 
     it('should count by type', async () => {
@@ -264,8 +264,8 @@ describe('LoggingService', () => {
     it('should maintain buffer with multiple entries', async () => {
       for (let i = 0; i < 50; i++) {
         await service.add({
-          type: 'ACTION' as const,
-          severity: 'INFO' as const,
+          type: 'system' as const,
+          severity: 'info' as const,
           message: `Message ${i}`,
         });
       }

@@ -252,7 +252,7 @@ describe('ViewerController', () => {
   });
 
   it('retrieves nearby labels with various radius values', async () => {
-    const mockLabels = [];
+    const mockLabels: any[] = [];
     viewerService.getNearbyLabels.mockResolvedValue(mockLabels as any);
 
     await controller.getNearbyLabels('180.0', '0.0', '1.5', '5');
