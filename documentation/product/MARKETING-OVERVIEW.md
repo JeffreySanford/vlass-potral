@@ -98,7 +98,7 @@ graph LR
     G -->|"No audit trail"| I["Reproducibility crisis"]
     G -->|"Manual sharing"| J["Publication delays"]
 
-```
+```text
 
 **[VISUAL SPECIFICATION: Replace above diagram with professional infographic showing:]**
 
@@ -185,7 +185,7 @@ graph TB
     P2C --> P3C
     P2D --> P3D
 
-```
+```text
 
 **[VISUAL SPECIFICATION: Professional pyramid or progression diagram showing:]**
 
@@ -305,7 +305,7 @@ graph TB
     style PG fill:#f3e5f5
     style EXT fill:#e8f5e9
 
-```
+```text
 
 **[VISUAL SPECIFICATION: Professional system diagram with:]**
 
@@ -461,7 +461,7 @@ User in viewer
   ↓
 ["Save to post" → embeds model output + reproducibility recipe]
 
-```
+```text
 
 ---
 
@@ -497,7 +497,7 @@ graph LR
     S --> C
     C --> D["Display overlay<br/>in viewer"]
 
-```
+```text
 
 **Impact:**
 
@@ -587,7 +587,7 @@ User sees red anomaly region in viewer. Hovers over it. Panel appears:
 
  [Save to post]  [Report as FP]
 
-```
+```text
 
 **User confidence:** 80%+ rate explainability as "helpful or better"
 
@@ -680,7 +680,7 @@ Unified discovery across **NRAO + CosmicAI curations + TACC + ngVLA** data sourc
   ↓
 [Both datasets simultaneously loaded in viewer]
 
-```
+```text
 
 **Success metric:** Dataset queries resolve in <2s
 
@@ -731,7 +731,7 @@ graph TB
     CACHE_T -->|"Results"| CACHE
     CACHE -->|"Notifies client<br/>WebSocket"| UI
 
-```
+```text
 
 **User experience:**
 
@@ -760,7 +760,7 @@ Fetch results into cosmic-horizons cache
   ↓
 Render in viewer + notify user
 
-```
+```text
 
 **Benefits:**
 
@@ -811,7 +811,7 @@ graph LR
     P --> R
     R --> PUB
 
-```
+```text
 
 **Scientific impact:** Enables funding agencies (NSF, DOE) to automatically verify reproducibility before awarding grants.
 
@@ -849,7 +849,7 @@ Confidence: 89% average
 Expert consensus: 9/9 radio astronomers agree
 
 [HIGH CONFIDENCE — Suitable for publication]
-```
+```text
 
 ---
 
@@ -871,7 +871,7 @@ graph TB
 
     FUNDING -->|"enables"| PHASE4["Phase 4:<br/>National<br/>Infrastructure"]
 
-```
+```text
 
 **[VISUAL SPECIFICATION: Strategic partnership map showing:]**
 
@@ -954,7 +954,7 @@ graph TB
                perf)
      │
      └──→ External: VLASS HiPS, FITS APIs (read-only)
-```
+```text
 
 **Phase 2 Extension: Local AI Inference**
 
@@ -982,7 +982,7 @@ Previous layers +
 └─ ReproducibilityGraph
    ├─ DAG storage
    └─ Replay orchestration
-```
+```text
 
 **Phase 3 Extension: Distributed Multi-Site**
 
@@ -1010,7 +1010,7 @@ Previous layers +
 └─ ReproducibilityManifestBuilder
    ├─ Multi-site lineage
    └─ DOI metadata
-```
+```text
 
 ### Technology Stack
 
@@ -1074,7 +1074,7 @@ CosmicAI                  Cosmic Horizon            Scientists
 │                                                 audited,
 │                                                 published
 │                                                 analyses
-```
+```text
 
 ### Next-Generation VLA (ngVLA) Readiness
 
@@ -1159,7 +1159,7 @@ graph TB
     DOE -->|"$200K–400K<br/>(if awarded)"| P3
     NSF -->|"$500K–1M<br/>CIS (2027)"| P4
 
-```
+```text
 
 ### Budget Overview
 
@@ -1172,7 +1172,7 @@ Investment trajectory:
   (done)     (2026)       (2026–27)        (2027+)
 
   Cumulative: $800K–1.6M over 3 years
-```
+```text
 
 ### Phase 2: Self-Fundable ($100K–$200K)
 
@@ -1273,7 +1273,7 @@ Jan–Jun 2027
 Jun–Aug 2027
   └─ Prepare NSF CIS proposal (larger, $300K–$1M)
 
-```
+```text
 
 ### Honest Assessment
 

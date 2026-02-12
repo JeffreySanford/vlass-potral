@@ -173,7 +173,7 @@ Astropy Service (Python subprocess)
 Redis Cache (24h TTL, pre-warmed daily)
       ↓
 Result: { ra: 142.847, dec: -15.234, accuracy_arcsec: 1.2 }
-```
+```text
 
 ### Key Features
 

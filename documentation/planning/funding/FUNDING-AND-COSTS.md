@@ -217,7 +217,7 @@ Oct 2026: If awarded → accelerate Phase 3; if not → continue at 50% staffing
   ↓
 Q1 2027: Phase 3 ramping (grant-funded or extended timeline)
 
-```
+```text
 
 ### Realistic Success Rates
 
@@ -353,7 +353,7 @@ Aug–Sep 2026: Decisions returning
 Oct 2026: If either awarded → hire 2–3 engineers, accelerate Phase 3
           If neither awarded → continue Phase 2 at 50% pace, pivot to NVIDIA
 
-```
+```text
 
 **Outcome probabilities:**
 
@@ -374,7 +374,7 @@ Aug 2026: Parallel NSF/DOE submissions (stronger pitch with NVIDIA backing)
 Sep–Oct 2026: Build momentum; reach out to CosmicAI formally
 Nov 2026+: Phase 3 (funded by NVIDIA credits + internal budget + eventual NSF/DOE)
 
-```
+```text
 
 **Advantage:** Lower risk, faster start. NVIDIA partnership strengthens NSF/DOE pitches.
 
@@ -389,7 +389,7 @@ Sep–Oct 2026: NSF/DOE submissions (Phase 3 scoped bigger, $300K+)
 Nov 2026–Feb 2027: Decision period; meanwhile continue Phase 3 at 50% pace
 Mar 2027: Check awards; if funded, accelerate; if not, seek DOE CIS (larger, $500K+)
 
-```
+```text
 
 **Advantage:** Most control; Phase 2 fully baked before external funding.
 

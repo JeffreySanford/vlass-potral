@@ -79,7 +79,7 @@ export class TimeoutError extends Error {
   }
 }
 
-```
+```text
 
 ### Error Handling Flow
 
@@ -126,7 +126,7 @@ export class TimeoutError extends Error {
            Use cached data
            Queue requests
 
-```
+```text
 
 ---
 
@@ -319,7 +319,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   }
 }
 
-```
+```text
 
 ### Registering the Interceptor
 
@@ -339,7 +339,7 @@ export const appConfig: ApplicationConfig = {
   ]
 };
 
-```
+```text
 
 ### Example API Call with Error Handling
 
@@ -396,7 +396,7 @@ export class ViewerApiService {
   }
 }
 
-```
+```text
 
 ---
 
@@ -497,7 +497,7 @@ export class ErrorBoundaryService {
   }
 }
 
-```
+```text
 
 ### Usage in Components
 
@@ -562,7 +562,7 @@ export class ViewerComponent implements OnInit {
   );
 }
 
-```
+```text
 
 ---
 
@@ -648,7 +648,7 @@ export class ErrorMessageService {
   }
 }
 
-```
+```text
 
 ### Notification Service
 
@@ -698,7 +698,7 @@ export class NotificationService {
   }
 }
 
-```
+```text
 
 ---
 
@@ -766,7 +766,7 @@ export class LoggingService {
   }
 }
 
-```
+```text
 
 ---
 
@@ -836,7 +836,7 @@ export class LoggingService {
   </div>
 }
 
-```
+```text
 
 ### Component Logic
 
@@ -889,7 +889,7 @@ export class ViewerComponent implements OnInit {
   }
 }
 
-```
+```text
 
 ---
 
@@ -987,7 +987,7 @@ describe('ViewerComponent - Error Handling', () => {
   }));
 });
 
-```
+```text
 
 ### HTTP Interceptor Tests
 
@@ -1068,7 +1068,7 @@ describe('HttpErrorInterceptor', () => {
   });
 });
 
-```
+```text
 
 ---
 
@@ -1117,7 +1117,7 @@ export class OfflineService {
   }
 }
 
-```
+```text
 
 ### Caching Strategy
 
@@ -1174,7 +1174,7 @@ export class CacheService {
   }
 }
 
-```
+```text
 
 ---
 
@@ -1202,7 +1202,7 @@ onSubmit() {
   // Submit form...
 }
 
-```
+```text
 
 ### Problem: Race conditions with multiple API calls
 
@@ -1219,7 +1219,7 @@ public searchResults$ = this.search$.pipe(
   catchError(() => of([]))
 );
 
-```
+```text
 
 ### Problem: Memory leaks from subscriptions
 
@@ -1251,7 +1251,7 @@ export class MyComponent implements OnInit {
   }
 }
 
-```
+```text
 
 ### Problem: Lost error context
 
@@ -1277,7 +1277,7 @@ this.api.call()
   )
   .subscribe();
 
-```
+```text
 
 ---
 

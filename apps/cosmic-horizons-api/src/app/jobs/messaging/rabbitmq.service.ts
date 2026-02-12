@@ -41,7 +41,6 @@ export interface RabbitMQMessage {
 export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger('RabbitMQService');
   private connection: any;
-  private channel: any;
   private consumerCallbacks: Map<string, Function> = new Map();
   private isConnecting = false;
 
@@ -81,7 +80,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
       await this.setupChannels();
       this.logger.log('RabbitMQ connection established');
     } catch (error) {
-      this.logger.error(`Failed to connect to RabbitMQ: ${error.message}`);
+      this.logger.error(`Failed to connect to RabbitMQ: ${error instanceof Error ? error.message : 'Unknown error'}`);
       this.isConnecting = false;
       throw error;
     }
@@ -142,7 +141,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
       return true;
     } catch (error) {
-      this.logger.error(`Failed to publish message: ${error.message}`);
+      this.logger.error(`Failed to publish message: ${error instanceof Error ? error.message : 'Unknown error'}`);
       throw error;
     }
   }
@@ -178,7 +177,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   /**
    * Negative acknowledge with optional requeue
    */
-  async nack(message: RabbitMQMessage, requeue: boolean = true): Promise<void> {
+  async nack(message: RabbitMQMessage, requeue = true): Promise<void> {
     this.logger.warn(
       `Nacking message: ${message.headers.messageId} (requeue: ${requeue})`
     );
@@ -210,7 +209,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
       this.logger.log(`Sent to DLQ: ${message.headers.messageId}`);
     } catch (error) {
-      this.logger.error(`Failed to send to DLQ: ${error.message}`);
+      this.logger.error(`Failed to send to DLQ: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 

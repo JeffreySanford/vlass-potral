@@ -21,7 +21,7 @@ git gc --prune=now --aggressive
 git push origin --force --all
 git push origin --force --tags
 
-```
+```text
 
 ## Post-Rewrite
 

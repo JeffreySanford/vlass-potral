@@ -14,7 +14,7 @@ is healthy:
 ```bash
 pnpm start:all
 
-```
+```text
 
 Or manually:
 
@@ -23,7 +23,7 @@ pnpm start:infra
 pnpm start:web
 pnpm start:api
 
-```
+```text
 
 ## Deferred Services
 

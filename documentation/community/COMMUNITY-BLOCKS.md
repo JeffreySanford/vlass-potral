@@ -120,7 +120,7 @@ CREATE TABLE post_block_snapshots (
   artifact_is_deleted BOOL
 );
 
-```
+```text
 
 ### Post Revisions & Immutability
 
@@ -149,7 +149,7 @@ User deletes post → post.status = 'DELETED', deleted_at = now()
   ├─ emits: AUDIT_EVENT(action=POST_DELETED)
   ├─ after 30d: hard delete (cascade delete revisions, artifacts)
 
-```
+```text
 
 ---
 
@@ -182,7 +182,7 @@ Here's what we observed in the VLASS Quick Look data.
   "timestampUtc": "2026-02-11T20:00:00Z"
 }
 
-```
+```text
 
 ````
 
@@ -198,7 +198,7 @@ The core shows a clear ring structure.
 
 - compact-core
 
-```
+```text
 
 ## Image
 
@@ -345,7 +345,7 @@ After parsing, store as JSON (deterministic, queryable):
   }
 ]
 
-```
+```text
 
 ---
 
@@ -389,7 +389,7 @@ async createPost(
   return toDto(post);  // 201 Created, POST complete
 }
 
-```
+```text
 
 ### Async Snapshot Job (Background)
 
@@ -501,7 +501,7 @@ export class SnapshotGenerationJob {
   }
 }
 
-```
+```text
 
 ### WebSocket Events
 
@@ -528,7 +528,7 @@ interface JobEvent {
   error?: string;
 }
 
-```
+```text
 
 ---
 
@@ -559,7 +559,7 @@ if (post.flag_count >= 3 && !post.flagged) {
   });
 }
 
-```
+```text
 
 ### Mod Action: Hide Post
 
@@ -603,7 +603,7 @@ async hidePost(
   return toDto(post);
 }
 
-```
+```text
 
 ### Mod Action: Lock Comments on Post
 
@@ -627,7 +627,7 @@ async lockPost(
   return toDto(post);
 }
 
-```
+```text
 
 ### Mod Action: Tag for "Needs Sources"
 
@@ -647,7 +647,7 @@ async addNeedsSourcesTag(
   return toDto(post);
 }
 
-```
+```text
 
 ---
 
@@ -686,7 +686,7 @@ Response:
   ]
 }
 
-```
+```text
 
 ### Diff Between Revisions
 
@@ -714,7 +714,7 @@ Response:
   }
 }
 
-```
+```text
 
 ---
 

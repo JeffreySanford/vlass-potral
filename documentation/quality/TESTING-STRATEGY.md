@@ -17,7 +17,7 @@ This strategy covers in-scope MVP architecture only:
 ```bash
 pnpm nx run-many --target=test --all
 
-```
+```text
 
 CI must fail on baseline gate failures.
 
@@ -28,7 +28,7 @@ pnpm nx run docs-policy:check
 pnpm nx run-many --target=test --all
 pnpm nx run mvp-gates:e2e
 
-```
+```text
 
 These three commands are the minimum quality bar for merge readiness.
 

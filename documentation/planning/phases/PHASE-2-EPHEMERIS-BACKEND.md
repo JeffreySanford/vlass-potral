@@ -41,7 +41,7 @@ Implement real-time ephemeris calculations using **astronomy-engine** (pure Java
 ```http
 GET /api/view/ephem/search?object=mars&epoch=2026-02-10T14:30:00Z
 
-```
+```text
 
 **NestJS Backend** (cosmic-horizons-api):
 
@@ -51,7 +51,7 @@ GET /api/view/ephem/search?object=mars&epoch=2026-02-10T14:30:00Z
 ├─ Cache: Redis (24h TTL, pre-warmed daily)
 └─ Data: DE440/DE441 ephemeris (bundled)
 
-```
+```text
 
 **Response**:
 
@@ -65,7 +65,7 @@ GET /api/view/ephem/search?object=mars&epoch=2026-02-10T14:30:00Z
   object_type: "planet"
 }
 
-```
+```text
 
 ### Component Details
 
@@ -90,7 +90,7 @@ TypeScript request:
   include_uncertainty?: boolean; // Optional, default: false
 }
 
-```
+```text
 
 TypeScript response:
 
@@ -104,7 +104,7 @@ TypeScript response:
   object_type: 'planet' | 'satellite' | 'asteroid';
 }
 
-```
+```text
 
 **Features**:
 
@@ -195,7 +195,7 @@ export class EphemerisService {
   }
 }
 
-```
+```text
 
 #### 4. Redis Caching Strategy
 
@@ -240,7 +240,7 @@ async precomputeDailyEphemeris() {
   }
 }
 
-```
+```text
 
 ---
 
@@ -275,7 +275,7 @@ import * as Astronomy from 'astronomy-engine';
 
 const vector = Astronomy.GeoVector(Astronomy.Body.Mars, new Date(), observer);
 
-```
+```text
 
 - Expected: No build errors, full TypeScript support
 
@@ -424,7 +424,7 @@ const vector = Astronomy.GeoVector(Astronomy.Body.Mars, new Date(), observer);
   }
 }
 
-```
+```text
 
 ### No Infrastructure Changes Required
 
@@ -572,7 +572,7 @@ describe('EphemerisService', () => {
   });
 });
 
-```
+```text
 
 ### Integration Tests (Sprint 2)
 

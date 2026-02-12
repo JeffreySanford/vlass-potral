@@ -56,7 +56,7 @@ Browser
 Shared contracts:
   -> libs/shared/models
 
-```
+```text
 
 Primary paths:
 

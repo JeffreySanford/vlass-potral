@@ -54,7 +54,7 @@ graph TB
     style IMPACT fill:#ffcccc
     style OUTCOME fill:#cc0000,color:#fff
 
-```
+```text
 
 ---
 
@@ -83,7 +83,7 @@ graph LR
     style PUB fill:#f8bbd0
     style REP fill:#d1c4e9
 
-```
+```text
 
 Estimated end-to-end time: approximately 3 minutes from data to publication.
 
@@ -127,7 +127,7 @@ graph TB
     style P2 fill:#bbdefb
     style P3 fill:#fff9c4
 
-```
+```text
 
 ---
 
@@ -156,7 +156,7 @@ graph LR
     style Z fill:#ffebee
     style R fill:#d1c4e9
 
-```
+```text
 
 | Facility | Annual Data Volume | Analysis Mode | Operational Implication |
 | --- | --- | --- | --- |
@@ -184,7 +184,7 @@ flowchart LR
     style S fill:#ffccbc
     style P fill:#e1bee7
 
-```
+```text
 
 | Step | Action | Typical Time |
 | --- | --- | --- |
@@ -213,7 +213,7 @@ flowchart LR
     style R0 fill:#c8e6c9
     style P1 fill:#d1c4e9
 
-```
+```text
 
 | Step | Action | Typical Time |
 | --- | --- | --- |
@@ -242,7 +242,7 @@ flowchart TB
     style M fill:#c8e6c9
     style O fill:#d1c4e9
 
-```
+```text
 
 ## Multi-site flow summary
 
@@ -272,7 +272,7 @@ flowchart TB
       DB1 --> EX1["VLASS HiPS/FITS Sources"]
     end
 
-```
+```text
 
 ### MVP profile
 
@@ -295,7 +295,7 @@ flowchart TB
       RC2 --> X2["Explainability UI"]
     end
 
-```
+```text
 
 ### Phase 2 profile
 
@@ -320,7 +320,7 @@ flowchart TB
       SL3 --> MAN3["Reproducibility Manifest"]
     end
 
-```
+```text
 
 ### Phase 3 profile
 
@@ -360,7 +360,7 @@ gantt
 
     Phase 3 Target Complete      :milestone, p3m, 2027-06-30, 0d
 
-```
+```text
 
 | Window | Milestones |
 | --- | --- |
@@ -402,7 +402,7 @@ flowchart LR
 
     classDef phase fill:#e3f2fd,stroke:#1565c0;
 
-```
+```text
 
 | Funding Source | Primary Phase Coverage | Budget Range | Notes |
 | --- | --- | --- | --- |
@@ -437,7 +437,7 @@ gantt
     Continue Phase 2           :a5, 2026-05-01, 2026-09-30
     Phase 3 Grant-Accelerated  :a6, 2026-10-01, 2027-06-30
 
-```
+```text
 
 | Period | Action |
 | --- | --- |
@@ -473,7 +473,7 @@ flowchart TB
     style CAI fill:#ffe0b2
     style TACC fill:#c8e6c9
 
-```
+```text
 
 | Layer | Stakeholders | Relationship to cosmic-horizons |
 | --- | --- | --- |
@@ -519,7 +519,7 @@ flowchart TB
     style JP fill:#fff3e0
     style AF fill:#ffebee
 
-```
+```text
 
 ### Positioning summary
 
@@ -552,7 +552,7 @@ flowchart LR
       S3["Grant decision support"]
     end
 
-```
+```text
 
 | Category | Metric | Target | Current |
 | --- | --- | --- | --- |
@@ -592,7 +592,7 @@ flowchart LR
       O3["ngVLA readiness evidence"]
     end
 
-```
+```text
 
 | Category | Metric | Target | Current |
 | --- | --- | --- | --- |
@@ -657,7 +657,7 @@ Neutral Gray (backgrounds):   #f5f5f5
 Text Dark:                    #333333
 Text Light:                   #666666
 
-```
+```text
 
 ### Typography
 

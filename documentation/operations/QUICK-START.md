@@ -13,7 +13,7 @@ Status date: 2026-02-07
 ```bash
 pnpm install
 
-```
+```text
 
 ## Run
 
@@ -22,7 +22,7 @@ Recommended (infra + app):
 ```bash
 pnpm start:all
 
-```
+```text
 
 Split mode (two terminals, no infra automation):
 
@@ -31,14 +31,14 @@ Terminal 1:
 ```bash
 pnpm start:web
 
-```
+```text
 
 Terminal 2:
 
 ```bash
 pnpm start:api
 
-```
+```text
 
 ## Test
 
@@ -47,14 +47,14 @@ pnpm test
 pnpm test:web
 pnpm test:api
 
-```
+```text
 
 ## Build
 
 ```bash
 pnpm build
 
-```
+```text
 
 ## Notes
 

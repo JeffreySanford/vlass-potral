@@ -110,7 +110,7 @@ searchTarget(): void {
   // ... existing search logic
 }
 
-```
+```text
 
 **UI Changes:**
 
@@ -145,7 +145,7 @@ F     → Download FITS cutout
 P     → Copy permalink to clipboard
 ?     → Show help/keybinds overlay
 
-```
+```text
 
 **Scope:** Frontend only (hotkeys library or native)
 
@@ -200,7 +200,7 @@ onKeyboardEvent(event: KeyboardEvent): void {
   }
 }
 
-```
+```text
 
 **UI Changes:**
 
@@ -228,7 +228,7 @@ onKeyboardEvent(event: KeyboardEvent): void {
 🟠 Planet/Solar System object
 ?  Unknown type
 
-```
+```text
 
 **Scope:** Frontend parsing of SIMBAD object types
 
@@ -267,7 +267,7 @@ private getObjectTypeIcon(objectType: string): string {
 // <mat-icon class="label-icon">{{ getObjectTypeIcon(label.objectType) }}</mat-icon>
 // <span>{{ label.name }}</span>
 
-```
+```text
 
 **UI Changes:**
 
@@ -332,7 +332,7 @@ from(this.aladinView.getViewDataURL({
   width: this.selectedSnapshotResolution,
 })).pipe(...)
 
-```
+```text
 
 **UI Changes:**
 

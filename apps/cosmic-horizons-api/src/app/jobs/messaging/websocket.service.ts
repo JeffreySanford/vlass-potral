@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class WebSocketService {
   private readonly logger = new Logger(WebSocketService.name);
-  private server: any;
   private clients: Map<string, any> = new Map();
   private rooms: Map<string, Set<string>> = new Map();
 
@@ -12,11 +11,6 @@ export class WebSocketService {
 
   async initialize(): Promise<void> {
     const port = this.configService.get<number>('WEBSOCKET_PORT', 3001);
-    this.server = {
-      port,
-      maxConnections: this.configService.get<number>('WEBSOCKET_MAX_CONNECTIONS', 500),
-      heartbeatInterval: this.configService.get<number>('WEBSOCKET_HEARTBEAT_MS', 30000),
-    };
     this.logger.log(`WebSocket Server initialized on port ${port}`);
   }
 

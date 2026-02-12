@@ -51,7 +51,7 @@ Enable reliable, scalable event processing for job orchestration, result callbac
 
 **Tests to Create:**
 
-```
+```text
 rabbitmq-integration.service.spec.ts (35 tests)
 ├─ Connection management (5 tests)
 ├─ Message publishing (8 tests)
@@ -63,7 +63,7 @@ event-schema.validation.spec.ts (15 tests)
 ├─ Event validation (8 tests)
 ├─ Schema versioning (5 tests)
 └─ Backward compatibility (2 tests)
-```
+```text
 
 **Key Components:**
 
@@ -109,7 +109,7 @@ interface RabbitMQConfig {
   durable_queues: boolean;
   durable_exchanges: boolean;
 }
-```
+```text
 
 #### Sprint 5.2: Kafka Integration (3 weeks)
 
@@ -129,7 +129,7 @@ interface RabbitMQConfig {
 
 **Tests to Create:**
 
-```
+```text
 kafka-integration.service.spec.ts (30 tests)
 ├─ Broker connection (5 tests)
 ├─ Topic management (6 tests)
@@ -141,7 +141,7 @@ schema-registry.spec.ts (12 tests)
 ├─ Schema registration (5 tests)
 ├─ Compatibility checking (4 tests)
 └─ Version evolution (3 tests)
-```
+```text
 
 #### Sprint 5.3: Job Orchestration Events (2 weeks)
 
@@ -161,7 +161,7 @@ schema-registry.spec.ts (12 tests)
 
 **Test Coverage:**
 
-```
+```text
 job-orchestration-events.spec.ts (50 tests)
 ├─ Job submission event emission (8 tests)
 ├─ Status change events (10 tests)
@@ -169,7 +169,7 @@ job-orchestration-events.spec.ts (50 tests)
 ├─ Error events & DLQ (12 tests)
 ├─ Event ordering & idempotency (8 tests)
 └─ Event replay & recovery (4 tests)
-```
+```text
 
 **Expected Metrics:**
 
@@ -211,7 +211,7 @@ Deliver enterprise-grade dashboards for real-time job monitoring, performance an
 
 **Tests to Create:**
 
-```
+```text
 websocket.server.spec.ts (40 tests)
 ├─ Client connection (6 tests)
 ├─ Broadcast channels (8 tests)
@@ -225,7 +225,7 @@ websocket.client.spec.ts (15 tests)
 ├─ Event subscription (4 tests)
 ├─ Reconnection logic (5 tests)
 └─ State synchronization (3 tests)
-```
+```text
 
 #### Sprint 6.2: Real-Time Dashboards (4 weeks)
 
@@ -245,7 +245,7 @@ websocket.client.spec.ts (15 tests)
 
 **Components to Build:**
 
-```
+```text
 Dashboard Components:
 ├─ JobsMonitoring
 │  ├─ ActiveJobsList (real-time updates)
@@ -262,11 +262,11 @@ Dashboard Components:
    ├─ ResourceUtilization
    ├─ NetworkLatency
    └─ CacheHitRateMetrics
-```
+```text
 
 **Dashboard Mockup:**
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │  Cosmic Horizons Control Plane                           🔄  │
 ├─────────────────────────────────────────────────────────────┤
@@ -292,7 +292,7 @@ Dashboard Components:
 │                                                               │
 │  System Health: ✅ Normal  |  Cluster: ✅ 99.97% uptime      │
 └─────────────────────────────────────────────────────────────┘
-```
+```text
 
 #### Sprint 6.3: Performance Analytics (3 weeks)
 
@@ -312,7 +312,7 @@ Dashboard Components:
 
 **Tests to Create:**
 
-```
+```text
 analytics.pipeline.spec.ts (35 tests)
 ├─ Metric collection (8 tests)
 ├─ Data aggregation (10 tests)
@@ -323,7 +323,7 @@ anomaly-detection.spec.ts (20 tests)
 ├─ Threshold-based detection (7 tests)
 ├─ ML-based anomalies (8 tests)
 └─ Alert generation (5 tests)
-```
+```text
 
 #### Sprint 6.4: Aladin Integration (2 weeks)
 
@@ -422,7 +422,7 @@ anomaly-detection.spec.ts (20 tests)
 
 ### Team Composition
 
-```
+```text
 Priority 5 (Event Infrastructure):
 ├─ Lead Architect: 1 (full-time)
 ├─ Backend Engineers: 2 (full-time)
@@ -438,7 +438,7 @@ Priority 7 (Optimization):
 ├─ Performance Engineer: 1 (full-time)
 ├─ GPU Specialist: 1 (full-time)
 └─ QA Engineer: 1 (full-time)
-```
+```text
 
 ### Budget & Infrastructure
 
@@ -522,7 +522,7 @@ Priority 7 (Optimization):
 
 ## Timeline Summary
 
-```
+```text
 Q2 2026 (Apr-May):
 ├─ Priority 5.1: RabbitMQ Foundation (Weeks 1-3)
 ├─ Priority 5.2: Kafka Integration (Weeks 4-6)
@@ -542,7 +542,7 @@ Q3 2026 (Jul-Aug):
 ├─ Priority 7.3: GPU Optimization (Weeks 17-19)
 ├─ Priority 7.4: Scale Testing & Hardening (Weeks 19-20)
 └─ Production Readiness Review
-```
+```text
 
 ---
 

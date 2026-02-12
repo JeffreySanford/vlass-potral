@@ -79,7 +79,7 @@ CUTOUT_SECONDARY_API_KEY=replace_me
 CUTOUT_SECONDARY_API_KEY_HEADER=X-API-Key
 CUTOUT_SECONDARY_API_KEY_PREFIX=
 
-```
+```text
 
 ## If config docs conflict with runtime code, source of truth is active code + charter/scope lock
 

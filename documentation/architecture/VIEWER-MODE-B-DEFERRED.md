@@ -44,7 +44,7 @@ User Browser                         VLASS Platform
 │                     └──────────────┘                     │
 └──────────────────────────────────────────────────────────┘
 
-```
+```text
 
 ### Key Components (Proposed)
 
@@ -226,7 +226,7 @@ For future transition to Mode B ("Expert Mode"):
    │ (Aladin)│      │  (FITS, Go)  │
    └─────────┘      └──────────────┘
 
-```
+```text
 
 **User Experience:**
 
@@ -278,7 +278,7 @@ Raw Survey Data (VLASS)
       FITS Cutout
    (Ready for analysis)
 
-```
+```text
 
 ### Calibration Metadata (Deferred with Mode B)
 
@@ -305,7 +305,7 @@ PHOTZP  =                 38.5  / photometric zero point
 SEEING  =                 1.4   / seeing FWHM (arcsec)
 AIRMASS =                 1.35  / airmass at observation
 
-```
+```text
 
 These metadata fields enable:
 

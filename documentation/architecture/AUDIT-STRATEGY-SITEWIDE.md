@@ -40,7 +40,7 @@ This strategy establishes a multi-layered audit infrastructure that captures eve
 
 ### 1. **Multi-Layer Event Capture**
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │  USER ACTIONS (UI)                                  │
 │  - Searches, filters, exports                       │
@@ -75,7 +75,7 @@ This strategy establishes a multi-layered audit infrastructure that captures eve
 │  - Remote execution logs                           │
 │  - Data staging & archival events                  │
 └─────────────────────────────────────────────────────┘
-```
+```text
 
 ### 2. **Audit Trail Components**
 
@@ -121,7 +121,7 @@ interface JobAuditEntry {
   retry_count: number;               // Retry attempts
   notes: string;                    // Error context, recovery actions
 }
-```
+```text
 
 #### B. **User Action Audit**
 
@@ -156,7 +156,7 @@ interface UserActionAudit {
   client_ip: string;
   user_agent: string;
 }
-```
+```text
 
 #### C. **Security Event Audit**
 
@@ -198,7 +198,7 @@ interface SecurityEventAudit {
   risk_score: number;                // 0-100
   action_taken: 'LOG' | 'ALERT' | 'BLOCK' | 'MFA_CHALLENGE';
 }
-```
+```text
 
 #### D. **Data Access & Export Audit**
 
@@ -232,7 +232,7 @@ interface DataAccessAudit {
   approved_by?: string;
   approval_timestamp?: Date;
 }
-```
+```text
 
 ---
 
@@ -249,14 +249,14 @@ interface DataAccessAudit {
 
 ### Retention Policy
 
-```
+```text
 Public Data:         Permanent in archive
 Internal Audit:      3 years (365 days hot, 2 years cold)
 Security Events:     1 year (90 days hot, 270 days warm)
 User Actions:        1 year (rolling window)
 Performance Metrics: 90 days hot, 2 years aggregate
 Export Records:      7 years (regulatory requirement)
-```
+```text
 
 ---
 
@@ -368,13 +368,13 @@ All audit events use structured JSON format:
     "gpu_count": 2
   }
 }
-```
+```text
 
 ### 2. **Multi-Destination Logging**
 
 Events sent to multiple systems for redundancy:
 
-```
+```text
 ┌─────────────────────────┐
 │  Application Logging    │
 │  (Winston/NestJS)       │
@@ -395,18 +395,18 @@ Events sent to multiple systems for redundancy:
 │ Redis   │  │ S3 Archiv│          │ TACC Logs   │
 │ Cache   │  │ (Cold)   │          │ (External)  │
 └─────────┘  └──────────┘          └─────────────┘
-```
+```text
 
 ### 3. **Log Aggregation**
 
-```
+```text
 Event Source → Log Shipper → Message Queue → Log Processor → Storage
    ↓                                                            ↓
 - API Requests          Fluent/Logstash      RabbitMQ      PostgreSQL
 - Database Changes      FileBeats            Kafka         Elasticsearch
 - System Events         AWS CloudWatch                      S3
 - External Systems
-```
+```text
 
 ---
 
@@ -430,17 +430,17 @@ Event Source → Log Shipper → Message Queue → Log Processor → Storage
 
 ### 2. **Encryption**
 
-```
+```text
 In Transit:  TLS 1.3 for all log transport
 At Rest:     AES-256-GCM for encrypted storage
 Transit:     Encrypted channels (HTTPS, AMQPS)
 Archival:    S3 Server-Side Encryption
 Keys:        AWS KMS or HashiCorp Vault
-```
+```text
 
 ### 3. **Access Control Model**
 
-```
+```text
 Audit Data Access Levels:
 ├── Level 1: Own Actions Only
 │   └─ Users can search their own job history
@@ -450,7 +450,7 @@ Audit Data Access Levels:
 │   └─ Admins see organization-wide audit
 └── Level 4: Compliance Officer Access
     └─ SoC compliance, regulatory audits
-```
+```text
 
 ---
 
@@ -458,7 +458,7 @@ Audit Data Access Levels:
 
 ### 1. **Real-Time Alerts**
 
-```
+```text
 Event Type                        Threshold     Action
 ─────────────────────────────────────────────────────────
 Failed Login Attempts             5 in 15 min   INVESTIGATE
@@ -468,11 +468,11 @@ API Error Rate                    > 5%          INCIDENT
 Job Failure Rate                  > 25%         WARNING
 Unauthorized API Access           Any           BLOCK
 Missing Audit Records             > 1 hour      ALERT
-```
+```text
 
 ### 2. **Audit Dashboard**
 
-```
+```text
 Real-Time Metrics:
 ├─ Active User Sessions
 ├─ Jobs Submitted (last hour)
@@ -487,7 +487,7 @@ Compliance Status:
 ├─ Log Retention Adherence
 ├─ Encryption Coverage (%)
 └─ Access Control Violations
-```
+```text
 
 ### 3. **Alerting Rules**
 
@@ -515,7 +515,7 @@ rules:
       SELECT COUNT(*) FROM audit_logs
       WHERE created_at < NOW() - INTERVAL '3 hours'
     alert: CRITICAL
-```
+```text
 
 ---
 
@@ -543,7 +543,7 @@ rules:
 
 ### 1. **Incident Timeline Reconstruction**
 
-```
+```text
 User reports suspicious activity
          ↓
 Query Job Audit Trail (tacc_job_id → parameters → results)
@@ -555,7 +555,7 @@ Query Security Event Audit (login → permission → access)
 Query Data Access Audit (export destination → timestamp)
          ↓
 Timeline established → Forensic analysis begins
-```
+```text
 
 ### 2. **Common Incident Queries**
 
@@ -577,7 +577,7 @@ SELECT * FROM security_event_audit
 WHERE auth_event->>'event' = 'LOGIN_FAILED' 
   AND user_id = ? 
 ORDER BY timestamp DESC LIMIT 20;
-```
+```text
 
 ---
 
@@ -651,7 +651,7 @@ AUDIT_ENCRYPTION_ALGORITHM=AES-256-GCM
 ALERT_FAILED_AUTH_THRESHOLD=5
 ALERT_FAILED_AUTH_WINDOW_MINUTES=15
 ALERT_BRUTE_FORCE_BLOCK_ENABLED=true
-```
+```text
 
 ### SQL Schema
 
@@ -695,7 +695,7 @@ CREATE TABLE user_action_audit (
     INDEX idx_user_timestamp (user_id, timestamp),
     INDEX idx_timestamp (timestamp)
 );
-```
+```text
 
 ---
 

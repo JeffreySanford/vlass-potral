@@ -469,7 +469,7 @@ describe('Job Audit Trail & Persistence', () => {
     });
 
     it('should track completion status', async () => {
-      const completedJob = { ...mockAuditableJob, status: 'COMPLETED' };
+      const completedJob = { ...mockAuditableJob, status: 'COMPLETED' } as any;
       jobRepository.findById.mockResolvedValueOnce(completedJob);
 
       const job = await jobRepository.findById(mockAuditableJob.id);

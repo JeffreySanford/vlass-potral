@@ -30,7 +30,7 @@ A proper ephemeris backend would solve it by:
 GET /api/ephem/mars?epoch=2026-02-10T14:30:00Z
 → { ra: 142.847, dec: -15.234, accuracy_arcsec: 1.2 }  // ±1 arcsec
 
-```
+```text
 
 ### Q2: Would that exceed MVP scope
 **Answer: ⚠️ DEPENDS on project priorities**
@@ -98,7 +98,7 @@ GET /api/ephem/mars?epoch=2026-02-10T14:30:00Z
 - No scientific accuracy requirement
 - Mars showing ±10° off is acceptable for visual centering
 - Phase 2 roadmap explicitly includes ephemeris
-```
+```text
 
 **Your MVP Charter says**:
 
@@ -118,7 +118,7 @@ GET /api/ephem/mars?epoch=2026-02-10T14:30:00Z
 - Planetary data for calibration (FITS cutouts, etc.)
 - Observatory partnerships require accuracy
 - Public credibility depends on scientific validity
-```
+```text
 
 ---
 
@@ -136,7 +136,7 @@ GET /api/ephem/mars?epoch=2026-02-10T14:30:00Z
 // What we have now:
 const mars = { ra: 142.8, dec: -15.2 };  // Static, approximate
 
-```
+```text
 
 **Pros**:
 
@@ -178,7 +178,7 @@ GET /api/ephem/mars?epoch=2026-02-10T14:30:00Z
     epoch: "2026-02-10T14:30:00Z"
   }
 
-```
+```text
 
 **Implementation**:
 
@@ -253,7 +253,7 @@ GET /api/ephem/mars?epoch=2026-02-10T14:30:00Z
 // Call JPL Horizons API:
 curl "https://ssd-api.jpl.nasa.gov/horizons_file?COMMAND='Mars'&format=json"
 
-```
+```text
 
 **Pros**:
 
@@ -303,7 +303,7 @@ curl "https://ssd-api.jpl.nasa.gov/horizons_file?COMMAND='Mars'&format=json"
 // Current implementation is correct for MVP
 getKnownPlanetCoordinates('mars') → { ra: 142.8, dec: -15.2 }
 
-```
+```text
 
 ### Phase 1.1 / Operational Hardening (2-4 weeks out)
 
@@ -315,7 +315,7 @@ If multiple users report "Mars doesn't work", add a client-side warning:
 // OPTION: UI warning for fallback coordinates
 statusMessage = `Mars (approximate position ±5-10°). For precise coordinates, enter RA/Dec manually.`
 
-```
+```text
 
 ### Phase 2 / AI Integration Platform (3-6 months out)
 

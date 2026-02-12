@@ -12,7 +12,7 @@ find apps/cosmic-horizons-api/src -name "*.spec.ts" | wc -l
 
 # Find files with 'any' types
 grep -r "any" apps/cosmic-horizons-api/src --include="*.spec.ts" | head -20
-```
+```text
 
 ## Step 2: Import Infrastructure
 
@@ -29,7 +29,7 @@ import { CommentsService } from './comments.service';
 import { CommentBuilder, PostBuilder, CommentReportBuilder, TestDataFactory } from '../testing/test-builders';
 import { createMockRepository, TypeSafeAssertions } from '../testing/mock-factory';
 import { TestDataTypeChecker } from '../testing/type-safety-config';
-```
+```text
 
 ## Step 3: Update Mock Data Creation
 
@@ -45,7 +45,7 @@ const mockComment = {
   post_id: 'post-1',
   // Missing relations: hidden_at, post, user, replies
 };
-```
+```text
 
 **AFTER:**
 
@@ -57,7 +57,7 @@ const mockComment = new CommentBuilder()
   .withPostId('post-1')
   .build();
 // All relations auto-populated
-```
+```text
 
 ### Pattern 2: Nested Objects
 
@@ -75,7 +75,7 @@ const mockComment = {
   content: 'Great post!',
   post: mockPost, // May have missing fields
 };
-```
+```text
 
 **AFTER:**
 
@@ -90,7 +90,7 @@ const mockComment = new CommentBuilder()
   .withContent('Great post!')
   .withPost(mockPost)
   .build();
-```
+```text
 
 ### Pattern 3: Arrays of Entities
 
@@ -101,7 +101,7 @@ const comments: any[] = [
   { id: 'c1', content: 'test1', user_id: 'u1', post_id: 'p1' },
   { id: 'c2', content: 'test2', user_id: 'u1', post_id: 'p1' },
 ];
-```
+```text
 
 **AFTER:**
 
@@ -114,7 +114,7 @@ const comments = Array.from({ length: 2 }, (_, i) =>
     .withPostId('p1')
     .build(),
 );
-```
+```text
 
 ### Pattern 4: Factory Convenience Functions
 
@@ -129,7 +129,7 @@ const defaultComment = {
   user_id: 'user-1',
   post_id: 'post-1',
 };
-```
+```text
 
 **AFTER:**
 
@@ -138,7 +138,7 @@ const defaultComment = TestDataFactory.createComment({
   content: 'Default text',
 });
 // Uses sensible defaults for all other fields
-```
+```text
 
 ## Step 4: Update Mock Repositories
 
@@ -165,7 +165,7 @@ beforeEach(async () => {
     ],
   }).compile();
 });
-```
+```text
 
 **AFTER:**
 
@@ -185,7 +185,7 @@ beforeEach(async () => {
     ],
   }).compile();
 });
-```
+```text
 
 ### Pattern 2: Direct Mock Calls
 
@@ -200,7 +200,7 @@ it('should create comment', async () => {
   
   expect(mockCommentRepo.create).toHaveBeenCalledWith(newComment);
 });
-```
+```text
 
 **AFTER:**
 
@@ -219,7 +219,7 @@ it('should create comment', async () => {
     { content: 'new' },
   );
 });
-```
+```text
 
 ## Step 5: Update Service Mocks
 
@@ -245,7 +245,7 @@ beforeEach(async () => {
     ],
   }).compile();
 });
-```
+```text
 
 **AFTER:**
 
@@ -267,7 +267,7 @@ beforeEach(async () => {
     ],
   }).compile();
 });
-```
+```text
 
 ## Step 6: Update Assertions
 
@@ -283,7 +283,7 @@ it('should return comment', async () => {
   
   expect(result).toEqual([mockComment]);
 });
-```
+```text
 
 **AFTER:**
 
@@ -299,7 +299,7 @@ it('should return comment', async () => {
     content: mockComment.content,
   });
 });
-```
+```text
 
 ### Pattern 2: Validate Structure
 
@@ -309,7 +309,7 @@ it('should return comment', async () => {
 expect(result).toBeDefined();
 expect(result.id).toBeDefined();
 expect(result.comment).toBeDefined();
-```
+```text
 
 **AFTER:**
 
@@ -320,7 +320,7 @@ TestDataTypeChecker.validateEntity(result, [
   'comment_id',
   'user_id',
 ]);
-```
+```text
 
 ### Pattern 3: Array Validation
 
@@ -332,7 +332,7 @@ results.forEach(r => {
   expect(r.id).toBeDefined();
   expect(r.content).toBeDefined();
 });
-```
+```text
 
 **AFTER:**
 
@@ -343,7 +343,7 @@ TestDataTypeChecker.validateEntityArray(results, [
   'user_id',
   'post_id',
 ]);
-```
+```text
 
 ## Step 7: Add Validation to beforeEach
 
@@ -365,7 +365,7 @@ beforeEach(async () => {
     'replies',
   ]);
 });
-```
+```text
 
 ## Complete Example: Before and After
 
@@ -424,7 +424,7 @@ describe('CommentsController', () => {
     expect(service.createComment).toHaveBeenCalled(); // Loose check
   });
 });
-```
+```text
 
 ### AFTER (Type-Safe, Complete Data)
 
@@ -507,7 +507,7 @@ describe('CommentsController', () => {
     );
   });
 });
-```
+```text
 
 ## Checklist for Migration
 
@@ -537,7 +537,7 @@ pnpm nx run cosmic-horizons-api:test
 pnpm nx run cosmic-horizons-api:test -- --coverage
 
 # 5. Move to next test file
-```
+```text
 
 ## Troubleshooting
 
@@ -547,7 +547,7 @@ Ensure imports are correct:
 
 ```typescript
 import { CommentBuilder } from '../testing/test-builders'; // Adjust path
-```
+```text
 
 ### "Property ... does not exist"
 
@@ -556,7 +556,7 @@ Builder is missing required fields. Check what the entity needs:
 ```typescript
 // Get list of required fields for entity
 TestDataTypeChecker.validateEntity(yourObject, ['id', 'whatElse?']);
-```
+```text
 
 ### Tests still have `any` types
 
@@ -568,7 +568,7 @@ Use TypeScript strict mode to catch these:
     "noImplicitAny": true
   }
 }
-```
+```text
 
 ### Mock returns don't match expected type
 
@@ -580,4 +580,4 @@ mockService.getItems.mockResolvedValue(
     new ItemBuilder().withId(`item-${i}`).build(),
   ),
 );
-```
+```text

@@ -34,7 +34,7 @@ flowchart TD
     AC --> SRDP[Science Ready Data Products]
     VP --> Audit[Human-in-the-Loop Audit]
     Audit --> Publication[Notebook Publication]
-```
+```text
 
 ---
 

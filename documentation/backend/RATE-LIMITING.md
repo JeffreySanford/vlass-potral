@@ -110,7 +110,7 @@ export class EndpointThrottleGuard implements CanActivate {
   }
 }
 
-```
+```text
 
 ### Usage in Controller
 
@@ -140,7 +140,7 @@ export class CommunityController {
   }
 }
 
-```
+```text
 
 ---
 
@@ -162,7 +162,7 @@ Retry-After: 30
 Content-Type: application/json
 { "error": "Rate limit exceeded: 100/min" }
 
-```
+```text
 
 ---
 
@@ -183,7 +183,7 @@ async canActivate(context: ExecutionContext): Promise<boolean> {
   // ... apply normal limits
 }
 
-```
+```text
 
 ---
 
@@ -215,7 +215,7 @@ if (current > limit) {
   });
 }
 
-```
+```text
 
 ---
 
@@ -265,7 +265,7 @@ describe('Rate Limiting', () => {
   });
 });
 
-```
+```text
 
 ---
 

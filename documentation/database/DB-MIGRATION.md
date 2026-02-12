@@ -22,7 +22,7 @@ pnpm nx exec -- typeorm migration:create \
 
   apps/cosmic-horizons-api/src/migrations/InitialSchema
 
-```
+```text
 
 ---
 
@@ -124,7 +124,7 @@ export class InitialSchema1700000000000 implements MigrationInterface {
   }
 }
 
-```
+```text
 
 ---
 
@@ -173,7 +173,7 @@ const config: TypeOrmModuleOptions = {
 
 export default config;
 
-```
+```text
 
 ---
 
@@ -231,7 +231,7 @@ pnpm nx exec -- typeorm migration:revert
 
 pnpm nx exec -- typeorm migration:show
 
-```
+```text
 
 ---
 
@@ -272,7 +272,7 @@ jobs:
 
         run: pnpm nx e2e cosmic-horizons-api-e2e
 
-```
+```text
 
 ---
 
@@ -309,7 +309,7 @@ NODE_ENV=production DB_URL="postgresql://..." \
 
 # psql -h prod-db.example.com -U vlass_app -d vlass_prod < dump.sql
 
-```
+```text
 
 ---
 
@@ -389,7 +389,7 @@ describe('Database Migrations', () => {
   });
 });
 
-```
+```text
 
 ---
 

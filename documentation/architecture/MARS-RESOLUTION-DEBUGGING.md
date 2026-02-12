@@ -35,7 +35,7 @@
   dec: -15.2
   note: "Using approximate coordinates; planet positions change continuously"
 
-```
+```text
 
 If you see this, the resolver is working. If you don't see ANY logs, the `searchTarget()` method might not be triggering.
 
@@ -83,7 +83,7 @@ const decInput = form.querySelector('input[formControlName="dec"]');
 console.log("RA:", raInput.value);
 console.log("Dec:", decInput.value);
 
-```
+```text
 
 **Expected**:
 
@@ -146,7 +146,7 @@ searchTarget(): void {
   // ... rest of method
 }
 
-```
+```text
 
 Reload, search for "mars", and check if "DEBUG: searchTarget called" appears.
 
@@ -197,7 +197,7 @@ switchMap((aladinSuccesss) => {
     : this.resolveWithSkybot$(query);
 }),
 
-```
+```text
 
 ### Root Cause C: HTTP Requests Timing Out / CORS Issues
 
@@ -259,7 +259,7 @@ if (window.A && window.A.aladin) {
   console.error('Aladin not loaded');
 }
 
-```
+```text
 
 ---
 

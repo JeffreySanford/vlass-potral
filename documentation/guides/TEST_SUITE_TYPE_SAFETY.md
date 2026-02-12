@@ -23,7 +23,7 @@ This document outlines how to use strong TypeScript type checking in the Cosmic 
 
 ```typescript
 const mockComment: any = { id: 'comment-1' };
-```
+```text
 
 **Good:**
 
@@ -32,7 +32,7 @@ const mockComment = new CommentBuilder()
   .withId('comment-1')
   .build();
 // Type is inferred as complete Comment entity
-```
+```text
 
 ### 2. All Test Data Must Be Complete
 
@@ -46,7 +46,7 @@ const mockPost = {
   title: 'Test',
   // Missing: status, user_id, description, content, etc.
 };
-```
+```text
 
 **Good:**
 
@@ -58,7 +58,7 @@ const mockPost = new PostBuilder()
   .withUserId('user-1')
   .build();
 // All required fields auto-populated with defaults
-```
+```text
 
 ### 3. Use Type Guards for Collections
 
@@ -67,7 +67,7 @@ const mockPost = new PostBuilder()
 ```typescript
 const logs: any[] = [];
 service.getRecent.mockResolvedValue(logs);
-```
+```text
 
 **Good:**
 
@@ -78,7 +78,7 @@ const logs: LogEntry[] = [
     .build() as LogEntry,
 ];
 service.getRecent.mockResolvedValue(logs);
-```
+```text
 
 ---
 
@@ -105,7 +105,7 @@ const comment = new CommentBuilder()
 // - post: Post object (auto-populated)
 // - user: User object (auto-populated)
 // - replies: Comment[] (auto-populated)
-```
+```text
 
 ### PostBuilder
 
@@ -125,7 +125,7 @@ const post = new PostBuilder()
 
 // All properties populated:
 // - description, content, published_at, hidden_at, created_at, updated_at, etc.
-```
+```text
 
 ### CommentReportBuilder
 
@@ -145,7 +145,7 @@ const report = new CommentReportBuilder()
   .build();
 
 // Includes: comment: Comment, user: User (auto-populated)
-```
+```text
 
 ### LogEntryBuilder
 
@@ -163,7 +163,7 @@ const log = new LogEntryBuilder()
   .build();
 
 // All properties: id, at, type, severity, message, context, meta
-```
+```text
 
 ---
 
@@ -182,7 +182,7 @@ mockCommentRepo.findById.mockResolvedValue(mockComment);
 const mockRedis = createMockRedisClient();
 mockRedis.get.mockResolvedValue(JSON.stringify(cachedData));
 mockRedis.setex.mockResolvedValue('OK');
-```
+```text
 
 ### Service Mocks
 
@@ -198,7 +198,7 @@ const commentService = {
 
 // All methods are type-safe!
 commentService.getCommentsByPost.mockResolvedValue([mockComment]);
-```
+```text
 
 ---
 
@@ -228,7 +228,7 @@ TestDataTypeChecker.validateEntityArray<LogEntry>(logs, [
   'type',
   'severity',
 ]);
-```
+```text
 
 ### Validate Enum Values
 
@@ -239,7 +239,7 @@ TestDataTypeChecker.assertEnumValue(
   'PostStatus',
 );
 // Throws if statusValue is not a valid PostStatus
-```
+```text
 
 ### Validate Collections
 
@@ -249,7 +249,7 @@ TestDataTypeChecker.assertRecordStructure(
   'string', // keys are strings
   'number', // values are numbers
 );
-```
+```text
 
 ---
 
@@ -266,7 +266,7 @@ export default {
   ...strictTestTypescriptConfig,
   // other jest config
 };
-```
+```text
 
 ### tsconfig.json for Tests
 
@@ -285,7 +285,7 @@ export default {
     "noFallthroughCasesInSwitch": true
   }
 }
-```
+```text
 
 ---
 
@@ -331,7 +331,7 @@ describe('CommentRepository', () => {
     TestDataTypeChecker.validateEntityArray(results, ['id', 'post_id', 'user_id']);
   });
 });
-```
+```text
 
 ### Week 2: DTO Validation Tests (+25 tests)
 
@@ -362,7 +362,7 @@ describe('CreateCommentDto Validation', () => {
     expect(validated.length).toBeGreaterThan(0);
   });
 });
-```
+```text
 
 ### Week 3: Auth Guards & Strategies (+20 tests)
 
@@ -385,7 +385,7 @@ describe('AuthenticatedGuard', () => {
     expect(result).toBe(true);
   });
 });
-```
+```text
 
 ### Week 4: E2E with Cypress (+15 tests for coverage)
 
@@ -414,7 +414,7 @@ describe('Comments E2E', () => {
     });
   });
 });
-```
+```text
 
 ---
 
@@ -507,7 +507,7 @@ describe('CommentsService - Type Safe Example', () => {
     });
   });
 });
-```
+```text
 
 ---
 

@@ -105,7 +105,7 @@ searchTarget('mars')
   ↓ (calls new /api/ephem backend)
   → Viewer centers on accurate coordinates
 
-```
+```text
 
 **Implementation**:
 

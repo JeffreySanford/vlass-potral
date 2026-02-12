@@ -49,7 +49,7 @@ flowchart LR
     W --> V[Aladin HiPS Viewer]
     V --> E[External VLASS/HiPS Sources]
 
-```
+```text
 
 Frontend runtime note:
 

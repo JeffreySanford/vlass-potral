@@ -29,7 +29,7 @@ From repository root:
 ```bash
 pnpm start:all
 
-```
+```text
 
 This runs:
 
@@ -44,7 +44,7 @@ This runs:
 ```bash
 pnpm run start:infra:check && docker compose down --remove-orphans --volumes && docker compose build --pull && docker compose up -d --wait
 
-```
+```text
 
 This guarantees stale containers/volumes are rebuilt and services are healthy before app startup.
 
@@ -68,7 +68,7 @@ docker compose ps
 
 docker compose logs -f
 
-```
+```text
 
 ## Default Local Credentials
 
@@ -147,7 +147,7 @@ Use:
 ```bash
 pnpm run start:ports:free
 
-```
+```text
 
 ### Database auth failures
 
@@ -157,14 +157,14 @@ Most common cause is stale volumes with old credentials. Reset infra:
 docker compose down --remove-orphans --volumes
 pnpm run start:infra
 
-```
+```text
 
 ### Validate Postgres connectivity
 
 ```bash
 docker compose exec vlass-postgres psql -U cosmic_horizons_user -d cosmic_horizons
 
-```
+```text
 
 ## Related Docs
 

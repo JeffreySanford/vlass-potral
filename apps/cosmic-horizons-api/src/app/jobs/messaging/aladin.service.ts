@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AladinService {
@@ -9,7 +8,7 @@ export class AladinService {
   private overlays: Map<string, Set<string>> = new Map();
   private instanceCounter = 0;
 
-  constructor(private configService: ConfigService) {}
+  constructor() {}
 
   async initializeAladin(elementId: string, config?: any): Promise<string> {
     const instanceId = `aladin-${Date.now()}-${this.instanceCounter++}`;
@@ -42,7 +41,7 @@ export class AladinService {
     }
   }
 
-  async getMetrics(): any {
+  async getMetrics(): Promise<any> {
     let totalCatalogs = 0;
     this.catalogs.forEach((cats) => totalCatalogs += cats.length);
     return {

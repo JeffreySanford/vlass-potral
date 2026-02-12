@@ -62,7 +62,7 @@ Modal: "Open FITS from NRAO"
 Button 1: "Open NRAO Archive" (new tab)
 Button 2: "Copy NRAO Link"
 
-```
+```text
 
 ### Technical Flow
 
@@ -89,7 +89,7 @@ Response:
 Client → opens NRAO URL in new tab
 Audit log → { action: "FITS_LINK_OUT", target: { ra, dec, epoch }, status: OK }
 
-```
+```text
 
 ---
 
@@ -110,7 +110,7 @@ export const FITS_ENDPOINTS = {
 
 // Validate resolver output against this list (no open proxying)
 
-```
+```text
 
 ### 2. Rate Limiting (on resolve, not transfer)
 
@@ -123,7 +123,7 @@ FITS_RESOLVE_LIMITS = {
   POWER: 'unlimited',
 };
 
-```
+```text
 
 ### 3. Audit Logging
 
@@ -138,7 +138,7 @@ What we log:
   timestamp: new Date(),
 }
 
-```
+```text
 
 What we **do NOT** log:
 
@@ -164,7 +164,7 @@ return {
   ],
 };
 
-```
+```text
 
 ---
 

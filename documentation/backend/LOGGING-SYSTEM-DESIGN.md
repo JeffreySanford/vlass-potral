@@ -122,7 +122,7 @@ Comprehensive request/event logging system with:
 │                                                                │
 └─────────────────────────────────────────────────────────────────┘
 
-```
+```text
 
 ---
 
@@ -150,7 +150,7 @@ Comprehensive request/event logging system with:
   error_message: null
 }
 
-```
+```text
 
 ### **HTTP Requests (Backend)**
 
@@ -171,7 +171,7 @@ Comprehensive request/event logging system with:
   stack_trace: null
 }
 
-```
+```text
 
 ### **WebSocket Events**
 
@@ -186,7 +186,7 @@ Comprehensive request/event logging system with:
   error_message: null
 }
 
-```
+```text
 
 ### **Application Events**
 
@@ -238,7 +238,7 @@ Comprehensive request/event logging system with:
   }
 }
 
-```
+```text
 
 ### **Event Categories (See Tiles)**
 
@@ -279,7 +279,7 @@ The current MVP viewer now emits runtime events for grid and load timing in dev 
   timestamp: '2026-02-08T00:00:00.000Z'
 }
 
-```
+```text
 
 Grid toggle events are logged as:
 
@@ -294,7 +294,7 @@ Grid toggle events are logged as:
   }
 }
 
-```
+```text
 
 Backend cache behavior for viewer endpoints is logged with explicit source attribution:
 
@@ -311,7 +311,7 @@ Cutout cache hit (source=redis, provider=primary, survey=CDS/P/DSS2/color, size=
 Nearby-label cache miss (source=none, limit=16, radius_deg=0.2).
 Viewer cache config: redis_enabled=true, cutout_ttl_ms=300000, nearby_ttl_ms=30000, warmup_enabled=true.
 
-```
+```text
 
 ### **Logger UI Route (Implemented)**
 
@@ -476,7 +476,7 @@ SELECT
 FROM logs
 GROUP BY type, severity;
 
-```
+```text
 
 ---
 
@@ -504,7 +504,7 @@ GROUP BY type, severity;
   ]
 }
 
-```
+```text
 
 **Response:**
 
@@ -515,7 +515,7 @@ GROUP BY type, severity;
   message: 'Batch logged'
 }
 
-```
+```text
 
 ---
 
@@ -537,7 +537,7 @@ GET /api/admin/logs?
   from=2026-02-01&
   to=2026-02-07
 
-```
+```text
 
 **Response:**
 
@@ -576,7 +576,7 @@ GET /api/admin/logs?
   }
 }
 
-```
+```text
 
 ---
 
@@ -589,7 +589,7 @@ GET /api/admin/logs?
 ```bash
 GET /api/admin/logs/summary?from=2026-02-01&to=2026-02-07
 
-```
+```text
 
 **Response:**
 
@@ -605,7 +605,7 @@ GET /api/admin/logs/summary?from=2026-02-01&to=2026-02-07
   timestamp: '2026-02-07T22:31:00.000Z'
 }
 
-```
+```text
 
 ---
 
@@ -620,7 +620,7 @@ GET /api/admin/logs/summary?from=2026-02-01&to=2026-02-07
   retention_days: 90  // Keep logs newer than this
 }
 
-```
+```text
 
 **Response:**
 
@@ -631,7 +631,7 @@ GET /api/admin/logs/summary?from=2026-02-01&to=2026-02-07
   message: 'Cleanup complete'
 }
 
-```
+```text
 
 ---
 
@@ -718,7 +718,7 @@ export class Log {
   updated_at!: Date;
 }
 
-```
+```text
 
 ---
 
@@ -859,7 +859,7 @@ export class LogRepository {
   }
 }
 
-```
+```text
 
 ---
 
@@ -1006,7 +1006,7 @@ export class LogService {
   }
 }
 
-```
+```text
 
 ---
 
@@ -1105,7 +1105,7 @@ export class LoggingInterceptor implements NestInterceptor {
   }
 }
 
-```
+```text
 
 ---
 
@@ -1209,7 +1209,7 @@ export class AdminLogsController {
   }
 }
 
-```
+```text
 
 ---
 
@@ -1269,7 +1269,7 @@ export class LoggingInterceptor implements HttpInterceptor {
   }
 }
 
-```
+```text
 
 ---
 
@@ -1360,7 +1360,7 @@ export class LoggerService {
   }
 }
 
-```
+```text
 
 ---
 
@@ -1382,7 +1382,7 @@ admin-logs-dashboard/
     ├── log-table.component.html
     └── log-table.component.scss
 
-```
+```text
 
 ---
 
@@ -1507,7 +1507,7 @@ admin-logs-dashboard/
   </section>
 </div>
 
-```
+```text
 
 ---
 
@@ -1567,7 +1567,7 @@ admin-logs-dashboard/
   </mat-card>
 </div>
 
-```
+```text
 
 ---
 
@@ -1704,7 +1704,7 @@ admin-logs-dashboard/
   ></mat-paginator>
 </div>
 
-```
+```text
 
 ---
 
@@ -1734,7 +1734,7 @@ const rolePermissions = {
   ],
 };
 
-```
+```text
 
 ### **RBAC Guard**
 
@@ -1745,7 +1745,7 @@ const rolePermissions = {
 @Controller('admin/logs')
 export class AdminLogsController { ... }
 
-```
+```text
 
 ---
 
@@ -1817,7 +1817,7 @@ LOG_BATCH_SIZE=100
 LOG_FLUSH_INTERVAL_MS=5000
 LOG_SENSITIVE_FIELDS=password,token,authorization,secret
 
-```
+```text
 
 ---
 

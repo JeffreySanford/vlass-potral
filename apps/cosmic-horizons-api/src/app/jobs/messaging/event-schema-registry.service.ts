@@ -81,7 +81,7 @@ export class EventSchemaRegistry {
       // Build compatibility matrix
       this.updateCompatibilityMatrix(registration);
     } catch (error) {
-      this.logger.error(`Failed to register schema: ${error.message}`);
+      this.logger.error(`Failed to register schema: ${error instanceof Error ? error.message : 'Unknown error'}`);
       throw error;
     }
   }
@@ -150,7 +150,7 @@ export class EventSchemaRegistry {
         }
 
         // Enum validation
-        if (field.enum && !field.enum.includes(value)) {
+        if (field.enum && Array.isArray(field.enum) && !(field.enum as any[]).includes(value)) {
           errors.push({
             field: field.name,
             error: `Value must be one of: ${field.enum.join(', ')}`,
@@ -166,7 +166,7 @@ export class EventSchemaRegistry {
 
       return errors;
     } catch (error) {
-      this.logger.error(`Validation error: ${error.message}`);
+      this.logger.error(`Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       throw error;
     }
   }
@@ -192,7 +192,7 @@ export class EventSchemaRegistry {
 
       return compatibility.get(newVersion) ?? false;
     } catch (error) {
-      this.logger.error(`Compatibility check error: ${error.message}`);
+      this.logger.error(`Compatibility check error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return false;
     }
   }

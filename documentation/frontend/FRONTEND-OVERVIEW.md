@@ -90,7 +90,7 @@ The Cosmic Horizon frontend follows a **Three-Pillar MVP** structure:
          │   (cosmic-horizons-api)        │
          └──────────────────────┘
 
-```
+```text
 
 ---
 
@@ -211,7 +211,7 @@ apps/cosmic-horizons-web/
 
 └── project.json                       # Nx project metadata
 
-```
+```text
 
 ---
 
@@ -293,7 +293,7 @@ apps/cosmic-horizons-web/
 User → Login → Email+Password → Backend validates → JWT issued → Stored in localStorage
            → Redirects to /landing → User authenticated for session
 
-```
+```text
 
 ### Viewer Component (Pillar 2)
 
@@ -391,7 +391,7 @@ authService.logout()
 authService.currentUser$ // Observable<User | null>
 authService.isAuthenticated$ // Observable<boolean>
 
-```
+```text
 
 ### ViewerService (Viewer-Specific State)
 
@@ -401,7 +401,7 @@ viewerService.currentState$ // Observable<ViewerStateModel>
 viewerService.labels$ // Observable<ViewerLabelModel[]>
 viewerService.catalogLabels$ // Observable<NearbyCatalogLabelModel[]>
 
-```
+```text
 
 ### Reactive Forms
 
@@ -415,7 +415,7 @@ stateForm = this.fb.group({
   survey: ['VLASS', Validators.required],
 });
 
-```
+```text
 
 ---
 
@@ -442,7 +442,7 @@ HTTP Request
     ↓
 HTTP Response
 
-```
+```text
 
 ### API Endpoints Called
 
@@ -549,7 +549,7 @@ const routes = [
   { path: '**', redirectTo: '/landing' }, // 404 fallback
 ];
 
-```
+```text
 
 ### Route Guards
 
@@ -582,7 +582,7 @@ pnpm build:web
 
 pnpm serve:web
 
-```
+```text
 
 ### Bundle Size Optimization
 
@@ -611,7 +611,7 @@ export const environment = {
   enableDevTools: false,
 };
 
-```
+```text
 
 **Configuration:** Injected at build time via `fileReplacements` in `project.json`.
 
@@ -636,7 +636,7 @@ describe('AuthService', () => {
   });
 });
 
-```
+```text
 
 ### Component Tests (Jasmine)
 
@@ -654,7 +654,7 @@ describe('ViewerComponent', () => {
   });
 });
 
-```
+```text
 
 ### E2E Tests (Playwright)
 
@@ -675,7 +675,7 @@ test('User can create, edit, and publish a post', async ({ page }) => {
   await expect(page).toHaveURL(/posts\/\d+/);
 });
 
-```
+```text
 
 ---
 
@@ -727,7 +727,7 @@ test('User can create, edit, and publish a post', async ({ page }) => {
 pnpm build:web --stats-json
 npx webpack-bundle-analyzer dist/apps/cosmic-horizons-web/stats.json
 
-```
+```text
 
 Typical production bundle:
 
@@ -757,7 +757,7 @@ pnpm start:all
 
 open http://localhost:4200
 
-```
+```text
 
 ### Code Style
 
@@ -799,7 +799,7 @@ export class DataService {
   }
 }
 
-```
+```text
 
 ### Component with Reactive Forms
 
@@ -825,7 +825,7 @@ export class FormComponent implements OnInit {
   }
 }
 
-```
+```text
 
 ### Observable Subscription Management
 
@@ -840,7 +840,7 @@ constructor(private destroyRef: DestroyRef) {
     .subscribe(data => { ... });
 }
 
-```
+```text
 
 ---
 

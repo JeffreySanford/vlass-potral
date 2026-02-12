@@ -32,7 +32,7 @@ pnpm nx run-many -t lint --all
 pnpm nx run-many -t test --all
 pnpm nx run mvp-gates:e2e
 
-```
+```text
 
 ## Notes
 

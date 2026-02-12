@@ -16,7 +16,7 @@ const report = new CommentReportBuilder().withId('r1').withReason('Spam').build(
 
 // Logs
 const log = new LogEntryBuilder().withType('ACTION').withSeverity('INFO').build();
-```
+```text
 
 ### Mock Repositories
 
@@ -25,7 +25,7 @@ const mockRepo = createMockRepository<Comment>();
 mockRepo.findById.mockResolvedValue(comment);
 mockRepo.find.mockResolvedValue([comment]);
 mockRepo.create.mockResolvedValue(comment);
-```
+```text
 
 ### Mock Services
 
@@ -36,7 +36,7 @@ const mockService = {
 } as jest.Mocked<CommentsService>;
 
 mockService.getComments.mockResolvedValue([comment]);
-```
+```text
 
 ### Validate Data
 
@@ -52,7 +52,7 @@ TestDataTypeChecker.assertEnumValue(status, Object.values(PostStatus));
 
 // Records
 TestDataTypeChecker.assertRecordStructure(map, 'string', 'number');
-```
+```text
 
 ### Assertions
 
@@ -70,7 +70,7 @@ TypeSafeAssertions.assertArrayPropertiesEqual(results, [
 
 // Mock called with partial
 TypeSafeAssertions.assertMockCalledWithPartial(repo.find, { post_id: 'p1' });
-```
+```text
 
 ## Common Builders
 
@@ -89,7 +89,7 @@ TypeSafeAssertions.assertMockCalledWithPartial(repo.find, { post_id: 'p1' });
 .withUser(user: any)
 .withReplies(replies: any[])
 .build()
-```
+```text
 
 ### PostBuilder
 
@@ -100,7 +100,7 @@ TypeSafeAssertions.assertMockCalledWithPartial(repo.find, { post_id: 'p1' });
 .withUserId(userId: string)
 .withLocked(locked: boolean)
 .build()
-```
+```text
 
 ### LogEntryBuilder
 
@@ -113,7 +113,7 @@ TypeSafeAssertions.assertMockCalledWithPartial(repo.find, { post_id: 'p1' });
 .withContext(context: string)
 .withMeta(meta: Record<string, any>)
 .build()
-```
+```text
 
 ### CommentReportBuilder
 
@@ -126,7 +126,7 @@ TypeSafeAssertions.assertMockCalledWithPartial(repo.find, { post_id: 'p1' });
 .withComment(comment: any)
 .withUser(user: any)
 .build()
-```
+```text
 
 ## Files
 
@@ -147,7 +147,7 @@ import { createMockRepository, createMockRedisClient, mockService, TypeSafeAsser
 
 // Validators
 import { TestDataTypeChecker, BuilderTypeValidator } from '../testing/type-safety-config';
-```
+```text
 
 ## Do's ✅
 
@@ -179,7 +179,7 @@ pnpm nx run cosmic-horizons-api:test -- --coverage
 
 # Watch mode
 pnpm nx run cosmic-horizons-api:test -- --watch
-```
+```text
 
 ## Coverage Goals
 

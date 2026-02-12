@@ -53,7 +53,7 @@ curl "http://vo.imcce.fr/webservices/skybot/api/ephem?name=mars&type=EQ&epoch=no
 
 # Result: 404 Object not found
 
-```
+```text
 
 Both IMCCE endpoints are unreachable in current production environment (as of Feb 2026).
 
@@ -96,7 +96,7 @@ Both IMCCE endpoints are unreachable in current production environment (as of Fe
         │ (approximate, MVP)   │
         └─────────────────────┘
 
-```
+```text
 
 ### Implementation Details
 
@@ -116,7 +116,7 @@ tryBasicAstroAlgorithm(name: string)
   ↓ returns
 getKnownPlanetCoordinates(name: string)
 
-```
+```text
 
 **Hardcoded Fallback Coordinates** (epoch ~2026):
 
@@ -213,7 +213,7 @@ Response:
   "source": "astropy"
 }
 
-```
+```text
 
 **Technology**:
 
@@ -244,7 +244,7 @@ Response:
 ```bash
 curl "https://ssd-api.jpl.nasa.gov/horizons_file?COMMAND='Mars'&format=json"
 
-```
+```text
 
 **Pros**: ✅ Authoritative NASA data, real scientific accuracy
 **Cons**: 🔴 Network dependency, rate limits, latency (500ms+)
@@ -260,7 +260,7 @@ const mars = data['Mars barycenter'];
 const astrometric = mars.at(t).apparent_from(location);
 const {ra, dec} = astrometric.apparent_equatorial();
 
-```
+```text
 
 **Pros**: ✅ No backend dependency, instant calculation
 **Cons**: 🔴 Large JS bundle (~2-5MB), client-side computation
@@ -298,7 +298,7 @@ console.log("planet_resolution_fallback")
   note: "Using approximate coordinates; planet positions change continuously"
 }
 
-```
+```text
 
 ### Manual Test Cases
 

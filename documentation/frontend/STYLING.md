@@ -134,7 +134,7 @@ $font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'He
 // Monospace font (code, coordinates)
 $font-family-mono: 'Courier New', 'Monaco', 'Menlo', monospace;
 
-```
+```text
 
 ### Type Scales
 
@@ -176,7 +176,7 @@ $custom-typography: mat.define-typography-config(
 
 @include mat.core($custom-typography);
 
-```
+```text
 
 ---
 
@@ -192,7 +192,7 @@ $spacing-lg: 24px;  // Large gap
 $spacing-xl: 32px;  // Extra large gap
 $spacing-2xl: 48px; // Huge gap
 
-```
+```text
 
 ### Layout Patterns
 
@@ -208,7 +208,7 @@ $container-padding: $spacing-lg;
   padding: 0 $container-padding;
 }
 
-```
+```text
 
 #### Grid System
 
@@ -234,7 +234,7 @@ Using CSS Grid for layouts:
   gap: $spacing-lg;
 }
 
-```
+```text
 
 #### Flexbox Patterns
 
@@ -262,7 +262,7 @@ Using CSS Grid for layouts:
   gap: $spacing-sm;
 }
 
-```
+```text
 
 ---
 
@@ -293,7 +293,7 @@ Using CSS Grid for layouts:
 
 <button mat-raised-button disabled>Loading...</button>
 
-```
+```text
 
 **CSS Classes Added:**
 
@@ -346,7 +346,7 @@ Using CSS Grid for layouts:
   Dark Mode
 </mat-slide-toggle>
 
-```
+```text
 
 ### Cards & Containers
 
@@ -367,7 +367,7 @@ Using CSS Grid for layouts:
   </mat-card-actions>
 </mat-card>
 
-```
+```text
 
 ### Data Tables
 
@@ -405,7 +405,7 @@ Using CSS Grid for layouts:
   (page)="onPageChange($event)">
 </mat-paginator>
 
-```
+```text
 
 ### Dialogs & Modals
 
@@ -426,7 +426,7 @@ dialogRef.afterClosed().subscribe(result => {
   }
 });
 
-```
+```text
 
 ### Toasts & Snackbars
 
@@ -439,7 +439,7 @@ this.snackBar.open('Action successful!', 'Dismiss', {
   panelClass: ['success-snackbar']
 });
 
-```
+```text
 
 ---
 
@@ -471,7 +471,7 @@ apps/cosmic-horizons-web/src/
 
             └── ...
 
-```
+```text
 
 ### Global Styles Example
 
@@ -485,7 +485,7 @@ apps/cosmic-horizons-web/src/
 
 // Then import component styles (handled by Angular)
 
-```
+```text
 
 ### Utilities
 
@@ -512,7 +512,7 @@ apps/cosmic-horizons-web/src/
 @mixin tablet { @media (768px to 1024px) { @content; } }
 @mixin desktop { @media (min-width: 1024px) { @content; } }
 
-```
+```text
 
 ---
 
@@ -538,7 +538,7 @@ $theme: mat.define-light-theme((
 
 @include mat.all-component-colors($theme);
 
-```
+```text
 
 ### Dark Theme (Future Enhancement)
 
@@ -559,7 +559,7 @@ $dark-theme: mat.define-dark-theme((
   color: #ffffff;
 }
 
-```
+```text
 
 ### Custom Colors in Components
 
@@ -581,7 +581,7 @@ $dark-theme: mat.define-dark-theme((
   font-size: 12px;
 }
 
-```
+```text
 
 ---
 
@@ -595,7 +595,7 @@ $breakpoint-tablet: 768px;
 $breakpoint-desktop: 1024px;
 $breakpoint-wide: 1440px;
 
-```
+```text
 
 ### Responsive Grid
 
@@ -618,7 +618,7 @@ $breakpoint-wide: 1440px;
   }
 }
 
-```
+```text
 
 ### Touch-Friendly Interactions (Mobile)
 
@@ -637,7 +637,7 @@ $breakpoint-wide: 1440px;
   }
 }
 
-```
+```text
 
 ---
 
@@ -671,7 +671,7 @@ $breakpoint-wide: 1440px;
   ...
 </footer>
 
-```
+```text
 
 ### Color Contrast
 
@@ -697,7 +697,7 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
-```
+```text
 
 ### Screen Reader Text
 
@@ -720,7 +720,7 @@ a:focus-visible {
   <span class="sr-only">(FITS format)</span>
 </button>
 
-```
+```text
 
 ---
 
@@ -765,7 +765,7 @@ Max nesting depth: 3 levels (improves readability + CSS specificity)
   }
 }
 
-```
+```text
 
 ### Variables Usage
 
@@ -785,7 +785,7 @@ button {
   padding: 8px 16px; // ← Bad
 }
 
-```
+```text
 
 ### Media Query Organization
 
@@ -801,7 +801,7 @@ button {
   }
 }
 
-```
+```text
 
 ---
 
@@ -818,7 +818,7 @@ button {
   {{ data }}
 }
 
-```
+```text
 
 ```scss
 .skeleton {
@@ -837,7 +837,7 @@ button {
   100% { background-position: -200% 0; }
 }
 
-```
+```text
 
 ### Badge Styles
 
@@ -865,7 +865,7 @@ button {
   }
 }
 
-```
+```text
 
 ### Elevation (Shadows)
 
@@ -896,7 +896,7 @@ Material Design 3 elevation levels:
   }
 }
 
-```
+```text
 
 ---
 
@@ -931,7 +931,7 @@ Material Design 3 elevation levels:
   backface-visibility: hidden;
 }
 
-```
+```text
 
 ---
 

@@ -62,4 +62,4 @@ Run:
 ```bash
 node scripts/generate-marketing-visuals-pdf.mjs
 
-```
+```text

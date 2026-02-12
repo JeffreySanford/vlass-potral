@@ -17,7 +17,7 @@ pnpm nx run docs-policy:check
 pnpm nx run-many --target=test --all
 pnpm nx run mvp-gates:e2e
 
-```
+```text
 
 ## Scoring Model (Target >= 95)
 

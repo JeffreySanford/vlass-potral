@@ -14,16 +14,6 @@ import { Logger } from '@nestjs/common';
  * 5. Dead Letter Queue captures undeliverable messages
  */
 
-interface RabbitMQConfig {
-  urls: string[];
-  reconnectTime: number;
-  heartbeat: number;
-  prefetch: number;
-  dlq_enabled: boolean;
-  durable_queues: boolean;
-  durable_exchanges: boolean;
-}
-
 interface PublishOptions {
   exchange: string;
   routingKey: string;
@@ -44,12 +34,9 @@ interface ConsumeOptions {
 @Injectable()
 class RabbitMQService {
   private connection: any;
-  private channel: any;
   private consumerGroups: Map<string, any[]> = new Map();
 
-  constructor(private configService: ConfigService) {
-    this.channel = {};
-  }
+  constructor() {}
 
   async connect(): Promise<void> {
     // Simulated connection

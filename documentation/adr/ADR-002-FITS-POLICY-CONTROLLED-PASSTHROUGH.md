@@ -84,7 +84,7 @@ FITS_QUOTAS = {
   ADMIN: { unlimited },
 };
 
-```
+```text
 
 ### 3. Proxy Behavior
 
@@ -110,7 +110,7 @@ Return from cache (increment quota)
   ↓
 Stream to client, decrement quota
 
-```
+```text
 
 ### 4. Upstream Allowlist
 
@@ -129,7 +129,7 @@ Stream to client, decrement quota
   "retryCount": 1
 }
 
-```
+```text
 
 ### 5. Cache Persistence
 

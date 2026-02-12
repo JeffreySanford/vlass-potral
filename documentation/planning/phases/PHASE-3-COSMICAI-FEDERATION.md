@@ -327,7 +327,7 @@ graph TB
     UI -->|Select models| COSMICAI_MODELS
     COSMICAI_MODELS -->|Model versions, containers| SLURM
 
-```
+```text
 
 **New services (Phase 3):**
 

@@ -79,7 +79,7 @@ The Cosmic Horizon Mode A Viewer is a **web-based astronomical sky explorer** po
          │ └─ Multiple providers  │
          └────────────────────────┘
 
-```
+```text
 
 ---
 
@@ -140,7 +140,7 @@ toggleGridOverlay(enabled: boolean): void {
   <span>Grid</span>
 </label>
 
-```
+```text
 
 ---
 
@@ -208,7 +208,7 @@ toggleLabelsOverlay(enabled: boolean): void {
   <span>Labels</span>
 </label>
 
-```
+```text
 
 #### Nearby Catalog Lookup (Real-Time)
 
@@ -236,7 +236,7 @@ private scheduleNearbyLabelLookup(state: ViewerStateModel, options?: { force?: b
   }, 1000); // 1 second debounce
 }
 
-```
+```text
 
 **API Endpoint:**
 
@@ -251,7 +251,7 @@ Response:
   centerMatch: { name: "M31", ... }
 }
 
-```
+```text
 
 ---
 
@@ -333,7 +333,7 @@ this.stateForm.valueChanges
   <span>P/DSS2/color</span>
 </label>
 
-```
+```text
 
 #### Survey Mapping
 
@@ -355,7 +355,7 @@ private surveyHipsUrl(normalized: string): string {
   }
 }
 
-```
+```text
 
 ---
 
@@ -428,7 +428,7 @@ this.stateForm.valueChanges
     }
   });
 
-```
+```text
 
 **Behavior:** Type a new RA/Dec or select a different survey → View updates in real-time without clicking a button.
 
@@ -474,14 +474,14 @@ private encodeState(state: ViewerStateModel): string {
     .replace(/=+$/g, ''); // URL-safe base64
 }
 
-```
+```text
 
 **Example URL:**
 
 ```text
 https://cosmic-horizons.com/view?state=eyJyYSI6MTAuNjgsImRlYyI6NDEuMjcsImZvdiI6MiwiY3V2ZXkiOiJWTEFTUyJ9
 
-```
+```text
 
 ---
 
@@ -518,7 +518,7 @@ downloadScienceData(): void {
   this.logViewerEvent('science_data_downloaded', { detail, survey: state.survey });
 }
 
-```
+```text
 
 **API Call:**
 
@@ -526,7 +526,7 @@ downloadScienceData(): void {
 GET /api/viewer/cutout?ra=10.68&dec=41.27&fov=2&survey=VLASS&detail=high
 Response: FITS binary file (image/fits)
 
-```
+```text
 
 ---
 
@@ -573,7 +573,7 @@ async createPermalink(): Promise<void> {
   }
 }
 
-```
+```text
 
 **API Call:**
 
@@ -598,7 +598,7 @@ Response:
   }
 }
 
-```
+```text
 
 ---
 
@@ -648,7 +648,7 @@ async saveSnapshot(): Promise<void> {
   }
 }
 
-```
+```text
 
 ---
 
@@ -698,7 +698,7 @@ applySuggestedSurvey(): void {
   this.statusMessage = `Switched to ${this.suggestedSharperSurvey} for sharper detail.`;
 }
 
-```
+```text
 
 This helps users understand when switching to a higher-resolution survey would be beneficial.
 
@@ -726,7 +726,7 @@ export interface ViewerLabelModel {
   created_at: string;   // Timestamp
 }
 
-```
+```text
 
 ### Encoding Strategy
 
@@ -764,7 +764,7 @@ private decodeState(encoded: string): ViewerStateModel {
   return JSON.parse(json) as ViewerStateModel;
 }
 
-```
+```text
 
 ### State Persistence
 
@@ -803,7 +803,7 @@ private hydrateStateFromRoute(): void {
   this.syncAladinFromForm();
 }
 
-```
+```text
 
 ---
 
@@ -850,7 +850,7 @@ removeLabel(label: ViewerLabelModel): void {
   this.storageService.setLabels(this.labels);
 }
 
-```
+```text
 
 ### Catalog Label Annotations
 
@@ -877,7 +877,7 @@ addCenterCatalogLabelAsAnnotation(): void {
   this.logViewerEvent('catalog_label_annotated', { name: label.name });
 }
 
-```
+```text
 
 ---
 
@@ -913,7 +913,7 @@ if (resolutionQuotient < 10) { // User is zoomed in past native resolution
   }
 }
 
-```
+```text
 
 ---
 
@@ -938,7 +938,7 @@ logViewerEvent('permalink_created', { short_id });
 logViewerEvent('label_added', { name, ra, dec });
 logViewerEvent('catalog_label_annotated', { name });
 
-```
+```text
 
 **Logging Framework:** See [LOGGING-SYSTEM-DESIGN.md](../backend/LOGGING-SYSTEM-DESIGN.md)
 
@@ -1132,7 +1132,7 @@ Resolve short ID to full viewer state.
   view_count: number;
 }
 
-```
+```text
 
 ### POST /api/viewer/state
 
@@ -1143,7 +1143,7 @@ Create new persistent state, return short ID.
 ```typescript
 ViewerStateModel
 
-```
+```text
 
 **Response:**
 
@@ -1157,7 +1157,7 @@ ViewerStateModel
   }
 }
 
-```
+```text
 
 ### GET /api/viewer/nearby
 
@@ -1179,7 +1179,7 @@ Query nearby catalog objects.
   centerMatch: NearbyCatalogLabelModel | null;
 }
 
-```
+```text
 
 ### GET /api/viewer/cutout
 

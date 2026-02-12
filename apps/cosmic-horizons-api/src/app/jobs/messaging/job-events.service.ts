@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -8,8 +7,7 @@ export class JobEventsService {
 
   constructor(
     private readonly eventPublisher: any,
-    private readonly eventRegistry: any,
-    private readonly configService: ConfigService
+    private readonly eventRegistry: any
   ) {}
 
   async emitJobSubmittedEvent(job: any): Promise<string> {

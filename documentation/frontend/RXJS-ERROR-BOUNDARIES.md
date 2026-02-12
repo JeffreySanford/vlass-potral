@@ -71,7 +71,7 @@ function isRetryableError(error: any): boolean {
   );
 }
 
-```
+```text
 
 ### Usage Example
 
@@ -104,7 +104,7 @@ export class TapService {
   }
 }
 
-```
+```text
 
 ---
 
@@ -172,7 +172,7 @@ export class DashboardComponent implements OnInit {
   }
 }
 
-```
+```text
 
 ---
 
@@ -203,7 +203,7 @@ this.data$ = this.fetchDataWithFallback(
   this.http.get("/api/posts")
 );
 
-```
+```text
 
 ---
 
@@ -250,7 +250,7 @@ export class CircuitBreaker {
   }
 }
 
-```
+```text
 
 ### Usage in Service
 
@@ -284,7 +284,7 @@ export class ExternalApiService {
   }
 }
 
-```
+```text
 
 ---
 
@@ -331,7 +331,7 @@ export class ErrorLogger {
   }
 }
 
-```
+```text
 
 ### Usage
 
@@ -348,7 +348,7 @@ this.api.getPosts().pipe(
   }),
 );
 
-```
+```text
 
 ---
 
@@ -397,7 +397,7 @@ describe('TapService Error Handling', () => {
   });
 });
 
-```
+```text
 
 ---
 

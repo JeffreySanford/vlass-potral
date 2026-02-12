@@ -81,7 +81,7 @@ pnpm lighthouse:mobile  # Execute mobile performance audit
 
 pnpm lighthouse:summary # Generate text/json summary for CI + AI consumers
 
-```
+```text
 
 ### Testing Ecosystem
 

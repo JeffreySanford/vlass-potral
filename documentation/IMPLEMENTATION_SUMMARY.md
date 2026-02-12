@@ -62,7 +62,7 @@ new PostBuilder()
   .build()
 
 // CommentReportBuilder, LogEntryBuilder (similar pattern)
-```
+```text
 
 **Benefits:**
 
@@ -87,7 +87,7 @@ redis.get.mockResolvedValue(data);
 // Type-safe assertions
 TypeSafeAssertions.assertPartial(obj, { id: 'c1' });
 TypeSafeAssertions.assertMockCalledWithPartial(fn, { post_id: 'p1' });
-```
+```text
 
 **Benefits:**
 
@@ -112,7 +112,7 @@ TestDataTypeChecker.assertEnumValue(status, Object.values(PostStatus));
 
 // Builder validators
 new BuilderTypeValidator().validateAll([obj1, obj2, obj3]);
-```
+```text
 
 **Benefits:**
 
@@ -166,7 +166,7 @@ const mockComment = {
   post_id: 'post-1',
   // Missing: hidden_at, post, user, replies
 };
-```
+```text
 
 **After:**
 
@@ -178,7 +178,7 @@ const mockComment = new CommentBuilder()
   .withPostId('post-1')
   .build();
 // All relations auto-populated
-```
+```text
 
 **Files Fixed:** comments.controller.spec.ts (24 errors), comments.service.spec.ts (35 errors)
 
@@ -192,7 +192,7 @@ const logEntry = {
   level: 'INFO',                      // Wrong!
   message: 'Test',
 };
-```
+```text
 
 **After:**
 
@@ -203,7 +203,7 @@ const logEntry = new LogEntryBuilder()
   .withMessage('Test')
   .build();
 // Correct field names enforced
-```
+```text
 
 **Files Fixed:** admin-logs.controller.spec.ts (15 errors)
 
@@ -218,7 +218,7 @@ const largeObject: any = {
     name: `Item ${i}`,
   })),
 };
-```
+```text
 
 **After:**
 
@@ -229,7 +229,7 @@ const largeObject: { items: Array<{ id: number; name: string }> } = {
     name: `Item ${i}`,
   })),
 };
-```
+```text
 
 **Files Fixed:** cache.service.spec.ts (2 errors)
 
@@ -248,7 +248,7 @@ Time:        2.223 s
 Coverage:    64.58%
 
 ✅ Total: 431 tests passing, 100% pass rate
-```
+```text
 
 **Verification Checklist:**
 
@@ -270,7 +270,7 @@ Coverage:    64.58%
 import { CommentBuilder, PostBuilder } from '../testing/test-builders';
 import { createMockRepository, TypeSafeAssertions } from '../testing/mock-factory';
 import { TestDataTypeChecker } from '../testing/type-safety-config';
-```
+```text
 
 ### Step 2: Create Type-Safe Test Data
 
@@ -279,7 +279,7 @@ const comment = new CommentBuilder()
   .withId('c1')
   .withContent('text')
   .build();
-```
+```text
 
 ### Step 3: Validate Structure
 
@@ -287,13 +287,13 @@ const comment = new CommentBuilder()
 TestDataTypeChecker.validateEntity(comment, [
   'id', 'content', 'user_id', 'post_id', 'hidden_at'
 ]);
-```
+```text
 
 ### Step 4: Use In Tests
 
 ```typescript
 mockService.getComments.mockResolvedValue([comment]);
-```
+```text
 
 ---
 
@@ -317,7 +317,7 @@ describe('CommentRepository', () => {
   
   // ... 29 more repository tests
 });
-```
+```text
 
 **Repository Tests to Create:**
 
@@ -346,7 +346,7 @@ describe('CreateCommentDto', () => {
   
   // ... 24 more DTO tests
 });
-```
+```text
 
 **Areas to Cover:**
 
@@ -371,7 +371,7 @@ describe('JobScheduler', () => {
   
   // ... 19 more job tests
 });
-```
+```text
 
 ### Week 4 Target: 92%+ Coverage (+15 tests)
 
@@ -387,7 +387,7 @@ describe('E2E: Complete Comment Workflow', () => {
     cy.deleteComment(comment.id);
   });
 });
-```
+```text
 
 ---
 
@@ -465,7 +465,7 @@ pnpm nx run cosmic-horizons-api:test -- --watch
 
 # TypeScript strict check
 pnpm tsc --noEmit --strict
-```
+```text
 
 ---
 

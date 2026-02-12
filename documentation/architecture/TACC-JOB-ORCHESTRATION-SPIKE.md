@@ -33,7 +33,7 @@ sequenceDiagram
 
     Worker->>Portal: Write SRDP to S3/Archive
     API->>User: Notify (Socket.io)
-```
+```text
 
 ## 3. API Contract Draft
 
@@ -53,7 +53,7 @@ sequenceDiagram
   },
   "webhook_url": "https://cosmic-horizons.org/api/webhooks/tacc"
 }
-```
+```text
 
 ### Get Status
 
@@ -71,7 +71,7 @@ sequenceDiagram
   },
   "output_url": "https://archive.vla.nrao.edu/..."
 }
-```
+```text
 
 ### Cancel Job
 

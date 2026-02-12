@@ -266,7 +266,7 @@ graph LR
 
     V -->|11. Render overlay<br/>+ annotations| U
 
-```
+```text
 
 **Backend services:**
 

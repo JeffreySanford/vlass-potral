@@ -57,7 +57,7 @@ AppComponent (root)
     │   └── LogTableComponent (Material DataTable)
     └── ModerationComponent
 
-```
+```text
 
 ---
 
@@ -105,7 +105,7 @@ navigateToEditor(): void {
   this.router.navigate(['/posts/new']); // Guard redirects if not authenticated
 }
 
-```
+```text
 
 #### Template Sections
 
@@ -173,7 +173,7 @@ loadingPermalink: boolean = false;
 savingSnapshot: boolean = false;
 cutoutTelemetry: CutoutTelemetryModel | null = null;
 
-```
+```text
 
 #### Viewer Key Methods
 
@@ -263,7 +263,7 @@ isDirty: boolean = false;
 isSaving: boolean = false;
 draftKey = 'post-draft'; // localStorage key
 
-```
+```text
 
 #### Editor Key Methods
 
@@ -326,7 +326,7 @@ async saveDraft(): Promise<void> {
   }
 }
 
-```
+```text
 
 #### Editor Lifecycle
 
@@ -388,7 +388,7 @@ isOwner: boolean = false;
 isPublished: boolean = false;
 isLoading: boolean = true;
 
-```
+```text
 
 #### Detail Key Methods
 
@@ -446,7 +446,7 @@ private loadRevisions(postId: string): void {
     });
 }
 
-```
+```text
 
 #### Detail Lifecycle
 
@@ -507,7 +507,7 @@ isLoading: boolean = false;
 searchTerm: string = '';
 selectedAuthor: string | null = null;
 
-```
+```text
 
 #### List Key Methods
 
@@ -549,7 +549,7 @@ viewPost(postId: string): void {
   this.router.navigate(['/posts', postId]);
 }
 
-```
+```text
 
 #### List Template
 
@@ -591,7 +591,7 @@ selectedFilter$: BehaviorSubject<string> = new BehaviorSubject('all');
 filterForm: FormGroup; // search, type, severity, user, date range
 pagination$: Observable<PaginationModel>;
 
-```
+```text
 
 #### Admin Key Methods
 
@@ -647,7 +647,7 @@ applyFilters(): void {
   );
 }
 
-```
+```text
 
 #### See Also
 
@@ -728,7 +728,7 @@ result.afterClosed().subscribe(confirmed => {
   }
 });
 
-```
+```text
 
 ---
 
@@ -753,7 +753,7 @@ export class AuthService {
   refreshToken(): Observable<string>
 }
 
-```
+```text
 
 ---
 
@@ -771,7 +771,7 @@ export class ViewerApiService {
   downloadCutout(state: ViewerStateModel): Observable<Blob>
 }
 
-```
+```text
 
 ---
 
@@ -791,7 +791,7 @@ export class PostsApiService {
   getRevisions(postId: string): Observable<RevisionModel[]>
 }
 
-```
+```text
 
 ---
 
@@ -807,7 +807,7 @@ export class AdminLogsApiService {
   deleteOldLogs(retentionDays: number): Observable<{ deleted_count: number }>
 }
 
-```
+```text
 
 ---
 
@@ -823,7 +823,7 @@ export class AdminLogsApiService {
 @Input() post: PostModel;
 @Input() isOwner: boolean = false;
 
-```
+```text
 
 ### Child → Parent: @Output + EventEmitter
 
@@ -847,7 +847,7 @@ publish(): void {
   });
 }
 
-```
+```text
 
 ### Async Data: Observable + async Pipe
 
@@ -860,7 +860,7 @@ posts$ = this.postsApi.getPublishedPosts();
   <app-post-card [post]="post"></app-post-card>
 }
 
-```
+```text
 
 ---
 
@@ -900,7 +900,7 @@ describe('MyComponent', () => {
   });
 });
 
-```
+```text
 
 ---
 

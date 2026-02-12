@@ -56,7 +56,7 @@ export class LocationService {
   }
 }
 
-```
+```text
 
 ### Option B: Manual Entry
 
@@ -73,7 +73,7 @@ User types city/state or coordinates:
 │ [Search]                        │
 └─────────────────────────────────┘
 
-```
+```text
 
 Backend geocodes city → RA/Dec:
 
@@ -103,7 +103,7 @@ async geocodeCity(
   return { ra, dec, geohash };
 }
 
-```
+```text
 
 ---
 
@@ -125,7 +125,7 @@ const { latitude, longitude, error } = geohash.bounds(gh);
 // latitude: 40.70313, ±0.02197 (±2.4 km)
 // longitude: -74.01367, ±0.02197
 
-```
+```text
 
 **Precision trade-offs:**
 
@@ -195,7 +195,7 @@ async verifyAndGetLocation(
 
 }
 
-```
+```text
 
 ### Cookie Format
 
@@ -210,7 +210,7 @@ Payload (JSON):
   "nonce": "random_string"
 }
 
-```
+```text
 
 ---
 
@@ -264,7 +264,7 @@ async function renderLandingPage(req: Request, res: Response): Promise<string> {
   );
 }
 
-```
+```text
 
 ### Background Image Generation
 
@@ -296,7 +296,7 @@ async getBackgroundImage(
   });
 }
 
-```
+```text
 
 ---
 
@@ -323,7 +323,7 @@ await this.audit.log({
   timestamp: new Date(),
 });
 
-```
+```text
 
 **Redaction rule:** Only log first 2 characters of geohash (reduces precision to ~600 km).
 
@@ -419,7 +419,7 @@ export class LandingComponent implements OnInit {
   }
 }
 
-```
+```text
 
 ### Privacy Consent Banner
 
@@ -432,7 +432,7 @@ export class LandingComponent implements OnInit {
   <a href="/privacy">Privacy Policy</a>
 </div>
 
-```
+```text
 
 ---
 
@@ -558,7 +558,7 @@ describe('Location Privacy', () => {
   });
 });
 
-```
+```text
 
 ---
 
