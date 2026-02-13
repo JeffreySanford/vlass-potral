@@ -150,6 +150,38 @@ export class AuthService implements OnModuleInit {
     });
   }
 
+  /**
+   * Convenient wrapper for refreshAuthTokens following standard JWT pattern
+   * Refreshes an expired access token using a refresh token
+   */
+  async refreshToken(refreshToken: string): Promise<AuthTokenPair> {
+    const result = await this.refreshAuthTokens(refreshToken);
+    return result.tokens;
+  }
+
+  /**
+   * Convenient wrapper for loginWithCredentials following standard auth pattern
+   */
+  async login(email: string, password: string): Promise<{ access_token: string; refresh_token: string }> {
+    const user = await this.loginWithCredentials({ email, password });
+    return this.issueAuthTokens(user);
+  }
+
+  /**
+   * Convenient wrapper for registerWithCredentials following standard signup pattern
+   */
+  async register(
+    credentials: Omit<RegisterDto, 'display_name'> & { display_name?: string },
+  ): Promise<{ user: User; access_token: string; refresh_token: string }> {
+    const user = await this.registerWithCredentials(credentials as RegisterDto);
+    const tokens = await this.issueAuthTokens(user);
+    return {
+      user,
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+    };
+  }
+
   signToken(user: User): string {
     const payload: JwtPayload = {
       sub: user.id,
