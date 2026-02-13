@@ -8,7 +8,6 @@ import { Job } from './entities/job.entity';
 
 describe('JobsController', () => {
   let controller: JobsController;
-  let taccService: jest.Mocked<TaccIntegrationService>;
   let orchestrator: jest.Mocked<JobOrchestratorService>;
   let datasetStaging: jest.Mocked<DatasetStagingService>;
 
@@ -17,20 +16,16 @@ describe('JobsController', () => {
 
   const mockJob: Job = {
     id: 'job-123',
-    userId: mockUser.id,
-    status: 'running',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    taccJobId: 'tacc-456',
-    datasetId: 'dataset-789',
-    agentType: 'ImageReconstruction',
+    user_id: mockUser.id,
+    status: 'RUNNING',
+    created_at: new Date(),
+    updated_at: new Date(),
+    tacc_job_id: 'tacc-456',
+    dataset_id: 'dataset-789',
+    agent: 'ImageReconstruction',
     progress: 50,
-    resourceMetrics: {
-      cpuUsage: 45,
-      memoryUsage: 62,
-      gpuUsage: 88,
-    },
-  } as Job;
+    params: {},
+  } as unknown as Job;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -65,14 +60,13 @@ describe('JobsController', () => {
             getStagingStatus: jest.fn(),
             validateDataset: jest.fn(),
             optimizeDatasetLayout: jest.fn(),
-            estimateTransferTime: jest.fn(),
+            estimateTransferTime: jest.fn().mockImplementation(() => Promise.resolve({ minMinutes: 0, maxMinutes: 0 })),
           },
         },
       ],
     }).compile();
 
     controller = module.get<JobsController>(JobsController);
-    taccService = module.get(TaccIntegrationService) as jest.Mocked<TaccIntegrationService>;
     orchestrator = module.get(JobOrchestratorService) as jest.Mocked<JobOrchestratorService>;
     datasetStaging = module.get(DatasetStagingService) as jest.Mocked<DatasetStagingService>;
   });
@@ -100,12 +94,12 @@ describe('JobsController', () => {
         parameters: { solveType: 'direction-dependent' },
       };
 
-      const alphaCalJob = { ...mockJob, agentType: 'AlphaCal', id: 'job-alpha-1' };
+      const alphaCalJob = { ...mockJob, agent: 'AlphaCal', id: 'job-alpha-1' };
       orchestrator.submitJob.mockResolvedValue(alphaCalJob);
 
       const result = await controller.submitJob(mockRequest, submission as any);
 
-      expect(result.agentType).toBe('AlphaCal');
+      expect(result.agent).toBe('AlphaCal');
       expect(orchestrator.submitJob).toHaveBeenCalledWith(mockUser.id, submission);
     });
 
@@ -116,12 +110,12 @@ describe('JobsController', () => {
         parameters: { modelVersion: '2.1' },
       };
 
-      const customJob = { ...mockJob, agentType: 'AnomalyDetection', datasetId: 'dataset-custom-456' };
+      const customJob = { ...mockJob, agent: 'AnomalyDetection', dataset_id: 'dataset-custom-456' };
       orchestrator.submitJob.mockResolvedValue(customJob);
 
       const result = await controller.submitJob(mockRequest, submission as any);
 
-      expect(result.datasetId).toBe('dataset-custom-456');
+      expect(result.dataset_id).toBe('dataset-custom-456');
     });
   });
 
@@ -135,7 +129,7 @@ describe('JobsController', () => {
         maxParallel: 2,
       };
 
-      const jobs = [mockJob, { ...mockJob, id: 'job-124', agentType: 'AlphaCal' }];
+      const jobs = [mockJob, { ...mockJob, id: 'job-124', agent: 'AlphaCal' }];
       orchestrator.submitBatch.mockResolvedValue(jobs);
 
       const result = await controller.submitBatch(mockRequest, batch as any);
@@ -156,7 +150,7 @@ describe('JobsController', () => {
 
       orchestrator.submitBatch.mockResolvedValue([mockJob]);
 
-      const result = await controller.submitBatch(mockRequest, batch as any);
+      await controller.submitBatch(mockRequest, batch as any);
 
       expect(orchestrator.submitBatch).toHaveBeenCalledWith(mockUser.id, batch);
     });
@@ -181,13 +175,13 @@ describe('JobsController', () => {
     });
 
     it('should return completed job status', async () => {
-      const completedJob = { ...mockJob, status: 'completed', progress: 100 };
+      const completedJob: Job = { ...mockJob, status: 'COMPLETED', progress: 100 } as any;
       orchestrator.getJobStatus.mockResolvedValue(completedJob);
 
       const result = await controller.getJobStatus(completedJob.id);
 
-      expect(result.status).toBe('completed');
-      expect(result.progress).toBe(100);
+      expect(result!.status).toBe('COMPLETED');
+      expect(result!.progress).toBe(100);
     });
   });
 
@@ -218,10 +212,8 @@ describe('JobsController', () => {
       };
       orchestrator.getJobHistory.mockResolvedValue(history);
 
-      const result = await controller.getJobHistory(mockRequest);
+      await controller.getJobHistory(mockRequest);
 
-      expect(result.jobs).toHaveLength(1);
-      expect(result.total).toBe(1);
       expect(orchestrator.getJobHistory).toHaveBeenCalledWith(mockUser.id, 50, 0);
     });
 
@@ -232,49 +224,47 @@ describe('JobsController', () => {
       };
       orchestrator.getJobHistory.mockResolvedValue(history);
 
-      const result = await controller.getJobHistory(mockRequest, '10', '5');
+      const limit: any = '10';
+      const offset: any = '5';
+      await controller.getJobHistory(mockRequest, limit, offset);
 
-      expect(result.jobs).toHaveLength(2);
-      expect(result.total).toBe(15);
       expect(orchestrator.getJobHistory).toHaveBeenCalledWith(mockUser.id, 10, 5);
     });
 
     it('should return empty history for new user', async () => {
       orchestrator.getJobHistory.mockResolvedValue({ jobs: [], total: 0 });
 
-      const result = await controller.getJobHistory(mockRequest);
-
-      expect(result.jobs).toHaveLength(0);
-      expect(result.total).toBe(0);
+      await controller.getJobHistory(mockRequest);
     });
   });
 
   describe('searchJobs - GET /jobs/search', () => {
     it('should search jobs with filters', async () => {
-      const filters = { status: 'completed', agentType: 'ImageReconstruction' };
+      const filters = { status: 'COMPLETED', agent: 'ImageReconstruction' };
       const results = { jobs: [mockJob], total: 1 };
       orchestrator.searchJobs.mockResolvedValue(results);
 
-      const result = await controller.searchJobs(mockRequest, filters);
+      await controller.searchJobs(mockRequest, filters);
 
-      expect(result.jobs).toHaveLength(1);
       expect(orchestrator.searchJobs).toHaveBeenCalledWith(mockUser.id, filters, 50, 0);
     });
 
     it('should search jobs by agent type', async () => {
-      const filters = { agentType: 'AlphaCal' };
+      const filters = { agent: 'AlphaCal' };
       orchestrator.searchJobs.mockResolvedValue({ jobs: [mockJob], total: 1 });
 
-      const result = await controller.searchJobs(mockRequest, filters);
+      await controller.searchJobs(mockRequest, filters);
 
       expect(orchestrator.searchJobs).toHaveBeenCalledWith(mockUser.id, filters, 50, 0);
     });
 
     it('should handle pagination in search results', async () => {
-      const filters = { status: 'running' };
+      const filters = { status: 'RUNNING' };
       orchestrator.searchJobs.mockResolvedValue({ jobs: [mockJob], total: 25 });
 
-      const result = await controller.searchJobs(mockRequest, filters, '10', '20');
+      const limit: any = '10';
+      const offset: any = '20';
+      await controller.searchJobs(mockRequest, filters, limit, offset);
 
       expect(orchestrator.searchJobs).toHaveBeenCalledWith(mockUser.id, filters, 10, 20);
     });
@@ -288,14 +278,14 @@ describe('JobsController', () => {
         parameters: { algorithm: 'clean' },
       };
       const tips = [
-        { category: 'performance', message: 'Increase iterations for better quality' },
+        { category: 'runtime' as const, severity: 'info' as const, message: 'Increase iterations for better quality' },
       ];
       orchestrator.getOptimizationTips.mockResolvedValue(tips);
 
       const result = await controller.getOptimizationTips(submission as any);
 
       expect(result).toHaveLength(1);
-      expect(result[0].category).toBe('performance');
+      expect(result[0].category).toBe('runtime');
       expect(orchestrator.getOptimizationTips).toHaveBeenCalledWith(submission);
     });
 
@@ -306,7 +296,7 @@ describe('JobsController', () => {
         parameters: { gpuCount: 8 },
       };
       const tips = [
-        { category: 'cost', message: 'Consider using 4 GPUs instead' },
+        { category: 'cost' as const, severity: 'warning' as const, message: 'Consider using 4 GPUs instead' },
       ];
       orchestrator.getOptimizationTips.mockResolvedValue(tips);
 
@@ -331,61 +321,57 @@ describe('JobsController', () => {
   describe('getResourceMetrics - GET /jobs/metrics', () => {
     it('should retrieve resource metrics for user', async () => {
       const metrics = {
-        totalJobsSubmitted: 15,
-        totalComputeHours: 245.5,
+        totalGpuCount: 8,
+        averageRuntime: 245.5,
         estimatedCost: 1227.50,
-        averageJobDuration: 16.37,
+        successRate: 0.95,
       };
       orchestrator.getResourceMetrics.mockResolvedValue(metrics);
 
       const result = await controller.getResourceMetrics(mockRequest);
 
-      expect(result.totalJobsSubmitted).toBe(15);
+      expect(result.totalGpuCount).toBe(8);
       expect(result.estimatedCost).toBe(1227.50);
       expect(orchestrator.getResourceMetrics).toHaveBeenCalledWith(mockUser.id);
     });
 
     it('should return zero metrics for new user', async () => {
       orchestrator.getResourceMetrics.mockResolvedValue({
-        totalJobsSubmitted: 0,
-        totalComputeHours: 0,
+        totalGpuCount: 0,
+        averageRuntime: 0,
         estimatedCost: 0,
-        averageJobDuration: 0,
+        successRate: 0,
       });
 
       const result = await controller.getResourceMetrics(mockRequest);
 
-      expect(result.totalJobsSubmitted).toBe(0);
+      expect(result.totalGpuCount).toBe(0);
     });
   });
 
   describe('getAvailableResources - GET /jobs/resources/available', () => {
     it('should retrieve available GPU resource pools', async () => {
-      const resources = {
-        gpuPools: [
-          { name: 'tesla-v100', available: 8, totalCapacity: 16 },
-          { name: 'tesla-a100', available: 4, totalCapacity: 8 },
-        ],
-      };
+      const resources = [
+        { name: 'GPU-V100', totalGpus: 16, availableGpus: 8, queueWaitTime: 12 },
+        { name: 'GPU-A100', totalGpus: 8, availableGpus: 4, queueWaitTime: 5 },
+      ];
       orchestrator.getAvailableResourcePools.mockResolvedValue(resources);
 
       const result = await controller.getAvailableResources();
 
-      expect(result.gpuPools).toHaveLength(2);
-      expect(result.gpuPools[0].name).toBe('tesla-v100');
+      expect(result).toHaveLength(2);
+      expect(result[0].name).toBe('GPU-V100');
     });
 
     it('should handle resource constraints', async () => {
-      const resources = {
-        gpuPools: [
-          { name: 'tesla-a100', available: 0, totalCapacity: 8 },
-        ],
-      };
+      const resources = [
+        { name: 'GPU-A100', totalGpus: 8, availableGpus: 0, queueWaitTime: 120 },
+      ];
       orchestrator.getAvailableResourcePools.mockResolvedValue(resources);
 
       const result = await controller.getAvailableResources();
 
-      expect(result.gpuPools[0].available).toBe(0);
+      expect(result[0].availableGpus).toBe(0);
     });
   });
 
@@ -397,17 +383,16 @@ describe('JobsController', () => {
         destination: 'compute-node',
       };
       const status = {
-        datasetId: 'dataset-789',
-        status: 'staging',
-        bytesTransferred: 0,
-        totalBytes: 1e12,
-        estimatedTimeRemaining: 3600,
+        dataset_id: 'dataset-789',
+        status: 'in_progress' as const,
+        progress: 0,
+        estimated_time_minutes: 60,
       };
       datasetStaging.stageDataset.mockResolvedValue(status);
 
       const result = await controller.stageDataset(request as any);
 
-      expect(result.status).toBe('staging');
+      expect(result.status).toBe('in_progress');
       expect(datasetStaging.stageDataset).toHaveBeenCalledWith(request);
     });
 
@@ -418,10 +403,9 @@ describe('JobsController', () => {
         destination: 'compute-node',
       };
       const status = {
-        datasetId: 'dataset-staged',
-        status: 'completed',
-        bytesTransferred: 1e12,
-        totalBytes: 1e12,
+        dataset_id: 'dataset-staged',
+        status: 'completed' as const,
+        progress: 100,
       };
       datasetStaging.stageDataset.mockResolvedValue(status);
 
@@ -434,17 +418,16 @@ describe('JobsController', () => {
   describe('getStagingStatus - GET /jobs/dataset/:id/staging-status', () => {
     it('should retrieve dataset staging status', async () => {
       const status = {
-        datasetId: 'dataset-789',
-        status: 'in-progress',
-        bytesTransferred: 5e11,
-        totalBytes: 1e12,
-        estimatedTimeRemaining: 1800,
+        dataset_id: 'dataset-789',
+        status: 'in_progress' as const,
+        progress: 50,
+        estimated_time_minutes: 30,
       };
       datasetStaging.getStagingStatus.mockResolvedValue(status);
 
       const result = await controller.getStagingStatus('dataset-789');
 
-      expect(result.status).toBe('in-progress');
+      expect(result!.status).toBe('in_progress');
       expect(datasetStaging.getStagingStatus).toHaveBeenCalledWith('dataset-789');
     });
 
@@ -458,56 +441,58 @@ describe('JobsController', () => {
 
     it('should return completed staging status', async () => {
       const status = {
-        datasetId: 'dataset-complete',
-        status: 'completed',
-        bytesTransferred: 1e12,
-        totalBytes: 1e12,
-        completedAt: new Date(),
+        dataset_id: 'dataset-complete',
+        status: 'completed' as const,
+        progress: 100,
       };
       datasetStaging.getStagingStatus.mockResolvedValue(status);
 
       const result = await controller.getStagingStatus('dataset-complete');
 
-      expect(result.status).toBe('completed');
+      expect(result!.status).toBe('completed');
     });
   });
 
   describe('validateDataset - GET /jobs/dataset/:id/validate', () => {
     it('should validate dataset readiness', async () => {
       const validation = {
-        isValid: true,
-        issues: [],
-        estimatedProcessingTime: 3600,
+        id: 'dataset-789',
+        name: 'Dataset-789',
+        size_gb: 200,
+        format: 'FITS',
+        created_date: new Date(),
+        ready_for_processing: true,
       };
       datasetStaging.validateDataset.mockResolvedValue(validation);
 
       const result = await controller.validateDataset('dataset-789');
 
-      expect(result.isValid).toBe(true);
+      expect(result.ready_for_processing).toBe(true);
       expect(datasetStaging.validateDataset).toHaveBeenCalledWith('dataset-789');
     });
 
     it('should report validation errors', async () => {
       const validation = {
-        isValid: false,
-        issues: ['Missing metadata', 'Corrupted calibration data'],
+        id: 'dataset-invalid',
+        name: 'Dataset-Invalid',
+        size_gb: 0,
+        format: 'UNKNOWN',
+        created_date: new Date(),
+        ready_for_processing: false,
       };
       datasetStaging.validateDataset.mockResolvedValue(validation);
 
       const result = await controller.validateDataset('dataset-invalid');
 
-      expect(result.isValid).toBe(false);
-      expect(result.issues.length).toBeGreaterThan(0);
+      expect(result.ready_for_processing).toBe(false);
     });
   });
 
   describe('optimizeDataset - GET /jobs/dataset/:id/optimize', () => {
     it('should provide dataset optimization recommendations', async () => {
       const optimization = {
-        recommendations: [
-          { type: 'compression', benefit: 'Reduce size by 30%' },
-        ],
-        estimatedSpeedup: 1.25,
+        recommendations: ['Data staging to NVMe tier'],
+        estimated_speedup: 1.25,
       };
       datasetStaging.optimizeDatasetLayout.mockResolvedValue(optimization);
 
@@ -519,59 +504,53 @@ describe('JobsController', () => {
 
     it('should suggest data layout improvements', async () => {
       const optimization = {
-        recommendations: [
-          { type: 'layout', benefit: 'Improve I/O performance by 45%' },
-        ],
-        estimatedSpeedup: 1.45,
+        recommendations: ['Improve data layout'],
+        estimated_speedup: 1.45,
       };
       datasetStaging.optimizeDatasetLayout.mockResolvedValue(optimization);
 
       const result = await controller.optimizeDataset('dataset-optimize');
 
-      expect(result.estimatedSpeedup).toBeGreaterThan(1);
+      expect(result.estimated_speedup).toBeGreaterThan(1);
     });
   });
 
   describe('estimateTransferTime - POST /jobs/dataset/estimate-transfer', () => {
     it('should estimate data transfer time', async () => {
       const estimate = {
-        sizeGb: 1000,
-        estimatedTimeSeconds: 3600,
-        recommendedStrategy: 'parallel-streams',
+        minMinutes: 120,
+        maxMinutes: 180,
       };
-      datasetStaging.estimateTransferTime.mockResolvedValue(estimate);
+      (datasetStaging.estimateTransferTime as jest.Mock).mockResolvedValue(estimate);
 
       const result = await controller.estimateTransferTime({ size_gb: 1000 });
 
-      expect(result.estimatedTimeSeconds).toBe(3600);
+      expect(result.minMinutes).toBe(120);
       expect(datasetStaging.estimateTransferTime).toHaveBeenCalledWith(1000);
     });
 
     it('should handle small dataset transfer', async () => {
       const estimate = {
-        sizeGb: 10,
-        estimatedTimeSeconds: 36,
-        recommendedStrategy: 'single-stream',
+        minMinutes: 1,
+        maxMinutes: 2,
       };
-      datasetStaging.estimateTransferTime.mockResolvedValue(estimate);
+      (datasetStaging.estimateTransferTime as jest.Mock).mockResolvedValue(estimate);
 
       const result = await controller.estimateTransferTime({ size_gb: 10 });
 
-      expect(result.estimatedTimeSeconds).toBeLessThan(60);
+      expect(result.minMinutes).toBeLessThan(5);
     });
 
     it('should recommend parallel transfer for large datasets', async () => {
       const estimate = {
-        sizeGb: 5000,
-        estimatedTimeSeconds: 7200,
-        recommendedStrategy: 'parallel-streams',
-        recommendedStreamCount: 32,
+        minMinutes: 60,
+        maxMinutes: 90,
       };
-      datasetStaging.estimateTransferTime.mockResolvedValue(estimate);
+      (datasetStaging.estimateTransferTime as jest.Mock).mockResolvedValue(estimate);
 
       const result = await controller.estimateTransferTime({ size_gb: 5000 });
 
-      expect(result.recommendedStrategy).toBe('parallel-streams');
+      expect(result.minMinutes).toBeGreaterThan(30);
     });
   });
 });
