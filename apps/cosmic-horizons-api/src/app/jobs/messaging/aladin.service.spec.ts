@@ -208,13 +208,15 @@ describe('AladinService', () => {
     });
 
     it('should track instance count', async () => {
-      const id1 = await service.initializeAladin('viewer-1');
-      const id2 = await service.initializeAladin('viewer-2');
-      const id3 = await service.initializeAladin('viewer-3');
+      const ids: string[] = [];
+      ids.push(await service.initializeAladin('viewer-1'));
+      ids.push(await service.initializeAladin('viewer-2'));
+      ids.push(await service.initializeAladin('viewer-3'));
 
       const metrics = await service.getMetrics();
 
       expect(metrics.instances).toBe(3);
+      expect(ids).toHaveLength(3);
     });
 
     it('should track catalog count', async () => {

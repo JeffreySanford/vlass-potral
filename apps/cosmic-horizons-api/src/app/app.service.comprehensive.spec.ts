@@ -3,7 +3,7 @@ import { AppService } from './app.service';
 import { UserRepository, PostRepository, AuditLogRepository, RevisionRepository } from './repositories';
 import { DataSource } from 'typeorm';
 import { NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
-import { User, Post, AuditAction, AuditEntityType } from './entities';
+import { User, Post, AuditAction, AuditEntityType, PostStatus } from './entities';
 
 describe('AppService - Comprehensive Coverage', () => {
   let service: AppService;
@@ -28,7 +28,7 @@ describe('AppService - Comprehensive Coverage', () => {
     title: 'Test Post',
     description: 'Description',
     content: 'Content',
-    status: 'DRAFT',
+    status: PostStatus.DRAFT,
     user_id: 'user-1',
     hidden_at: null,
     locked_at: null,
@@ -94,7 +94,7 @@ describe('AppService - Comprehensive Coverage', () => {
     it('should allow owner to edit post', async () => {
       const post = mockPost({ user_id: 'user-1', locked_at: null });
       mockPostRepository.findById.mockResolvedValue(post);
-      mockPostRepository.update.mockResolvedValue(mockPost({ title: 'Updated' }));
+      mockPostRepository.update.mockResolvedValue(mockPost({ title: 'Updated', status: PostStatus.DRAFT }));
 
       const result = await service.updatePost('post-1', 'user-1', { title: 'Updated' });
 
@@ -112,7 +112,7 @@ describe('AppService - Comprehensive Coverage', () => {
     });
 
     it('should prevent editing locked post', async () => {
-      const lockedPost = mockPost({ locked_at: new Date() });
+      const lockedPost = mockPost({ locked_at: new Date(), status: PostStatus.DRAFT });
       mockPostRepository.findById.mockResolvedValue(lockedPost);
 
       await expect(service.updatePost('post-1', 'user-1', { title: 'Updated' })).rejects.toThrow(
@@ -233,34 +233,34 @@ describe('AppService - Comprehensive Coverage', () => {
 
   describe('Post Publishing', () => {
     it('should allow owner to publish draft post', async () => {
-      const draft = mockPost({ status: 'DRAFT', user_id: 'user-1' });
+      const draft = mockPost({ status: PostStatus.DRAFT, user_id: 'user-1' });
       mockPostRepository.findById.mockResolvedValue(draft);
-      mockPostRepository.publish.mockResolvedValue(mockPost({ status: 'PUBLISHED' }));
+      mockPostRepository.publish.mockResolvedValue(mockPost({ status: PostStatus.PUBLISHED }));
 
       const result = await service.publishPost('post-1', 'user-1');
 
-      expect(result.status).toBe('PUBLISHED');
+      expect(result.status).toBe('published');
       expect(mockRevisionRepository.create).toHaveBeenCalled();
     });
 
     it('should prevent non-owner from publishing post', async () => {
-      const draft = mockPost({ status: 'DRAFT', user_id: 'user-1' });
+      const draft = mockPost({ status: PostStatus.DRAFT, user_id: 'user-1' });
       mockPostRepository.findById.mockResolvedValue(draft);
 
       await expect(service.publishPost('post-1', 'user-2')).rejects.toThrow(ForbiddenException);
     });
 
     it('should prevent publishing locked post', async () => {
-      const draft = mockPost({ status: 'DRAFT', locked_at: new Date() });
+      const draft = mockPost({ status: PostStatus.DRAFT, locked_at: new Date() });
       mockPostRepository.findById.mockResolvedValue(draft);
 
       await expect(service.publishPost('post-1', 'user-1')).rejects.toThrow(ForbiddenException);
     });
 
     it('should log publish action in audit', async () => {
-      const draft = mockPost({ status: 'DRAFT' });
+      const draft = mockPost({ status: PostStatus.DRAFT });
       mockPostRepository.findById.mockResolvedValue(draft);
-      mockPostRepository.publish.mockResolvedValue(mockPost({ status: 'PUBLISHED' }));
+      mockPostRepository.publish.mockResolvedValue(mockPost({ status: PostStatus.PUBLISHED }));
 
       await service.publishPost('post-1', 'user-1');
 
@@ -273,13 +273,13 @@ describe('AppService - Comprehensive Coverage', () => {
     });
 
     it('should unpublish post when authorized', async () => {
-      const published = mockPost({ status: 'PUBLISHED' });
+      const published = mockPost({ status: PostStatus.PUBLISHED });
       mockPostRepository.findById.mockResolvedValue(published);
-      mockPostRepository.unpublish.mockResolvedValue(mockPost({ status: 'DRAFT' }));
+      mockPostRepository.unpublish.mockResolvedValue(mockPost({ status: PostStatus.DRAFT }));
 
       const result = await service.unpublishPost('post-1', 'user-1');
 
-      expect(result.status).toBe('DRAFT');
+      expect(result.status).toBe('draft');
     });
   });
 
@@ -396,12 +396,12 @@ describe('AppService - Comprehensive Coverage', () => {
     });
 
     it('should retrieve published posts', async () => {
-      mockPostRepository.findPublished.mockResolvedValue([mockPost({ status: 'PUBLISHED' })]);
+      mockPostRepository.findPublished.mockResolvedValue([mockPost({ status: PostStatus.PUBLISHED })]);
 
       const posts = await service.getPublishedPosts();
 
       expect(posts).toHaveLength(1);
-      expect(posts[0].status).toBe('PUBLISHED');
+      expect(posts[0].status).toBe(PostStatus.PUBLISHED);
     });
   });
 
@@ -438,7 +438,7 @@ describe('AppService - Comprehensive Coverage', () => {
 
   describe('Health Status', () => {
     it('should return ok status when database connected', async () => {
-      mockDataSource.isInitialized = true;
+      Object.defineProperty(mockDataSource, 'isInitialized', { value: true, configurable: true });
 
       const status = await service.getHealthStatus();
 
@@ -447,7 +447,7 @@ describe('AppService - Comprehensive Coverage', () => {
     });
 
     it('should return disconnected when database not initialized', async () => {
-      mockDataSource.isInitialized = false;
+      Object.defineProperty(mockDataSource, 'isInitialized', { value: false, configurable: true });
 
       const status = await service.getHealthStatus();
 
@@ -455,7 +455,7 @@ describe('AppService - Comprehensive Coverage', () => {
     });
 
     it('should handle health check errors', async () => {
-      mockDataSource.isInitialized = false;
+      Object.defineProperty(mockDataSource, 'isInitialized', { value: false, configurable: true });
 
       const status = await service.getHealthStatus();
 
@@ -478,10 +478,8 @@ describe('AppService - Comprehensive Coverage', () => {
 
       const createPostDto = {
         title: 'New Post',
-        description: 'Desc',
         content: 'Content',
         user_id: 'user-1',
-        status: 'DRAFT',
       };
 
       await service.createPost(createPostDto);
@@ -494,10 +492,8 @@ describe('AppService - Comprehensive Coverage', () => {
 
       const createPostDto = {
         title: 'New Post',
-        description: 'Desc',
         content: 'Content',
         user_id: 'nonexistent',
-        status: 'DRAFT',
       };
 
       await expect(service.createPost(createPostDto)).rejects.toThrow(NotFoundException);
@@ -601,7 +597,7 @@ describe('AppService - Comprehensive Coverage', () => {
     it('should create appropriate audit logs for all actions', async () => {
       const testCases = [
         {
-          method: () => service.createPost({ title: 'Test', description: 'Desc', content: 'Content', user_id: 'user-1', status: 'DRAFT' }),
+          method: () => service.createPost({ title: 'Test', content: 'Content', user_id: 'user-1' }),
           action: AuditAction.CREATE,
           setup: () => {
             mockUserRepository.findById.mockResolvedValue(mockUser());

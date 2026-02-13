@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RabbitMQService, PublishOptions, ConsumeOptions } from './rabbitmq.service';
+// @ts-expect-error - uuid types not available
 import { v4 as uuidv4 } from 'uuid';
 
 jest.mock('uuid');

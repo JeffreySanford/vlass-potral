@@ -339,18 +339,17 @@ describe('KafkaService', () => {
     });
 
     it('should track metrics across operations', async () => {
-      let metrics = service.getMetrics();
-      const initialBrokers = metrics.brokers;
+      const metrics = service.getMetrics();
 
       await service.connect();
-      metrics = service.getMetrics();
-      expect(metrics.brokers).toBe(3);
+      const connectedMetrics = service.getMetrics();
+      expect(connectedMetrics.brokers).toBe(3);
 
       await service.produce('topic', [{ key: 'k', value: 'v' }]);
       await service.disconnect();
 
-      metrics = service.getMetrics();
-      expect(metrics.connected).toBe(false);
+      const finalMetrics = service.getMetrics();
+      expect(finalMetrics.connected).toBe(false);
     });
   });
 

@@ -3,8 +3,6 @@ import { BadRequestException, Logger } from '@nestjs/common';
 import {
   EventSchemaRegistry,
   EventSchema,
-  SchemaField,
-  ValidationError,
 } from './event-schema-registry.service';
 
 describe('EventSchemaRegistry', () => {
