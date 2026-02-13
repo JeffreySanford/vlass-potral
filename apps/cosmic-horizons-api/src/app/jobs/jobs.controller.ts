@@ -11,8 +11,10 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { TaccIntegrationService } from './tacc-integration.service';
-import { JobOrchestratorService, BatchJobRequest, OptimizationTip } from './services/job-orchestrator.service';
-import { DatasetStagingService, StagingRequest, StagingStatus } from './services/dataset-staging.service';
+import { JobOrchestratorService } from './services/job-orchestrator.service';
+import type { BatchJobRequest, OptimizationTip } from './services/job-orchestrator.service';
+import { DatasetStagingService } from './services/dataset-staging.service';
+import type { StagingRequest, StagingStatus } from './services/dataset-staging.service';
 import type { TaccJobSubmission } from './tacc-integration.service';
 import { AuthenticatedGuard } from '../auth/guards/authenticated.guard';
 import type { AuthenticatedRequest } from '../types/http.types';
