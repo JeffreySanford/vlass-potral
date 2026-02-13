@@ -16,6 +16,16 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { JobsConsoleComponent } from './jobs-console.component';
 
+// Polyfill for jsdom test environment - fixes "Cannot read properties of undefined (reading 'toLowerCase')"
+// This ensures navigator.platform is defined for Angular Forms
+if (typeof navigator !== 'undefined' && !navigator.platform) {
+  Object.defineProperty(navigator, 'platform', {
+    value: 'Linux',
+    writable: true,
+    configurable: true,
+  });
+}
+
 describe('JobsConsoleComponent', () => {
   let component: JobsConsoleComponent;
   let fixture: ComponentFixture<JobsConsoleComponent>;
