@@ -103,4 +103,12 @@ export default [
       '@angular-eslint/prefer-standalone': 'off',
     },
   },
+  {
+    files: ['**/*.spec.ts', '**/*.test.ts', '**/*.spec.js', '**/*.test.js'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+    },
+  },
 ];

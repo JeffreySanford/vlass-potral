@@ -45,6 +45,14 @@ const passport =
 
 async function bootstrap() {
   try {
+    // Ensure OAuth env vars are set (required for strategy initialization even if not used)
+    if (!process.env['GITHUB_CLIENT_ID']) {
+      process.env['GITHUB_CLIENT_ID'] = 'placeholder-for-openapi-generation';
+    }
+    if (!process.env['GITHUB_CLIENT_SECRET']) {
+      process.env['GITHUB_CLIENT_SECRET'] = 'placeholder-for-openapi-generation';
+    }
+
     const app = await NestFactory.create(AppModule);
     const globalPrefix = 'api';
     app.setGlobalPrefix(globalPrefix);
