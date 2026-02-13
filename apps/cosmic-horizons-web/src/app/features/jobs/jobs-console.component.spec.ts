@@ -1,3 +1,12 @@
+// Polyfill for jsdom test environment - Angular Forms navigator.platform fix
+if (typeof navigator !== 'undefined' && navigator.platform === undefined) {
+  Object.defineProperty(navigator, 'platform', {
+    value: 'Linux x86_64',
+    writable: true,
+    configurable: true,
+  });
+}
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
