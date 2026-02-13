@@ -90,7 +90,10 @@ describe('AppService - Final Coverage Gaps', () => {
 
   describe('Health check error scenarios', () => {
     it('should handle health check with database error', async () => {
-      mockDataSource.isInitialized = false;
+      Object.defineProperty(mockDataSource, 'isInitialized', {
+        value: false,
+        writable: true,
+      });
 
       const result = await service.getHealthStatus();
 
@@ -100,7 +103,6 @@ describe('AppService - Final Coverage Gaps', () => {
 
     it('should catch exception in health check', async () => {
       const error = new Error('DB Error');
-      mockDataSource.isInitialized = true;
       Object.defineProperty(mockDataSource, 'isInitialized', {
         get: () => {
           throw error;
