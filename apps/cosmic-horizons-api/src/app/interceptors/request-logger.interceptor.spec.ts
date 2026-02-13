@@ -32,7 +32,7 @@ describe('RequestLoggerInterceptor', () => {
     } as unknown as jest.Mocked<ExecutionContext>;
 
     callHandler = {
-      handle: jest.fn(),
+      handle: jest.fn().mockReturnValue(of({})),
     } as unknown as jest.Mocked<CallHandler>;
   });
 

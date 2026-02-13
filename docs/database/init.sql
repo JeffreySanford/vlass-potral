@@ -1,6 +1,30 @@
 -- Cosmic Horizons Database Schema
 -- Initialized on container startup
 
+-- ============================================================================
+-- SEEDED USERS FOR LOCAL DEVELOPMENT
+-- ============================================================================
+-- These test users are created on database initialization for development.
+-- DO NOT use these credentials in production.
+--
+-- Seeded Users:
+--   Username: testuser
+--   Email:    test@cosmic.local
+--   Password: Password123!
+--   Role:     user
+--
+--   Username: adminuser (or admin)
+--   Email:    admin@cosmic.local (or admin-direct@cosmic.local)
+--   Password: AdminPassword123!
+--   Role:     admin
+--
+-- To login via UI:
+--   - Go to http://localhost:4200/auth/login
+--   - Use email (not username)
+--   - Examples: test@cosmic.local or admin@cosmic.local
+--
+-- ============================================================================
+
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
@@ -234,7 +258,7 @@ SET
   password_hash = EXCLUDED.password_hash,
   deleted_at = NULL;
 
--- Seed admin credential user for RBAC development.
+-- Seed admin credential user for RBAC development (adminuser username variant).
 INSERT INTO users (
   github_id,
   username,
@@ -249,6 +273,33 @@ VALUES (
   'adminuser',
   'Admin User',
   'admin@cosmic.local',
+  'admin',
+  crypt('AdminPassword123!', gen_salt('bf')),
+  NULL
+)
+ON CONFLICT (username) DO UPDATE
+SET
+  display_name = EXCLUDED.display_name,
+  email = EXCLUDED.email,
+  role = EXCLUDED.role,
+  password_hash = EXCLUDED.password_hash,
+  deleted_at = NULL;
+
+-- Seed admin user with 'admin' username for convenience (alias)
+INSERT INTO users (
+  github_id,
+  username,
+  display_name,
+  email,
+  role,
+  password_hash,
+  github_profile_url
+)
+VALUES (
+  NULL,
+  'admin',
+  'Admin User',
+  'admin-direct@cosmic.local',
   'admin',
   crypt('AdminPassword123!', gen_salt('bf')),
   NULL

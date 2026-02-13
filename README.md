@@ -35,7 +35,10 @@ Cosmic Horizon MVP is a three-pillar Angular + NestJS product:
 **v1.1 Additions (Complete)**:
 
 - **Threaded Comments**: Recursive community engagement on notebook posts.
-- **Scientific Ephemeris**: High-precision planetary/minor-planet coordinate resolution.
+- **Scientific Ephemeris**: High-precision planetary/minor-planet coordinate resolution via `/ephem` route.
+  - Supports Mars, Venus, Sun, Moon with astronomy-engine backend
+  - Redis caching (24h TTL) for performance
+  - RA/Dec coordinates with accuracy metrics
 
 **v1.2 Additions (In Progress)**:
 
@@ -70,8 +73,8 @@ pnpm lint           # nx run-many --target=lint --all
 
 ## Projects
 
-- `apps/cosmic-horizons-web` - Angular SSR frontend
-- `apps/cosmic-horizons-api` - NestJS backend
+- `apps/cosmic-horizons-web` - Angular SSR frontend (landing, posts, ephemeris page, moderation dashboard)
+- `apps/cosmic-horizons-api` - NestJS backend (auth, posts, comments, ephemeris, jobs)
 - `apps/cosmic-horizons-web-e2e` - Playwright E2E
 - `apps/cosmic-horizons-api-e2e` - API E2E
 - `libs/shared/models` - Shared types

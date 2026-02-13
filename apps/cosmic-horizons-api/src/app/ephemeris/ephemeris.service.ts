@@ -5,6 +5,7 @@ import { CacheService } from '../cache/cache.service';
 import * as Astronomy from 'astronomy-engine';
 
 export interface EphemerisResult {
+  target: string;
   ra: number;
   dec: number;
   accuracy_arcsec: number;
@@ -54,6 +55,7 @@ export class EphemerisService {
       const equatorial = Astronomy.Equator(body, epoch, observer, false, true);
 
       const result: EphemerisResult = {
+        target: object,
         ra: equatorial.ra * 15,          // Right ascension: convert hours (astronomy-engine) to degrees
         dec: equatorial.dec,             // Declination in degrees
         accuracy_arcsec: 0.1,            // Typical accuracy of astronomy-engine

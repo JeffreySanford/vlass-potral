@@ -82,6 +82,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
 
     if (this.loginForm.invalid) {
+      this.logger.warn('auth', 'login_form_invalid', {
+        email_invalid: this.f['email'].invalid,
+        password_invalid: this.f['password'].invalid,
+      });
       return;
     }
 
@@ -90,8 +94,11 @@ export class LoginComponent implements OnInit, OnDestroy {
     const email = this.loginForm.value.email as string;
     const password = this.loginForm.value.password as string;
 
+    console.log('[LOGIN_DEBUG] Starting login request with email:', email);
+
     this.authApiService.login({ email, password }).subscribe({
       next: (response) => {
+        console.log('[LOGIN_DEBUG] Login successful, received response:', response);
         this.authSessionService.setSession(response);
         this.logger.info('auth', 'login_success', {
           user_id: response.user.id,
@@ -99,15 +106,21 @@ export class LoginComponent implements OnInit, OnDestroy {
         });
 
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/landing';
+        console.log('[LOGIN_DEBUG] Navigating to:', returnUrl);
         this.loading = false;
         this.router.navigateByUrl(returnUrl);
       },
       error: (error: HttpErrorResponse) => {
+        console.log('[LOGIN_DEBUG] Login error:', error);
         this.loading = false;
         this.error = this.errorFromHttp(error);
         this.logger.info('auth', 'login_failed', {
           status_code: error.status,
+          error_message: error.error?.message || error.statusText,
         });
+      },
+      complete: () => {
+        console.log('[LOGIN_DEBUG] Login subscription completed');
       },
     });
   }

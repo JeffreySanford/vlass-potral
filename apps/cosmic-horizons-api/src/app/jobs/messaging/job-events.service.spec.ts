@@ -21,9 +21,9 @@ describe('JobEventsService', () => {
 
     service = new JobEventsService(mockEventPublisher, mockEventRegistry);
 
-    jest.spyOn(Logger.prototype, 'debug').mockImplementation();
-    jest.spyOn(Logger.prototype, 'log').mockImplementation();
-    jest.spyOn(Logger.prototype, 'error').mockImplementation();
+    jest.spyOn(Logger.prototype, 'debug').mockImplementation(() => undefined);
+    jest.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
+    jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
 
     (uuidv4 as jest.Mock).mockReturnValue('test-uuid-12345');
   });

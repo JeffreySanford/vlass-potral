@@ -28,6 +28,16 @@
         }
       </div>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="on">
+        @if (error) {
+          <div class="error-alert" role="alert" aria-live="polite">
+            <mat-icon>error</mat-icon>
+            <div class="error-content">
+              <strong>Login Failed</strong>
+              <p>{{ error }}</p>
+            </div>
+          </div>
+        }
+
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
           <input
@@ -59,12 +69,6 @@
           }
         </mat-form-field>
 
-        @if (error) {
-          <div class="error-message">
-            {{ error }}
-          </div>
-        }
-
         <button
           mat-raised-button
           color="primary"
@@ -76,6 +80,7 @@
             <span>Login</span>
           }
           @if (loading) {
+            <mat-spinner diameter="20" [attr.aria-label]="'Logging in...'"></mat-spinner>
             <span>Logging in...</span>
           }
         </button>

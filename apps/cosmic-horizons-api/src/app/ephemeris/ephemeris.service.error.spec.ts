@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpService } from '@nestjs/axios';
 import { Logger } from '@nestjs/common';
+import { AxiosResponse } from 'axios';
 import { EphemerisService, EphemerisResult } from './ephemeris.service';
 import { CacheService } from '../cache/cache.service';
 import { of, throwError } from 'rxjs';
@@ -9,6 +10,16 @@ import { of, throwError } from 'rxjs';
  * EphemerisService - Error Path & Branch Coverage Tests
  * Focus: Cache failures, JPL Horizons errors, invalid input handling
  */
+
+// Helper to create mock AxiosResponse
+const mockAxiosResponse = (data: any): AxiosResponse => ({
+  data,
+  status: 200,
+  statusText: 'OK',
+  headers: {},
+  config: {} as any,
+});
+
 describe('EphemerisService - Error Paths & Branch Coverage', () => {
   let service: EphemerisService;
   let cacheService: jest.Mocked<CacheService>;
@@ -22,7 +33,7 @@ describe('EphemerisService - Error Paths & Branch Coverage', () => {
           provide: CacheService,
           useValue: {
             get: jest.fn(),
-            set: jest.fn(),
+            set: jest.fn().mockResolvedValue(undefined),
             del: jest.fn(),
           },
         },
@@ -39,9 +50,9 @@ describe('EphemerisService - Error Paths & Branch Coverage', () => {
     cacheService = module.get(CacheService) as jest.Mocked<CacheService>;
     httpService = module.get(HttpService) as jest.Mocked<HttpService>;
 
-    jest.spyOn(Logger.prototype, 'log').mockImplementation(() => {});
-    jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => {});
-    jest.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
+    jest.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
+    jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
   });
 
   afterEach(() => {
@@ -51,6 +62,7 @@ describe('EphemerisService - Error Paths & Branch Coverage', () => {
   describe('calculatePosition - Cache Operations', () => {
     it('should return cached result when cache hit occurs', async () => {
       const cached: Omit<EphemerisResult, 'source'> = {
+        target: 'mars',
         ra: 100.5,
         dec: 45.2,
         accuracy_arcsec: 0.1,
@@ -68,7 +80,7 @@ describe('EphemerisService - Error Paths & Branch Coverage', () => {
 
     it('should calculate and cache result on cache miss', async () => {
       cacheService.get.mockResolvedValueOnce(null);
-      cacheService.set.mockResolvedValueOnce('OK');
+      cacheService.set.mockResolvedValueOnce(undefined);
 
       const result = await service.calculatePosition('mars', '2026-02-13T00:00:00.000Z');
 
@@ -101,7 +113,7 @@ describe('EphemerisService - Error Paths & Branch Coverage', () => {
 
     it('should handle null epoch with current date', async () => {
       cacheService.get.mockResolvedValueOnce(null);
-      cacheService.set.mockResolvedValueOnce('OK');
+      cacheService.set.mockResolvedValueOnce(undefined);
 
       const result = await service.calculatePosition('moon');
 
@@ -113,7 +125,7 @@ describe('EphemerisService - Error Paths & Branch Coverage', () => {
 
     it('should return null for empty object name', async () => {
       cacheService.get.mockResolvedValueOnce(null);
-      httpService.get.mockReturnValueOnce(of({ data: { result: 'No matches found' } }));
+      httpService.get.mockReturnValueOnce(of(mockAxiosResponse({ result: 'No matches found' })));
 
       const result = await service.calculatePosition('', '2026-02-13T00:00:00.000Z');
 
@@ -123,7 +135,7 @@ describe('EphemerisService - Error Paths & Branch Coverage', () => {
 
     it('should normalize object names to lowercase', async () => {
       cacheService.get.mockResolvedValueOnce(null);
-      cacheService.set.mockResolvedValueOnce('OK');
+      cacheService.set.mockResolvedValueOnce(undefined);
 
       const result = await service.calculatePosition('MARS', '2026-02-13T00:00:00.000Z');
 
@@ -135,7 +147,7 @@ describe('EphemerisService - Error Paths & Branch Coverage', () => {
   describe('calculatePosition - Unknown Objects & Fallback', () => {
     it('should handle unknown major body with successful asteroid fallback', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
 
       const jplResult = {
         result: `
@@ -144,7 +156,7 @@ $$SOE
 $$EOE
         `,
       };
-      httpService.get.mockReturnValueOnce(of({ data: jplResult }));
+      httpService.get.mockReturnValueOnce(of(mockAxiosResponse(jplResult)));
 
       const result = await service.calculatePosition('Ceres', '2026-02-13T00:00:00.000Z');
 
@@ -160,7 +172,7 @@ $$EOE
       const jplNoMatch = {
         result: 'No matches found for object "XYZ123"',
       };
-      httpService.get.mockReturnValueOnce(of({ data: jplNoMatch }));
+      httpService.get.mockReturnValueOnce(of(mockAxiosResponse(jplNoMatch)));
 
       const result = await service.calculatePosition('XYZ123', '2026-02-13T00:00:00.000Z');
 
@@ -181,7 +193,7 @@ $$EOE
     it('should handle HTTP 400 bad request from JPL', async () => {
       cacheService.get.mockResolvedValue(null);
       httpService.get.mockReturnValueOnce(
-        throwError(() => new HttpException('Bad Request', 400))
+        throwError(() => ({ response: { status: 400 } }))
       );
 
       const result = await service.calculatePosition('asteroid-999', '2026-02-13T00:00:00.000Z');
@@ -192,7 +204,7 @@ $$EOE
     it('should handle HTTP 500 server error from JPL', async () => {
       cacheService.get.mockResolvedValue(null);
       httpService.get.mockReturnValueOnce(
-        throwError(() => new HttpException('Server Error', 500))
+        throwError(() => ({ response: { status: 500 } }))
       );
 
       const result = await service.calculatePosition('asteroid-123', '2026-02-13T00:00:00.000Z');
@@ -202,7 +214,7 @@ $$EOE
 
     it('should handle missing response data', async () => {
       cacheService.get.mockResolvedValue(null);
-      httpService.get.mockReturnValueOnce(of({ data: null }));
+      httpService.get.mockReturnValueOnce(of(mockAxiosResponse(null)));
 
       const result = await service.calculatePosition('Eros', '2026-02-13T00:00:00.000Z');
 
@@ -211,7 +223,7 @@ $$EOE
 
     it('should handle empty response result', async () => {
       cacheService.get.mockResolvedValue(null);
-      httpService.get.mockReturnValueOnce(of({ data: { result: '' } }));
+      httpService.get.mockReturnValueOnce(of(mockAxiosResponse({ result: '' })));
 
       const result = await service.calculatePosition('Amor', '2026-02-13T00:00:00.000Z');
 
@@ -223,7 +235,7 @@ $$EOE
     it('should handle JPL response without SOE marker', async () => {
       cacheService.get.mockResolvedValue(null);
       httpService.get.mockReturnValueOnce(
-        of({ data: { result: 'some data\nno markers\nhere' } })
+        of(mockAxiosResponse({ result: 'some data\nno markers\nhere' }))
       );
 
       const result = await service.calculatePosition('Ida', '2026-02-13T00:00:00.000Z');
@@ -234,14 +246,12 @@ $$EOE
     it('should handle JPL response with only SOE marker but no EOE', async () => {
       cacheService.get.mockResolvedValue(null);
       httpService.get.mockReturnValueOnce(
-        of({
-          data: {
+        of(mockAxiosResponse({
             result: `
 $$SOE
 2026-Feb-13 00:00 14 28 32.12 -15 28 42.1
             `,
-          },
-        })
+          }))
       );
 
       const result = await service.calculatePosition('Vesta', '2026-02-13T00:00:00.000Z');
@@ -253,15 +263,13 @@ $$SOE
     it('should handle JPL response with malformed RA/Dec line', async () => {
       cacheService.get.mockResolvedValue(null);
       httpService.get.mockReturnValueOnce(
-        of({
-          data: {
+        of(mockAxiosResponse({
             result: `
 $$SOE
 2026-Feb-13 invalid data here
 $$EOE
             `,
-          },
-        })
+          }))
       );
 
       const result = await service.calculatePosition('Juno', '2026-02-13T00:00:00.000Z');
@@ -272,17 +280,15 @@ $$EOE
 
     it('should parse negative declination correctly', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
       httpService.get.mockReturnValueOnce(
-        of({
-          data: {
+        of(mockAxiosResponse({
             result: `
 $$SOE
 2026-Feb-13 00:00 02 45 30.00 -35 15 22.5
 $$EOE
             `,
-          },
-        })
+          }))
       );
 
       const result = await service.calculatePosition('Pallas', '2026-02-13T00:00:00.000Z');
@@ -294,18 +300,16 @@ $$EOE
 
     it('should handle multiple data lines (takes first)', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
       httpService.get.mockReturnValueOnce(
-        of({
-          data: {
+        of(mockAxiosResponse({
             result: `
 $$SOE
 2026-Feb-13 00:00 14 28 32.12 -15 28 42.1
 2026-Feb-14 00:00 14 29 15.45 -15 25 10.2
 $$EOE
             `,
-          },
-        })
+          }))
       );
 
       const result = await service.calculatePosition('Flora', '2026-02-13T00:00:00.000Z');
@@ -317,17 +321,15 @@ $$EOE
 
     it('should handle whitespace normalization in data', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
       httpService.get.mockReturnValueOnce(
-        of({
-          data: {
+        of(mockAxiosResponse({
             result: `
 $$SOE
 2026-Feb-13  00:00   14   28   32.12   -15   28   42.1
 $$EOE
             `,
-          },
-        })
+          }))
       );
 
       const result = await service.calculatePosition('Hygeia', '2026-02-13T00:00:00.000Z');
@@ -340,7 +342,7 @@ $$EOE
   describe('objectClassification', () => {
     it('should classify known planets correctly', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
 
       const planets = ['mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto', 'sun'];
       for (const planet of planets) {
@@ -351,7 +353,7 @@ $$EOE
 
     it('should classify moon as satellite', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
 
       const result = await service.calculatePosition('moon', '2026-02-13T00:00:00.000Z');
 
@@ -360,17 +362,15 @@ $$EOE
 
     it('should classify unknown objects as asteroids', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
       httpService.get.mockReturnValueOnce(
-        of({
-          data: {
+        of(mockAxiosResponse({
             result: `
 $$SOE
 2026-Feb-13 00:00 14 28 32.12 -15 28 42.1
 $$EOE
             `,
-          },
-        })
+          }))
       );
 
       const result = await service.calculatePosition('UnknownObject', '2026-02-13T00:00:00.000Z');
@@ -382,7 +382,7 @@ $$EOE
   describe('Cache Key Generation', () => {
     it('should generate consistent cache keys from epochIso', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
 
       // Same day, different times
       await service.calculatePosition('mercury', '2026-02-13T10:30:00.000Z');
@@ -396,7 +396,7 @@ $$EOE
 
     it('should generate different cache keys for different days', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
 
       await service.calculatePosition('venus', '2026-02-13T00:00:00.000Z');
       await service.calculatePosition('venus', '2026-02-14T00:00:00.000Z');
@@ -408,7 +408,7 @@ $$EOE
 
     it('should normalize object name in cache key', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
 
       await service.calculatePosition('MARS', '2026-02-13T00:00:00.000Z');
 
@@ -420,7 +420,7 @@ $$EOE
   describe('Cache TTL', () => {
     it('should cache results for 86400 seconds (24 hours)', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
 
       await service.calculatePosition('jupiter', '2026-02-13T00:00:00.000Z');
 
@@ -431,17 +431,15 @@ $$EOE
 
     it('should cache asteroid results for 86400 seconds (24 hours)', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
       httpService.get.mockReturnValueOnce(
-        of({
-          data: {
+        of(mockAxiosResponse({
             result: `
 $$SOE
 2026-Feb-13 00:00 14 28 32.12 -15 28 42.1
 $$EOE
             `,
-          },
-        })
+          }))
       );
 
       await service.calculatePosition('asteroid-xyzzy', '2026-02-13T00:00:00.000Z');
@@ -454,7 +452,7 @@ $$EOE
   describe('Error Recovery & Resilience', () => {
     it('should handle JPL Horizons date boundary edge cases', async () => {
       cacheService.get.mockResolvedValue(null);
-      httpService.get.mockReturnValueOnce(of({ data: { result: '$$SOE\n$$EOE' } }));
+      httpService.get.mockReturnValueOnce(of(mockAxiosResponse({ result: '$$SOE\n$$EOE' })));
 
       const result = await service.calculatePosition('asteroid', '2026-01-01T00:00:00.000Z');
 
@@ -464,6 +462,7 @@ $$EOE
 
     it('should cache and retrieve same-day calculations', async () => {
       const cached: Omit<EphemerisResult, 'source'> = {
+        target: 'mars',
         ra: 142.5,
         dec: -28.3,
         accuracy_arcsec: 0.1,
@@ -473,7 +472,7 @@ $$EOE
 
       // First call - miss, calculate and cache
       cacheService.get.mockResolvedValueOnce(null);
-      cacheService.set.mockResolvedValueOnce('OK');
+      cacheService.set.mockResolvedValueOnce(undefined);
 
       const result1 = await service.calculatePosition('venus', '2026-02-13T00:00:00.000Z');
       expect(result1).not.toBeNull();
@@ -487,7 +486,7 @@ $$EOE
 
     it('should handle different dates for same object', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
 
       const result1 = await service.calculatePosition('mars', '2026-02-13T00:00:00.000Z');
       const result2 = await service.calculatePosition('mars', '2026-02-14T00:00:00.000Z');
@@ -503,7 +502,7 @@ $$EOE
   describe('Concurrent Requests', () => {
     it('should handle concurrent requests for same object', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
 
       const results = await Promise.all([
         service.calculatePosition('uranus', '2026-02-13T00:00:00.000Z'),
@@ -517,7 +516,7 @@ $$EOE
 
     it('should handle concurrent requests for different objects', async () => {
       cacheService.get.mockResolvedValue(null);
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
 
       const results = await Promise.all([
         service.calculatePosition('mars', '2026-02-13T00:00:00.000Z'),
@@ -531,6 +530,7 @@ $$EOE
 
     it('should handle concurrent requests with mixed cache hits/misses', async () => {
       const cached: Omit<EphemerisResult, 'source'> = {
+        target: 'mars',
         ra: 100.5,
         dec: 45.2,
         accuracy_arcsec: 0.1,
@@ -543,7 +543,7 @@ $$EOE
         .mockResolvedValueOnce(null) // Cache miss for venus
         .mockResolvedValueOnce(cached); // Cache hit for mercury
 
-      cacheService.set.mockResolvedValue('OK');
+      cacheService.set.mockResolvedValue(undefined);
 
       const results = await Promise.all([
         service.calculatePosition('mars', '2026-02-13T00:00:00.000Z'),

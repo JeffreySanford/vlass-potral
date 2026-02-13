@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, ForbiddenException } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CommentRepository } from '../repositories/comment.repository';
 import { PostRepository } from '../repositories/post.repository';
@@ -150,7 +150,6 @@ describe('CommentsService - Error Paths & Branch Coverage', () => {
     });
 
     it('should allow owner to comment on their own draft posts', async () => {
-      const parentComment = { id: 'comment-1', post_id: 'post-1' } as any;
       postRepository.findById.mockResolvedValueOnce({
         id: 'post-1',
         status: PostStatus.DRAFT,
@@ -567,17 +566,16 @@ describe('CommentsService - Error Paths & Branch Coverage', () => {
         post_id: 'post-1',
         user_id: 'user-1',
         content: 'Top-level comment',
-        parent_id: null,
+        parent_id: undefined,
       } as any);
       auditLogRepository.createAuditLog.mockResolvedValueOnce(undefined);
 
       const result = await service.createComment('user-1', {
         post_id: 'post-1',
         content: 'Top-level comment',
-        parent_id: null,
       });
 
-      expect(result.parent_id).toBeNull();
+      expect(result.parent_id).toBeUndefined();
     });
   });
 

@@ -178,9 +178,21 @@ form {
   background: linear-gradient(90deg, #ffd166 0%, #ff9f1c 100%) !important;
   color: #101726 !important;
   transition: transform 220ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
+  }
+
+  &:disabled {
+    opacity: 0.8;
+  }
+
+  mat-spinner {
+    display: inline-block;
   }
 }
 
@@ -191,6 +203,58 @@ form {
   border-radius: 0.7rem;
   margin-bottom: 0.6rem;
   font-size: 0.9rem;
+}
+
+.error-alert {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #ffcdd2 0%, #ffb4ab 100%);
+  border: 2px solid #e53935;
+  border-radius: 0.8rem;
+  animation: error-shake 0.4s ease-in-out;
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.25);
+
+  mat-icon {
+    color: #c62828;
+    font-size: 1.25rem;
+    height: 1.25rem;
+    width: 1.25rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .error-content {
+    flex: 1;
+    color: #b71c1c;
+
+    strong {
+      font-weight: 700;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+@keyframes error-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  75% {
+    transform: translateX(4px);
+  }
 }
 
 .signup-link {

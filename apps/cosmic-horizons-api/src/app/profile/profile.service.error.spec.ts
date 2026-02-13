@@ -259,7 +259,7 @@ describe('ProfileService - Error Paths & Branch Coverage', () => {
         display_name: 'Test User',
         email: 'test@example.com',
         password_hash: 'very-secret-hash',
-        github_id: 'gh-123',
+        github_id: 123,
         avatar_url: 'https://example.com/avatar.jpg',
         bio: 'My bio',
         github_profile_url: 'https://github.com/testuser',

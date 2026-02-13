@@ -25,6 +25,12 @@ export const appRoutes: Route[] = [
       import('./features/viewer/viewer.module').then((m) => m.ViewerModule),
   },
   {
+    path: 'ephem',
+    loadChildren: () =>
+      import('./features/ephemeris/ephemeris.module').then((m) => m.EphemerisModule),
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'posts',
     loadChildren: () =>
       import('./features/posts/posts.module').then((m) => m.PostsModule),

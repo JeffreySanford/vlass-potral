@@ -54,12 +54,12 @@ describe('LoggingService - Error Paths & Branch Coverage', () => {
       process.env['REDIS_PORT'] = '99999';
 
       // Make Redis constructor throw
-      (Redis as jest.MockedClass<typeof Redis>).mockImplementationOnce(() => {
+      (Redis as jest.MockedClass<typeof Redis>).mockImplementationOnce((): any => {
         throw new Error('Connection refused');
       });
 
       // Suppress logger output for this test
-      jest.spyOn(global.console, 'warn').mockImplementationOnce(() => {});
+      jest.spyOn(global.console, 'warn').mockImplementationOnce(() => undefined);
 
       service = new LoggingService();
 

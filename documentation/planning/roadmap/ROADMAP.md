@@ -1,6 +1,6 @@
 # Roadmap
 
-Status date: 2026-02-08
+Status date: 2026-02-13
 
 Canonical scope: `documentation/product/PRODUCT-CHARTER.md` and `SCOPE-LOCK.md`.
 Industry context note: `documentation/planning/INDUSTRY-CONTEXT-AND-FEASIBILITY-2026-02-11.md`.

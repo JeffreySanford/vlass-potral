@@ -44,7 +44,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     {
       icon: 'auto_graph',
       title: 'Scientific Ephemeris & Target Search',
-      route: '/view',
+      route: '/ephem',
     },
     {
       icon: 'menu_book',

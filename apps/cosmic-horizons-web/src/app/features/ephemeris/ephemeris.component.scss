@@ -1,0 +1,318 @@
+.ephemeris-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #fff;
+
+  .app-toolbar {
+    display: flex;
+    align-items: center;
+    padding: 0 2rem;
+    margin-bottom: 2rem;
+
+    .brand-icon {
+      margin-right: 0.8rem;
+      font-size: 1.8rem;
+    }
+
+    .brand {
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .spacer {
+      flex: 1 1 auto;
+    }
+  }
+
+  .content-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 2rem 2rem 2rem;
+  }
+
+  .page-header {
+    margin-bottom: 2rem;
+    text-align: center;
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem 0;
+      background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin: 0;
+    }
+  }
+
+  .error-alert {
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #ffcdd2 0%, #ffb4ab 100%);
+    border: 2px solid #e53935;
+    border-radius: 0.8rem;
+    animation: error-shake 0.4s ease-in-out;
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.25);
+    color: #000;
+
+    mat-icon {
+      color: #e53935;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .error-content {
+      flex: 1;
+
+      strong {
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  @keyframes error-shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-4px);
+    }
+    75% {
+      transform: translateX(4px);
+    }
+  }
+
+  .search-card,
+  .info-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    margin-bottom: 2rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+
+    mat-card-header {
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    mat-card-title {
+      color: inherit;
+      font-size: 1.5rem;
+      margin: 0;
+    }
+  }
+
+  .search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .search-field,
+  .epoch-field {
+    width: 100%;
+    max-width: 100%;
+
+    ::ng-deep {
+      .mdc-text-field {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .mdc-text-field__input {
+        color: #fff;
+        caret-color: #00d4ff;
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+
+      .mat-mdc-form-field-label {
+        color: rgba(255, 255, 255, 0.7) !important;
+      }
+
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      &.mat-focused .mdc-notched-outline {
+        border-color: #00d4ff;
+      }
+
+      mat-hint {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      mat-error {
+        color: #ff6b6b;
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 0.5rem;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      mat-spinner {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  .results-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    h2 {
+      font-size: 1.3rem;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      color: #00d4ff;
+    }
+  }
+
+  .result-card {
+    background: rgba(0, 212, 255, 0.05);
+    border: 2px solid rgba(0, 212, 255, 0.2);
+    color: #fff;
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .result-item {
+    display: flex;
+    flex-direction: column;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 0.4rem;
+
+    .label {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+
+    .value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      font-family: 'Monaco', 'Courier New', monospace;
+      color: #00d4ff;
+    }
+  }
+
+  .result-note {
+    padding: 1rem;
+    background: rgba(0, 212, 255, 0.1);
+    border-radius: 0.4rem;
+    border-left: 4px solid #00d4ff;
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.85);
+    }
+  }
+
+  .info-card {
+    background: rgba(0, 212, 255, 0.05);
+    border: 2px solid rgba(0, 212, 255, 0.2);
+
+    p {
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 1rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      a {
+        color: #00d4ff;
+        text-decoration: none;
+        border-bottom: 1px solid #00d4ff;
+        transition: all 0.3s ease;
+
+        &:hover {
+          color: #0099cc;
+          border-bottom-color: #0099cc;
+        }
+      }
+    }
+
+    ul {
+      margin: 0.5rem 0 1rem 1.5rem;
+      padding: 0;
+
+      li {
+        margin-bottom: 0.5rem;
+        color: rgba(255, 255, 255, 0.9);
+
+        strong {
+          color: #00d4ff;
+        }
+      }
+    }
+  }
+}

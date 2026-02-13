@@ -51,6 +51,7 @@ export class AuthApiService {
   private readonly apiBaseUrl = 'http://localhost:3000';
 
   login(request: LoginRequest): Observable<LoginResponse> {
+    console.log('[AUTH_API] Sending login request to:', `${this.apiBaseUrl}/api/auth/login`, 'with email:', request.email);
     return this.http.post<LoginResponse>(
       `${this.apiBaseUrl}/api/auth/login`,
       request

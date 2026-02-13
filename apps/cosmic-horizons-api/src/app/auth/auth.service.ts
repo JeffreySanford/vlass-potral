@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, ConflictException, OnModuleInit, UnauthorizedException } from '@nestjs/common';
+import { Injectable, BadRequestException, ConflictException, OnModuleInit, UnauthorizedException, Logger } from '@nestjs/common';
 import Strategy from 'passport-github';
 import { UserRepository } from '../repositories';
 import { CreateUserDto } from '../dto';
@@ -30,6 +30,8 @@ export interface AuthTokenPair {
 
 @Injectable()
 export class AuthService implements OnModuleInit {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
@@ -112,7 +114,11 @@ export class AuthService implements OnModuleInit {
     const user = await this.userRepository.findByEmailAndPassword(email, password);
 
     if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
+      console.warn(`[AUTH] Login attempt failed for email: ${email}`);
+      throw new UnauthorizedException({
+        message: 'Invalid email or password',
+        error: 'INVALID_CREDENTIALS',
+      });
     }
 
     return user;

@@ -17,7 +17,6 @@ Canonical scope: `documentation/product/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
 
 - Angular module-mode policy: all `@Component` and `@Directive` declarations must explicitly set `standalone: false` (enforced by `pnpm standalone:check`).
 
-
 ## MVP Boundaries in Code
 
 - Viewer Mode A only
@@ -31,6 +30,7 @@ Canonical scope: `documentation/product/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
 ## Deferred Work Handling
 
 ## If implementing v1.1/v2 work (comments, Mode B, FITS proxy), gate with explicit roadmap updates first
+
 ---
 
 *Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*

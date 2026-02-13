@@ -110,6 +110,7 @@ describe('EphemerisWarmupService', () => {
       mockEphemerisService.calculatePosition
         .mockRejectedValueOnce(new Error('API call failed'))
         .mockResolvedValueOnce({
+          target: 'mars',
           ra: 0,
           dec: 0,
           accuracy_arcsec: 0.1,
@@ -238,6 +239,7 @@ describe('EphemerisWarmupService', () => {
       
       // All succeed
       mockEphemerisService.calculatePosition.mockResolvedValue({
+        target: 'mars',
         ra: 0,
         dec: 0,
         accuracy_arcsec: 0.1,
@@ -263,6 +265,7 @@ describe('EphemerisWarmupService', () => {
           throw new Error('Alternating failure');
         }
         return {
+          target: 'mars',
           ra: 0,
           dec: 0,
           accuracy_arcsec: 0.1,
