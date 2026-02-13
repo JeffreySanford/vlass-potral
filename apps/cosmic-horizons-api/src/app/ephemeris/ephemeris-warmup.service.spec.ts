@@ -109,7 +109,14 @@ describe('EphemerisWarmupService', () => {
     it('should continue warmup when individual calculation fails', async () => {
       mockEphemerisService.calculatePosition
         .mockRejectedValueOnce(new Error('API call failed'))
-        .mockResolvedValueOnce({ ra: 0, dec: 0 });
+        .mockResolvedValueOnce({
+          ra: 0,
+          dec: 0,
+          accuracy_arcsec: 0.1,
+          epoch: '2000.0',
+          source: 'test',
+          object_type: 'test',
+        });
 
       await service.handleDailyWarmup();
 
@@ -189,7 +196,7 @@ describe('EphemerisWarmupService', () => {
       }
 
       // Each day should have all 10 objects
-      for (const [day, objects] of Object.entries(objectsByDay)) {
+      for (const [, objects] of Object.entries(objectsByDay)) {
         expect(objects.size).toBe(10);
       }
     });
@@ -230,7 +237,14 @@ describe('EphemerisWarmupService', () => {
       const logSpy = jest.spyOn(Logger.prototype, 'log');
       
       // All succeed
-      mockEphemerisService.calculatePosition.mockResolvedValue({ ra: 0, dec: 0 });
+      mockEphemerisService.calculatePosition.mockResolvedValue({
+        ra: 0,
+        dec: 0,
+        accuracy_arcsec: 0.1,
+        epoch: '2000.0',
+        source: 'test',
+        object_type: 'test',
+      });
 
       await service.handleDailyWarmup();
 
@@ -248,7 +262,14 @@ describe('EphemerisWarmupService', () => {
         if (callCount % 2 === 0) {
           throw new Error('Alternating failure');
         }
-        return { ra: 0, dec: 0 };
+        return {
+          ra: 0,
+          dec: 0,
+          accuracy_arcsec: 0.1,
+          epoch: '2000.0',
+          source: 'test',
+          object_type: 'test',
+        };
       });
 
       await service.handleDailyWarmup();
