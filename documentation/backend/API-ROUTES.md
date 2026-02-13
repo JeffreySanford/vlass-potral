@@ -14,7 +14,7 @@ All data models used in these API endpoints are defined in the shared models lib
 
 ## Base URL
 
-```
+```plaintext
 http://localhost:3000/api
 ```
 
@@ -22,7 +22,7 @@ http://localhost:3000/api
 
 Most endpoints require JWT Bearer token authentication:
 
-```
+```plaintext
 Authorization: Bearer <jwt-token>
 ```
 
@@ -261,7 +261,7 @@ All errors follow this format:
 
 ### Connection
 
-```
+```plaintext
 ws://localhost:3000/api/ws
 ```
 
