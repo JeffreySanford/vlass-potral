@@ -2,6 +2,8 @@ const nxPreset = require('@nx/jest/preset').default;
 
 module.exports = {
   ...nxPreset,
+  // Global test setup - runs before all tests
+  setupFilesAfterEnv: ['<rootDir>/jest-setup.ts'],
   // Coverage configuration
   collectCoverage: false, // Enable with --coverage flag
   collectCoverageFrom: [
