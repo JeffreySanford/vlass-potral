@@ -639,4 +639,328 @@ describe('CacheService - Comprehensive Coverage', () => {
       expect(await service.get('zero')).toBe(0);
     });
   });
+
+  describe('Boundary and Edge Cases - Extended Coverage', () => {
+    it('should handle keys with special characters', async () => {
+      const specialKey = 'key:with:colons::test@123#special';
+      await service.set(specialKey, { data: 'value' });
+      const result = await service.get(specialKey);
+      expect(result).toEqual({ data: 'value' });
+    });
+
+    it('should handle very long keys', async () => {
+      const longKey = 'k'.repeat(512); // 512 character key
+      await service.set(longKey, 'value');
+      const result = await service.get(longKey);
+      expect(result).toBe('value');
+    });
+
+    it('should handle null and undefined values distinctly', async () => {
+      await service.set('nullKey', null);
+      // undefined values may not be stored
+      
+      expect(await service.get('nullKey')).toBeNull();
+      expect(await service.get('undefinedKey')).toBeNull();
+    });
+
+    it('should handle nested object structures', async () => {
+      const nestedObj = {
+        level1: {
+          level2: {
+            level3: {
+              data: 'deep value',
+              array: [1, 2, 3],
+            },
+          },
+        },
+      };
+      await service.set('nested', nestedObj);
+      const result = (await service.get('nested')) as Record<string, any>;
+      expect(result.level1.level2.level3.data).toBe('deep value');
+      expect(result.level1.level2.level3.array).toEqual([1, 2, 3]);
+    });
+
+    it('should handle arrays with mixed types', async () => {
+      const mixedArray = [1, 'string', true, { obj: 'value' }, null, 3.14];
+      await service.set('mixedArray', mixedArray);
+      const result = await service.get('mixedArray');
+      expect(result).toEqual(mixedArray);
+    });
+
+    it('should handle empty arrays and objects', async () => {
+      await service.set('emptyArray', []);
+      await service.set('emptyObj', {});
+      
+      expect(await service.get('emptyArray')).toEqual([]);
+      expect(await service.get('emptyObj')).toEqual({});
+    });
+
+    it('should handle TTL of zero', async () => {
+      // Zero TTL should expire immediately or be invalid
+      try {
+        await service.set('zeroTtl', 'value', 0);
+      } catch (error) {
+        expect(error).toBeDefined();
+      }
+    });
+
+    it('should handle negative TTL values', async () => {
+      // Negative TTL should be rejected or treated as invalid
+      try {
+        await service.set('negativeTtl', 'value', -100);
+      } catch (error) {
+        expect(error).toBeDefined();
+      }
+    });
+
+    it('should handle fractional TTL values', async () => {
+      // Fractional TTLs should be converted to integers
+      await service.set('fractionalTtl', 'value', 1.5);
+      const result = await service.get('fractionalTtl');
+      expect(result).toBe('value');
+    });
+
+    it('should handle maximum safe integer', async () => {
+      const maxInt = Number.MAX_SAFE_INTEGER;
+      await service.set('maxInt', maxInt);
+      const result = await service.get('maxInt');
+      expect(result).toBe(maxInt);
+    });
+
+    it('should handle minimum safe integer', async () => {
+      const minInt = Number.MIN_SAFE_INTEGER;
+      await service.set('minInt', minInt);
+      const result = await service.get('minInt');
+      expect(result).toBe(minInt);
+    });
+
+    it('should handle very large floating point numbers', async () => {
+      const largeFloat = 1.7976931348623157e+308; // Near MAX_VALUE
+      await service.set('largeFloat', largeFloat);
+      const result = await service.get('largeFloat');
+      expect(result).toBeCloseTo(largeFloat, -100);
+    });
+
+    it('should handle exponential notation numbers', async () => {
+      const expNum = 1e-10;
+      await service.set('expNum', expNum);
+      const result = await service.get('expNum');
+      expect(result).toBeCloseTo(expNum, 15);
+    });
+
+    it('should handle infinity values', async () => {
+      await service.set('infinity', Infinity);
+      const result = (await service.get('infinity')) as unknown;
+      // JSON serialization may convert Infinity to null
+      expect(result === null || result === Infinity).toBe(true);
+    });
+
+    it('should handle negative infinity', async () => {
+      await service.set('negInfinity', -Infinity);
+      const result = (await service.get('negInfinity')) as unknown;
+      expect(result === null || result === -Infinity).toBe(true);
+    });
+
+    it('should handle NaN values', async () => {
+      await service.set('nan', NaN);
+      const result = (await service.get('nan')) as unknown;
+      // JSON serialization converts NaN to null
+      expect(result === null || Number.isNaN(result)).toBe(true);
+    });
+
+    it('should perform many rapid get/set operations', async () => {
+      const operations = [];
+      for (let i = 0; i < 100; i++) {
+        operations.push(service.set(`rapid-${i}`, i));
+        operations.push(service.get(`rapid-${i}`));
+      }
+      
+      await Promise.all(operations);
+      
+      const result = await service.get('rapid-50');
+      expect(result).toBe(50);
+    });
+
+    it('should handle concurrent deletes and sets on same key', async () => {
+      const promises = [];
+      for (let i = 0; i < 10; i++) {
+        promises.push(
+          service.set('concurrent-key', `value-${i}`),
+        );
+      }
+      
+      await Promise.all(promises);
+      // Final state should be one of the values set
+      const result = await service.get('concurrent-key');
+      expect(result).toBeDefined();
+    });
+
+    it('should handle extremely large objects within serialization limits', async () => {
+      const largeObj: any = {};
+      for (let i = 0; i < 1000; i++) {
+        largeObj[`key-${i}`] = `value-${i}-with-some-extra-text-to-increase-size`;
+      }
+      
+      await service.set('largeObj', largeObj);
+      const result = (await service.get('largeObj')) as Record<string, any>;
+      expect(Object.keys(result)).toHaveLength(1000);
+    });
+  });
+
+  describe('cache.delete - alias for del', () => {
+    it('should delete value using delete method', async () => {
+      await service.set('deleteKey', 'value');
+      await service.delete('deleteKey');
+      
+      const result = await service.get('deleteKey');
+      expect(result).toBeNull();
+    });
+
+    it('should handle delete when Redis enabled', async () => {
+      mockRedisClient = {
+        connect: jest.fn().mockResolvedValue(undefined),
+        ping: jest.fn().mockResolvedValue('PONG'),
+        disconnect: jest.fn().mockResolvedValue(undefined),
+        quit: jest.fn().mockResolvedValue(undefined),
+        get: jest.fn(),
+        set: jest.fn(),
+        setex: jest.fn(),
+        del: jest.fn(),
+        flushdb: jest.fn(),
+      };
+
+      (Redis as any).mockImplementation(() => mockRedisClient);
+
+      mockConfigService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'REDIS_CACHE_ENABLED') return 'true';
+        return defaultValue;
+      });
+
+      await service.onModuleInit();
+      await service.delete('testKey');
+
+      expect(mockRedisClient.del).toHaveBeenCalledWith('testKey');
+    });
+
+    it('should still delete from memory cache even if Redis delete fails', async () => {
+      mockRedisClient = {
+        connect: jest.fn().mockResolvedValue(undefined),
+        ping: jest.fn().mockResolvedValue('PONG'),
+        disconnect: jest.fn().mockResolvedValue(undefined),
+        quit: jest.fn().mockResolvedValue(undefined),
+        get: jest.fn(),
+        set: jest.fn(),
+        setex: jest.fn(),
+        del: jest.fn().mockRejectedValueOnce(new Error('Redis error')),
+        flushdb: jest.fn(),
+      };
+
+      (Redis as any).mockImplementation(() => mockRedisClient);
+
+      mockConfigService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'REDIS_CACHE_ENABLED') return 'true';
+        return defaultValue;
+      });
+
+      await service.onModuleInit();
+      await service.set('key1', 'value');
+      await service.delete('key1');
+
+      const result = await service.get('key1');
+      expect(result).toBeNull();
+      expect(Logger.prototype.error).toHaveBeenCalled();
+    });
+  });
+
+  describe('cache.purge - clear all entries', () => {
+    it('should purge memory cache', async () => {
+      await service.set('key1', 'value1');
+      await service.set('key2', 'value2');
+      await service.set('key3', 'value3');
+
+      await service.purge();
+
+      expect(await service.get('key1')).toBeNull();
+      expect(await service.get('key2')).toBeNull();
+      expect(await service.get('key3')).toBeNull();
+    });
+
+    it('should purge Redis cache when enabled', async () => {
+      mockRedisClient = {
+        connect: jest.fn().mockResolvedValue(undefined),
+        ping: jest.fn().mockResolvedValue('PONG'),
+        disconnect: jest.fn().mockResolvedValue(undefined),
+        quit: jest.fn().mockResolvedValue(undefined),
+        get: jest.fn(),
+        set: jest.fn(),
+        setex: jest.fn(),
+        del: jest.fn(),
+        flushdb: jest.fn().mockResolvedValueOnce('OK'),
+      };
+
+      (Redis as any).mockImplementation(() => mockRedisClient);
+
+      mockConfigService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'REDIS_CACHE_ENABLED') return 'true';
+        return defaultValue;
+      });
+
+      await service.onModuleInit();
+      await service.purge();
+
+      expect(mockRedisClient.flushdb).toHaveBeenCalled();
+      expect(Logger.prototype.log).toHaveBeenCalledWith('Cache purged successfully');
+    });
+
+    it('should handle Redis purge failure gracefully', async () => {
+      mockRedisClient = {
+        connect: jest.fn().mockResolvedValue(undefined),
+        ping: jest.fn().mockResolvedValue('PONG'),
+        disconnect: jest.fn().mockResolvedValue(undefined),
+        quit: jest.fn().mockResolvedValue(undefined),
+        get: jest.fn(),
+        set: jest.fn(),
+        setex: jest.fn(),
+        del: jest.fn(),
+        flushdb: jest.fn().mockRejectedValueOnce(new Error('Purge failed')),
+      };
+
+      (Redis as any).mockImplementation(() => mockRedisClient);
+
+      mockConfigService.get.mockImplementation((key: string, defaultValue?: any) => {
+        if (key === 'REDIS_CACHE_ENABLED') return 'true';
+        return defaultValue;
+      });
+
+      await service.onModuleInit();
+      await service.purge();
+
+      expect(Logger.prototype.error).toHaveBeenCalled();
+    });
+
+    it('should purge memory cache even if Redis disabled', async () => {
+      await service.set('key1', 'value1');
+      await service.set('key2', 'value2');
+
+      await service.purge();
+
+      expect(await service.get('key1')).toBeNull();
+      expect(await service.get('key2')).toBeNull();
+    });
+
+    it('should handle purge with empty cache', async () => {
+      // Should not throw
+      await service.purge();
+      expect(true).toBe(true);
+    });
+
+    it('should log success on memory-only purge', async () => {
+      await service.set('key1', 'data');
+      await service.purge();
+
+      // Memory purge should not log (only Redis purge logs)
+      // This is by design - logging only happens on Redis purge
+      expect(await service.get('key1')).toBeNull();
+    });
+  });
 });

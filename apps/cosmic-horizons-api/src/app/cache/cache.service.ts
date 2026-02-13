@@ -116,4 +116,26 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
       }
     }
   }
+
+  /**
+   * Delete a key from cache (alias for del)
+   */
+  async delete(key: string): Promise<void> {
+    return this.del(key);
+  }
+
+  /**
+   * Purge all entries from cache (both Redis and memory)
+   */
+  async purge(): Promise<void> {
+    this.memoryCache.clear();
+    if (this.redisEnabled && this.redisClient) {
+      try {
+        await this.redisClient.flushdb();
+        this.logger.log('Cache purged successfully');
+      } catch (error) {
+        this.logger.error('Error purging Redis cache', error);
+      }
+    }
+  }
 }
