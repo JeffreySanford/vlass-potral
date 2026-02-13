@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProfileService } from './profile.service';
 import { UserRepository } from '../repositories/user.repository';
 import { PostRepository } from '../repositories/post.repository';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { Post, PostStatus } from '../entities/post.entity';
 import { User } from '../entities/user.entity';
 
@@ -150,6 +150,139 @@ describe('ProfileService', () => {
     expect(userRepository.update).toHaveBeenCalledWith('u1', {
       display_name: undefined,
       bio: 'hello',
+      avatar_url: null,
+    });
+  });
+
+  it('should throw BadRequestException for empty display name', async () => {
+    await expect(service.updateProfile('u1', { display_name: '' })).rejects.toThrow(
+      BadRequestException
+    );
+    expect(userRepository.update).not.toHaveBeenCalled();
+  });
+
+  it('should throw BadRequestException for whitespace-only display name', async () => {
+    await expect(service.updateProfile('u1', { display_name: '   ' })).rejects.toThrow(
+      BadRequestException
+    );
+    expect(userRepository.update).not.toHaveBeenCalled();
+  });
+
+  it('should throw NotFoundException when updating nonexistent user', async () => {
+    userRepository.update.mockResolvedValue(null);
+    await expect(service.updateProfile('nonexistent', { bio: 'new bio' })).rejects.toThrow(
+      NotFoundException
+    );
+  });
+
+  it('should clear bio field when updating with empty string', async () => {
+    userRepository.update.mockResolvedValue({
+      id: 'u1',
+      github_id: null,
+      username: 'testuser',
+      display_name: 'Test User',
+      avatar_url: null,
+      email: 'test@example.com',
+      role: 'user',
+      password_hash: null,
+      bio: null,
+      github_profile_url: null,
+      created_at: new Date(),
+      updated_at: new Date(),
+      deleted_at: null,
+      posts: [],
+      revisions: [],
+      comments: [],
+      auditLogs: [],
+    });
+    await service.updateProfile('u1', { bio: '' });
+    expect(userRepository.update).toHaveBeenCalledWith('u1', {
+      display_name: undefined,
+      bio: null,
+      avatar_url: null,
+    });
+  });
+
+  it('should update avatar URL', async () => {
+    userRepository.update.mockResolvedValue({
+      id: 'u1',
+      github_id: null,
+      username: 'testuser',
+      display_name: 'Test User',
+      avatar_url: 'https://example.com/avatar.jpg',
+      email: 'test@example.com',
+      role: 'user',
+      password_hash: null,
+      bio: null,
+      github_profile_url: null,
+      created_at: new Date(),
+      updated_at: new Date(),
+      deleted_at: null,
+      posts: [],
+      revisions: [],
+      comments: [],
+      auditLogs: [],
+    });
+    await service.updateProfile('u1', { avatar_url: 'https://example.com/avatar.jpg' });
+    expect(userRepository.update).toHaveBeenCalledWith('u1', {
+      display_name: undefined,
+      bio: null,
+      avatar_url: 'https://example.com/avatar.jpg',
+    });
+  });
+
+  it('should clear avatar URL when updating with empty string', async () => {
+    userRepository.update.mockResolvedValue({
+      id: 'u1',
+      github_id: null,
+      username: 'testuser',
+      display_name: 'Test User',
+      avatar_url: null,
+      email: 'test@example.com',
+      role: 'user',
+      password_hash: null,
+      bio: null,
+      github_profile_url: null,
+      created_at: new Date(),
+      updated_at: new Date(),
+      deleted_at: null,
+      posts: [],
+      revisions: [],
+      comments: [],
+      auditLogs: [],
+    });
+    await service.updateProfile('u1', { avatar_url: '' });
+    expect(userRepository.update).toHaveBeenCalledWith('u1', {
+      display_name: undefined,
+      bio: null,
+      avatar_url: null,
+    });
+  });
+
+  it('should update display name with trimming', async () => {
+    userRepository.update.mockResolvedValue({
+      id: 'u1',
+      github_id: null,
+      username: 'testuser',
+      display_name: 'Updated Name',
+      avatar_url: null,
+      email: 'test@example.com',
+      role: 'user',
+      password_hash: null,
+      bio: null,
+      github_profile_url: null,
+      created_at: new Date(),
+      updated_at: new Date(),
+      deleted_at: null,
+      posts: [],
+      revisions: [],
+      comments: [],
+      auditLogs: [],
+    });
+    await service.updateProfile('u1', { display_name: '  Updated Name  ' });
+    expect(userRepository.update).toHaveBeenCalledWith('u1', {
+      display_name: 'Updated Name',
+      bio: null,
       avatar_url: null,
     });
   });
