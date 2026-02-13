@@ -46,20 +46,22 @@ This starts PostgreSQL and Redis containers.
 ### 5. Start Development Servers
 
 **Terminal 1 - API Server:**
+
 ```bash
 pnpm nx serve cosmic-horizons-api
 ```
 
 **Terminal 2 - Web Application:**
+
 ```bash
 pnpm nx serve cosmic-horizons-web
 ```
 
 ### 6. Access the Application
 
-- **Web App**: http://localhost:4200
-- **API Docs**: http://localhost:3000/api/docs
-- **API**: http://localhost:3000/api
+- **Web App**: <http://localhost:4200>
+- **API Docs**: <http://localhost:3000/api/docs>
+- **API**: <http://localhost:3000/api>
 
 ## Test Users (Local Development)
 
@@ -92,7 +94,7 @@ pnpm nx run-many --target=lint --all
 
 ## Project Structure
 
-```
+``` text
 cosmic-horizons/
 ├── apps/
 │   ├── cosmic-horizons-api/        # NestJS backend

@@ -1,10 +1,17 @@
 // Polyfill for jsdom test environment - Angular Forms navigator.platform fix
-if (typeof navigator !== 'undefined' && navigator.platform === undefined) {
-  Object.defineProperty(navigator, 'platform', {
-    value: 'Linux x86_64',
-    writable: true,
-    configurable: true,
-  });
+// Must run BEFORE any Angular Forms imports
+if (typeof navigator !== 'undefined') {
+  try {
+    if (!navigator.platform || navigator.platform === '') {
+      Object.defineProperty(navigator, 'platform', {
+        value: 'Linux x86_64',
+        writable: true,
+        configurable: true,
+      });
+    }
+  } catch (e) {
+    console.warn('Could not define navigator.platform:', e);
+  }
 }
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
