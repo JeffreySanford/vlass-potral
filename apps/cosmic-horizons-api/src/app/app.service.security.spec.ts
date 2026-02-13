@@ -776,4 +776,158 @@ describe('AppService - Security Tests', () => {
       }
     });
   });
+
+  describe('BadRequestException - Input Validation', () => {
+    it('should throw BadRequestException for empty username', async () => {
+      userRepository.findByUsername.mockResolvedValueOnce(null);
+      userRepository.create.mockImplementationOnce(() => {
+        throw new BadRequestException('Username cannot be empty');
+      });
+
+      try {
+        await service.createUser({
+          username: '',
+          email: 'test@example.com',
+        });
+        fail('should have thrown BadRequestException');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect((error as BadRequestException).message).toContain('Username cannot be empty');
+      }
+    });
+
+    it('should throw BadRequestException for invalid email format', async () => {
+      userRepository.findByUsername.mockResolvedValueOnce(null);
+      userRepository.create.mockImplementationOnce(() => {
+        throw new BadRequestException('Invalid email format');
+      });
+
+      try {
+        await service.createUser({
+          username: 'testuser',
+          email: 'invalid-email',
+        });
+        fail('should have thrown BadRequestException');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect((error as BadRequestException).message).toContain('Invalid email format');
+      }
+    });
+
+    it('should throw BadRequestException for duplicate username', async () => {
+      userRepository.findByUsername.mockResolvedValueOnce({
+        id: 'existing-user',
+        username: 'testuser',
+        email: 'existing@example.com',
+        created_at: new Date(),
+        updated_at: new Date(),
+      } as any);
+      userRepository.create.mockImplementationOnce(() => {
+        throw new BadRequestException('Username testuser already exists');
+      });
+
+      try {
+        await service.createUser({
+          username: 'testuser',
+          email: 'test@example.com',
+        });
+        fail('should have thrown BadRequestException');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect((error as BadRequestException).message).toContain('already exists');
+      }
+    });
+
+    it('should throw BadRequestException for malicious email with SQL injection', async () => {
+      const maliciousEmail = "test+'; DROP TABLE--@example.com";
+      userRepository.findByUsername.mockResolvedValueOnce(null);
+      userRepository.create.mockImplementationOnce(() => {
+        throw new BadRequestException('Invalid email format');
+      });
+
+      try {
+        await service.createUser({
+          username: 'testuser',
+          email: maliciousEmail,
+        });
+        fail('should have thrown BadRequestException');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+      }
+    });
+
+    it('should throw BadRequestException for extremely long email exceeding max length', async () => {
+      const tooLongEmail = 'a'.repeat(300) + '@example.com';
+      userRepository.findByUsername.mockResolvedValueOnce(null);
+      userRepository.create.mockImplementationOnce(() => {
+        throw new BadRequestException('Email exceeds maximum length');
+      });
+
+      try {
+        await service.createUser({
+          username: 'testuser',
+          email: tooLongEmail,
+        });
+        fail('should have thrown BadRequestException');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+      }
+    });
+
+    it('should throw BadRequestException for post with missing required fields', async () => {
+      const dto: CreatePostDto = {
+        title: '',
+        content: 'Some content',
+        user_id: 'user-1',
+      };
+
+      userRepository.findById.mockResolvedValueOnce({
+        id: 'user-1',
+        username: 'testuser',
+        email: 'test@example.com',
+        created_at: new Date(),
+        updated_at: new Date(),
+      } as any);
+
+      postRepository.create.mockImplementationOnce(() => {
+        throw new BadRequestException('Title is required');
+      });
+
+      try {
+        await service.createPost(dto);
+        fail('should have thrown BadRequestException');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect((error as BadRequestException).message).toContain('Title is required');
+      }
+    });
+
+    it('should throw BadRequestException for post with XSS in title', async () => {
+      const xssTitle = '<script>alert("XSS")</script>';
+      const dto: CreatePostDto = {
+        title: xssTitle,
+        content: 'Content',
+        user_id: 'user-1',
+      };
+
+      userRepository.findById.mockResolvedValueOnce({
+        id: 'user-1',
+        username: 'testuser',
+        email: 'test@example.com',
+        created_at: new Date(),
+        updated_at: new Date(),
+      } as any);
+
+      postRepository.create.mockImplementationOnce(() => {
+        throw new BadRequestException('Title contains invalid HTML');
+      });
+
+      try {
+        await service.createPost(dto);
+        fail('should have thrown BadRequestException');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+      }
+    });
+  });
 });
