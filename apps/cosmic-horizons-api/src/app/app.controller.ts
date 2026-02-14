@@ -1,9 +1,46 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { AppService } from './app.service';
-import { CreateUserDto, UpdateUserDto, CreatePostDto, UpdatePostDto } from './dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  CreatePostDto,
+  UpdatePostDto,
+} from './dto';
 import { AuthenticatedGuard } from './auth/guards/authenticated.guard';
 import { RateLimitGuard } from './guards/rate-limit.guard';
 import type { AuthenticatedRequest } from './types/http.types';
+
+const DOC_CONTENT_MAP: Record<string, string> = {
+  architecture: 'documentation/architecture/ARCHITECTURE.md',
+  roadmap: 'documentation/planning/roadmap/ROADMAP.md',
+  'overview-v2': 'documentation/index/OVERVIEW-V2.md',
+  'overview-critique': 'documentation/index/OVERVIEW-V2-CRITIQUE.md',
+  'product-charter': 'documentation/product/PRODUCT-CHARTER.md',
+  'source-of-truth': 'documentation/governance/SOURCE-OF-TRUTH.md',
+  'quick-start': 'documentation/operations/QUICK-START.md',
+  'env-reference': 'documentation/reference/ENV-REFERENCE.md',
+  'coding-standards': 'documentation/quality/CODING-STANDARDS.md',
+  'testing-strategy': 'documentation/quality/TESTING-STRATEGY.md',
+  'audit-strategy': 'documentation/architecture/AUDIT-STRATEGY-SITEWIDE.md',
+  'cosmic-datasets': 'documentation/reference/COSMIC-DATASETS.md',
+  'messaging-architecture':
+    'documentation/backend/messaging/MESSAGING-ARCHITECTURE.md',
+};
 
 @Controller()
 export class AppController {
@@ -17,6 +54,43 @@ export class AppController {
   @Get('health')
   getHealth() {
     return this.appService.getHealthStatus();
+  }
+
+  @Get('internal-docs/content/:docId')
+  async getDocumentationContent(@Param('docId') docId: string) {
+    const relativePath = DOC_CONTENT_MAP[docId];
+    if (!relativePath) {
+      throw new BadRequestException(`Unsupported doc id: ${docId}`);
+    }
+
+    const workspaceRoot = this.findWorkspaceRoot();
+    const absolutePath = resolve(workspaceRoot, relativePath);
+    try {
+      const content = await readFile(absolutePath, 'utf8');
+      return {
+        docId,
+        sourcePath: relativePath,
+        content,
+      };
+    } catch {
+      throw new NotFoundException(
+        `Documentation file is unavailable: ${relativePath}`,
+      );
+    }
+  }
+
+  private findWorkspaceRoot(): string {
+    let current = process.cwd();
+    while (true) {
+      if (existsSync(resolve(current, 'nx.json'))) {
+        return current;
+      }
+      const parent = resolve(current, '..');
+      if (parent === current) {
+        return process.cwd();
+      }
+      current = parent;
+    }
   }
 
   // Users endpoints
@@ -61,7 +135,10 @@ export class AppController {
 
   @Post('posts')
   @UseGuards(AuthenticatedGuard, RateLimitGuard)
-  createPost(@Request() req: AuthenticatedRequest, @Body() createPostDto: CreatePostDto) {
+  createPost(
+    @Request() req: AuthenticatedRequest,
+    @Body() createPostDto: CreatePostDto,
+  ) {
     return this.appService.createPost({
       ...createPostDto,
       user_id: req.user.id,
@@ -75,7 +152,11 @@ export class AppController {
 
   @Put('posts/:id')
   @UseGuards(AuthenticatedGuard, RateLimitGuard)
-  updatePost(@Request() req: AuthenticatedRequest, @Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+  updatePost(
+    @Request() req: AuthenticatedRequest,
+    @Param('id') id: string,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
     return this.appService.updatePost(id, req.user.id, updatePostDto);
   }
 

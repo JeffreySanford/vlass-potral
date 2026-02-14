@@ -17,21 +17,32 @@
   @if (docId$ | async; as docId) {
     <div class="doc-viewer-container">
       <mat-card class="doc-viewer-card">
-        <mat-card-header>
-          <mat-icon mat-card-avatar>article</mat-icon>
-          <mat-card-title>{{ docId | titlecase }}</mat-card-title>
-          <span class="spacer"></span>
-          <button mat-icon-button routerLink="/docs">
-            <mat-icon>close</mat-icon>
-          </button>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="markdown-placeholder">
-            <mat-icon>hourglass_empty</mat-icon>
-            <p>Rendering <code>{{ docMap[docId] || docId }}</code>...</p>
-            <p class="hint">Markdown rendering (ngx-markdown) is currently being integrated in the v1.2 Documentation Spike.</p>
-          </div>
-        </mat-card-content>
+        @if (docViewModel$ | async; as model) {
+          <mat-card-header>
+            <mat-icon mat-card-avatar>article</mat-icon>
+            <mat-card-title>{{ model.title }}</mat-card-title>
+            <mat-card-subtitle>{{ model.sourcePath }}</mat-card-subtitle>
+            <span class="spacer"></span>
+            <button mat-icon-button routerLink="/docs" aria-label="Close document">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-card-header>
+          <mat-card-content>
+            @if (model.state === 'ready') {
+              <article class="markdown-content" [innerHTML]="model.html"></article>
+            } @else if (model.state === 'loading') {
+              <div class="markdown-placeholder">
+                <mat-icon>hourglass_empty</mat-icon>
+                <p>Loading markdown for <code>{{ docId }}</code>...</p>
+              </div>
+            } @else {
+              <div class="markdown-error" role="alert">
+                <mat-icon>error</mat-icon>
+                <p>{{ model.errorMessage }}</p>
+              </div>
+            }
+          </mat-card-content>
+        }
       </mat-card>
     </div>
   } @else {
@@ -60,11 +71,11 @@
 
   <div class="docs-footer">
     <mat-card class="disclaimer-card">
-      <mat-card-content>
-        <mat-icon>warning</mat-icon>
-        <p><strong>Independence:</strong> Cosmic Horizon is an independent project by Jeffrey Sanford using public astronomy data; it is not affiliated with VLA/NRAO.</p>
-        <p><strong>Heavier Lift:</strong> Full Markdown rendering and repository-linked guides are currently in development as part of the v1.2 Documentation Spike.</p>
-      </mat-card-content>
-    </mat-card>
+        <mat-card-content>
+          <mat-icon>warning</mat-icon>
+          <p><strong>Independence:</strong> Cosmic Horizon is an independent project by Jeffrey Sanford using public astronomy data; it is not affiliated with VLA/NRAO.</p>
+          <p><strong>Status:</strong> The internal docs hub now renders curated markdown from the repository and includes ADR-style architecture links.</p>
+        </mat-card-content>
+      </mat-card>
   </div>
 </div>

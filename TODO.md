@@ -5,35 +5,29 @@ Status date: 2026-02-14 (Updated)
 Canonical scope:
 `documentation/product/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
 
-## Current Execution Wave (2026-02-14 to 2026-02-28)
+## Current Execution Wave (2026-02-15 to 2026-02-28)
 
-Focus: reliability hardening for senior-reviewer local runs, contract clarity, and predictable CI signals.
+Focus: release readiness, CI signal quality, and post-MVP integration hardening.
 
-- [ ] **P0 Security/Boundary Hardening**
-  - [x] Add authenticated WebSocket connect guard for `/messaging` namespace
-  - [x] Replace `origin: '*'` with env-driven allowlist aligned to API CORS
-  - [x] Add gateway tests for cross-origin unauthenticated rejection
+- [ ] **P0 Release Readiness and CI Signal Quality**
+  - [ ] Calibrate Lighthouse mobile assertions and keep artifact baselines in CI
+  - [ ] Finalize public repo metadata checklist (description/topics/site/security toggles)
+  - [ ] Reduce noisy startup warnings in local run logs (deprecation + expected broker warmup noise)
 
-- [x] **P0 Environment Contract Unification**
-  - [x] Consolidate env loading to one path (remove manual duplication)
-  - [x] Standardize key names (`DB_USER/DB_NAME/API_PORT`) and remove compatibility aliases
-  - [x] Add config schema validation (fail-fast for wrong/missing keys)
-  - [x] Document `demo-local` vs `prod-like` run modes in setup docs
+- [ ] **P1 Remote Compute Gateway (Phase 4 Sprint 2)**
+  - [ ] Implement real TACC API orchestration path (replace simulation-only flow)
+  - [ ] Secure credential/header handling for remote compute calls
+  - [ ] Persist job audit trail records in PostgreSQL
 
-- [x] **P1 Messaging Reliability**
-  - [x] Remove fixed startup sleeps in messaging integration
-  - [x] Replace metadata-error suppression with retry/backoff + explicit error counters
-  - [x] Define RabbitMQ topology explicitly (exchange/queue/binding) with durability by env
-  - [x] Keep Kafka admin monitor connection persistent (connect-once, reconnect-on-failure)
+- [ ] **P1 Provenance + Explainable UX (Phase 4 Sprint 3)**
+  - [ ] Link AI job outputs to persistent Aladin viewer snapshots
+  - [ ] Add initial agent performance monitoring surfaces
+  - [ ] Finalize symposium packet updates for 2026 conference usage
 
-- [ ] **P1 Contract/Docs Consistency**
-  - [x] Review and intentionally accept OpenAPI delta (`/api/messaging/stats`)
-  - [x] Update `documentation/reference/api/openapi.json` to include accepted contract delta
-  - [x] Resolve stale links in `documentation/index/OVERVIEW-V2.md` (`ENV.md`, `DEMO.md`)
-
-- [x] **P2 CI Signal Stability**
-  - [x] Add changed-file Prettier gate (`format:check:changed`) in CI quality path
-  - [x] Investigate/track residual `mvp-gates:e2e` flaky-task signal in Nx
+- [ ] **P2 Documentation and External Claims Hygiene**
+  - [ ] Add source/date table for external trend figures used in presentations
+  - [ ] Keep roadmap links constrained to existing files only
+  - [ ] Keep canonical docs (`PRODUCT-CHARTER.md`, `SCOPE-LOCK.md`) synchronized with shipped post-MVP additions
 
 ## Type Safety Infrastructure (COMPLETED 2026-02-12)
 
@@ -98,7 +92,7 @@ Focus: reliability hardening for senior-reviewer local runs, contract clarity, a
 - [x] Complete Pillar 2 operational telemetry dashboarding for cutout provider reliability
 - [x] Complete post and revision workflows
 - [x] Complete post moderation path (hide/lock)
-- [ ] Complete Pillar 3 Documentation Hub (Markdown rendering + Repo guides integration)
+- [x] Complete Pillar 3 Documentation Hub (Markdown rendering + Repo guides integration)
 - [x] Align all documentation with source-of-truth models (SCOPE-LOCK/ROADMAP)
 
 ## Next Steps (Local Pre-Deploy)
@@ -153,7 +147,7 @@ Focus: reliability hardening for senior-reviewer local runs, contract clarity, a
   - [x] Build interactive comment component with recursive threading
   - [x] Integration with Auth context (user identities, roles)
   - [x] Optimistic UI updates (handled via full reload for state consistency)
-- [ ] Sprint 3: Moderation, Polish, and Documentation (Weeks 5-6)
+- [x] Sprint 3: Moderation, Polish, and Documentation (Weeks 5-6)
   - [x] Implement User Profile page (backend + frontend)
   - [x] Link to profiles from posts and comments
   - [x] Added comprehensive testing for Ephemeris and Profile modules
@@ -161,10 +155,10 @@ Focus: reliability hardening for senior-reviewer local runs, contract clarity, a
   - [x] Extend Post moderation (hide/lock) to comments
   - [x] Rate limiting and anti-spam measures
   - [x] Admin Moderation Dashboard (UI to view/resolve reports)
-  - [ ] **Technical Documentation Hub**:
+  - [x] **Technical Documentation Hub**:
     - [x] Scaffold `/docs` route and layout
-    - [ ] Integrate Markdown rendering for internal guides
-    - [ ] Link system-level architectural ADRs to frontend viewer
+    - [x] Integrate Markdown rendering for internal guides
+    - [x] Link system-level architectural ADRs to frontend viewer
 
 **Phase 4 (v1.2) - Remote Compute & TACC Integration**: IN-PROGRESS
 
@@ -184,8 +178,6 @@ Focus: reliability hardening for senior-reviewer local runs, contract clarity, a
   - [ ] Link AI job outputs to persistent Aladin viewer snapshots
   - [ ] Implement agent performance monitoring dashboards
   - [ ] Finalize Symposium packet for Charlottesville 2026
-
-**Phase 3 (v2.0) - NRAO Radar & Messaging Integration** (Scale Focus)
 
 **Phase 3 (v2.0) - NRAO Radar & Messaging Integration** (Scale Focus)
 
@@ -406,6 +398,12 @@ See `documentation/frontend/VIEWER-IMPROVEMENTS-ANALYSIS.md` for complete analys
 
 Completed on 2026-02-14:
 
+- [x] Complete reliability/contract hardening execution wave (2026-02-14 to 2026-02-28 initial scope)
+  - Security boundary hardening complete (WS auth + origin policy + tests)
+  - Environment contract unification complete (single loader + canonical keys + schema validation)
+  - Messaging reliability hardening complete (retry/backoff + explicit Rabbit topology + persistent Kafka monitor)
+  - Contract/docs consistency complete (OpenAPI delta accepted + overview links repaired)
+  - CI signal stability complete for changed-file formatting gate and e2e flake triage
 - [x] Harden WebSocket `/messaging` gateway:
   - Auth token required at handshake
   - JWT + user validation enforced
@@ -449,6 +447,13 @@ Completed on 2026-02-14:
       added API e2e health-check readiness gate (`/api/health`) after port-open,
       decomposed `mvp-gates:e2e` into ordered sub-targets to avoid port collisions,
       and disabled cache for web/api e2e targets to keep CI execution live/deterministic
+- [x] Complete internal Documentation Hub rendering:
+      added backend docs-content endpoint (`/api/internal-docs/content/:docId`)
+      with whitelist enforcement, and replaced `/docs/:docId` placeholder with live markdown rendering
+- [x] Link ADR-style architecture documentation in frontend docs hub:
+      exposed audit strategy and source-of-truth architecture entries in `/docs`
+- [x] Compact telemetry widget polish on landing/auth:
+      collapsed state is now a tiny top-left info icon; expanded state stays a small top-right gold-bordered panel
 
 Completed on 2026-02-11:
 

@@ -1,7 +1,8 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, PLATFORM_ID, REQUEST } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 
 export interface SkyPreview {
   geohash: string;
@@ -28,6 +29,7 @@ const PREVIEW_ASSET_VERSION = '20260207';
 export class SkyPreviewService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly request = inject(REQUEST, { optional: true });
+  private readonly http = inject(HttpClient);
 
   getInitialPreview(): SkyPreview {
     const geohashFromCookie = this.getRegionFromCookie();
@@ -50,6 +52,54 @@ export class SkyPreviewService {
         return this.buildPreview(geohash, 'browser', coordinates.latitude, coordinates.longitude);
       }),
     );
+  }
+
+  personalizeFromCoordinates(latitude: number, longitude: number): Observable<SkyPreview> {
+    // First attempt to get SSR-generated preview from backend for faster rendering
+    if (isPlatformBrowser(this.platformId)) {
+      return this.generateSsrPreviewFromBackend(latitude, longitude).pipe(
+        catchError(() => {
+          // Fall back to client-side geohashing if backend fails
+          return this.generateClientPreview(latitude, longitude);
+        }),
+      );
+    }
+    // Server-side: use client preview directly
+    return this.generateClientPreview(latitude, longitude);
+  }
+
+  private generateSsrPreviewFromBackend(
+    latitude: number,
+    longitude: number,
+  ): Observable<SkyPreview> {
+    return this.http
+      .post<{ imageUrl: string }> ('/api/preview/generate', {
+        latitude,
+        longitude,
+      })
+      .pipe(
+        map((response) => {
+          const geohash = this.toGeohash(latitude, longitude);
+          this.setRegionCookie(geohash);
+          return {
+            geohash,
+            imageUrl: response.imageUrl,
+            personalized: true,
+            source: 'browser',
+            latitude,
+            longitude,
+          };
+        }),
+      );
+  }
+
+  private generateClientPreview(
+    latitude: number,
+    longitude: number,
+  ): Observable<SkyPreview> {
+    const geohash = this.toGeohash(latitude, longitude);
+    this.setRegionCookie(geohash);
+    return of(this.buildPreview(geohash, 'browser', latitude, longitude));
   }
 
   toGeohash(latitude: number, longitude: number, precision = GEOHASH_PRECISION): string {

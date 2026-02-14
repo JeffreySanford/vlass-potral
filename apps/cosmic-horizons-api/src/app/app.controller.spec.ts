@@ -48,12 +48,18 @@ describe('AppController', () => {
       createPost: jest.fn().mockResolvedValue(mockPost),
       getPostById: jest.fn().mockResolvedValue(mockPost),
       updatePost: jest.fn().mockResolvedValue(mockPost),
-      publishPost: jest.fn().mockResolvedValue({ ...mockPost, status: 'PUBLISHED' }),
+      publishPost: jest
+        .fn()
+        .mockResolvedValue({ ...mockPost, status: 'PUBLISHED' }),
       unpublishPost: jest.fn().mockResolvedValue(mockPost),
       deletePost: jest.fn().mockResolvedValue(true),
-      hidePost: jest.fn().mockResolvedValue({ ...mockPost, hidden_at: new Date() }),
+      hidePost: jest
+        .fn()
+        .mockResolvedValue({ ...mockPost, hidden_at: new Date() }),
       unhidePost: jest.fn().mockResolvedValue({ ...mockPost, hidden_at: null }),
-      lockPost: jest.fn().mockResolvedValue({ ...mockPost, locked_at: new Date() }),
+      lockPost: jest
+        .fn()
+        .mockResolvedValue({ ...mockPost, locked_at: new Date() }),
       unlockPost: jest.fn().mockResolvedValue({ ...mockPost, locked_at: null }),
       getPostsByUser: jest.fn().mockResolvedValue([mockPost]),
     };
@@ -103,11 +109,28 @@ describe('AppController', () => {
     });
   });
 
+  describe('Documentation Endpoints', () => {
+    it('should load whitelisted markdown content', async () => {
+      const result = await controller.getDocumentationContent('roadmap');
+
+      expect(result.docId).toBe('roadmap');
+      expect(result.sourcePath).toContain('documentation/planning/roadmap');
+      expect(result.content.length).toBeGreaterThan(100);
+      expect(result.content).toContain('#');
+    });
+
+    it('should reject unknown documentation ids', async () => {
+      await expect(
+        controller.getDocumentationContent('unknown-doc'),
+      ).rejects.toThrow('Unsupported doc id');
+    });
+  });
+
   describe('Users Endpoints', () => {
     describe('getAllUsers', () => {
       it('should return all users', async () => {
         const result = await controller.getAllUsers();
-        
+
         expect(result).toEqual([mockUser]);
         expect(mockAppService.getAllUsers).toHaveBeenCalled();
       });
@@ -117,7 +140,7 @@ describe('AppController', () => {
       it('should create a new user', async () => {
         const createUserDto = { username: 'newuser', email: 'new@example.com' };
         const result = await controller.createUser(createUserDto);
-        
+
         expect(result).toEqual(mockUser);
         expect(mockAppService.createUser).toHaveBeenCalledWith(createUserDto);
       });
@@ -126,7 +149,7 @@ describe('AppController', () => {
     describe('getUserById', () => {
       it('should return a user by id', async () => {
         const result = await controller.getUserById('1');
-        
+
         expect(result).toEqual(mockUser);
         expect(mockAppService.getUserById).toHaveBeenCalledWith('1');
       });
@@ -136,16 +159,19 @@ describe('AppController', () => {
       it('should update a user', async () => {
         const updateUserDto = { full_name: 'Updated User' };
         const result = await controller.updateUser('1', updateUserDto);
-        
+
         expect(result).toEqual(mockUser);
-        expect(mockAppService.updateUser).toHaveBeenCalledWith('1', updateUserDto);
+        expect(mockAppService.updateUser).toHaveBeenCalledWith(
+          '1',
+          updateUserDto,
+        );
       });
     });
 
     describe('deleteUser', () => {
       it('should delete a user', async () => {
         const result = await controller.deleteUser('1');
-        
+
         expect(result).toBe(true);
         expect(mockAppService.deleteUser).toHaveBeenCalledWith('1');
       });
@@ -154,7 +180,7 @@ describe('AppController', () => {
     describe('getPostsByUser', () => {
       it('should return posts by user', async () => {
         const result = await controller.getPostsByUser('1');
-        
+
         expect(result).toEqual([mockPost]);
         expect(mockAppService.getPostsByUser).toHaveBeenCalledWith('1');
       });
@@ -165,7 +191,7 @@ describe('AppController', () => {
     describe('getAllPosts', () => {
       it('should return all posts', async () => {
         const result = await controller.getAllPosts();
-        
+
         expect(result).toEqual([mockPost]);
         expect(mockAppService.getAllPosts).toHaveBeenCalled();
       });
@@ -174,7 +200,7 @@ describe('AppController', () => {
     describe('getPublishedPosts', () => {
       it('should return published posts', async () => {
         const result = await controller.getPublishedPosts();
-        
+
         expect(result).toEqual([]);
         expect(mockAppService.getPublishedPosts).toHaveBeenCalled();
       });
@@ -182,10 +208,17 @@ describe('AppController', () => {
 
     describe('createPost', () => {
       it('should create a new post and enforce authenticated user id', async () => {
-        const createPostDto = { title: 'New Post', content: 'Content', user_id: 'malicious-user' };
+        const createPostDto = {
+          title: 'New Post',
+          content: 'Content',
+          user_id: 'malicious-user',
+        };
         const mockRequest = { user: { id: '1' } };
-        const result = await controller.createPost(mockRequest as never, createPostDto);
-        
+        const result = await controller.createPost(
+          mockRequest as never,
+          createPostDto,
+        );
+
         expect(result).toEqual(mockPost);
         expect(mockAppService.createPost).toHaveBeenCalledWith({
           ...createPostDto,
@@ -197,7 +230,7 @@ describe('AppController', () => {
     describe('getPostById', () => {
       it('should return a post by id', async () => {
         const result = await controller.getPostById('1');
-        
+
         expect(result).toEqual(mockPost);
         expect(mockAppService.getPostById).toHaveBeenCalledWith('1');
       });
@@ -207,10 +240,18 @@ describe('AppController', () => {
       it('should update a post', async () => {
         const updatePostDto = { title: 'Updated Title' };
         const mockRequest = { user: { id: '1' } };
-        const result = await controller.updatePost(mockRequest as never, '1', updatePostDto);
-        
+        const result = await controller.updatePost(
+          mockRequest as never,
+          '1',
+          updatePostDto,
+        );
+
         expect(result).toEqual(mockPost);
-        expect(mockAppService.updatePost).toHaveBeenCalledWith('1', '1', updatePostDto);
+        expect(mockAppService.updatePost).toHaveBeenCalledWith(
+          '1',
+          '1',
+          updatePostDto,
+        );
       });
     });
 
@@ -218,7 +259,7 @@ describe('AppController', () => {
       it('should publish a post', async () => {
         const mockRequest = { user: { id: '1' } };
         const result = await controller.publishPost(mockRequest as never, '1');
-        
+
         expect(result.status).toBe('PUBLISHED');
         expect(mockAppService.publishPost).toHaveBeenCalledWith('1', '1');
       });
@@ -227,8 +268,11 @@ describe('AppController', () => {
     describe('unpublishPost', () => {
       it('should unpublish a post', async () => {
         const mockRequest = { user: { id: '1' } };
-        const result = await controller.unpublishPost(mockRequest as never, '1');
-        
+        const result = await controller.unpublishPost(
+          mockRequest as never,
+          '1',
+        );
+
         expect(result).toEqual(mockPost);
         expect(mockAppService.unpublishPost).toHaveBeenCalledWith('1', '1');
       });
@@ -238,7 +282,7 @@ describe('AppController', () => {
       it('should delete a post', async () => {
         const mockRequest = { user: { id: '1' } };
         const result = await controller.deletePost(mockRequest as never, '1');
-        
+
         expect(result).toBe(true);
         expect(mockAppService.deletePost).toHaveBeenCalledWith('1', '1');
       });

@@ -21,6 +21,8 @@ External ecosystem alignment (planning context): The portal is designed to be in
 
 ## Three Pillars (MVP Only)
 
+Historical note (alignment): this charter locks MVP scope decisions as of 2026-02-07. Several post-MVP additions (for example comments, user profiles, and internal docs hub UX) have since been implemented and are tracked in `TODO.md` and `documentation/planning/roadmap/ROADMAP.md`.
+
 ### Pillar 1: Instant SSR First Paint (Wow Factor)
 
 **Goal:** Users land on site and see a beautiful, personalized VLASS preview in under 1 second.
@@ -37,7 +39,7 @@ External ecosystem alignment (planning context): The portal is designed to be in
 
 **Success Metric:** FCP <1s on 4G, LCP <2s
 
-**What's NOT Included:**
+**What's NOT Included (MVP lock, historical):**
 
 - Mode B (Canvas viewer) — deferred; Aladin only for MVP
 
@@ -129,7 +131,7 @@ Compute-heavy; clients can download + reproject locally
 
 (same as proxy; out of scope)
 
-**Comment System** (v1.1)
+**Comment System** (v1.1, historical lock; implemented post-MVP)
 
 Good first v1.1 feature, but not MVP
 
@@ -141,7 +143,7 @@ Collaborative viewing can wait
 
 Web-only for MVP
 
-**User Profiles** (v2+)
+**User Profiles** (v2+, historical lock; initial profile feature implemented post-MVP)
 
 Focus on posts, not bios
 
@@ -295,7 +297,7 @@ Pillar 1 + 2 + 3 as defined above. ~4–6 weeks.
 
 ---
 
-**Last Updated:** 2026-02-07
+**Last Updated:** 2026-02-14
 
 ## **Next Review:** After MVP launch (go/no-go for v1.1)
 

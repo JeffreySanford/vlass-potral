@@ -22,13 +22,13 @@
       >
         @if (locating) {
           <mat-icon class="locating-icon">my_location</mat-icon>
-        } @else if (!preview.personalized) {
+        } @else if (telemetryCompact || !preview.personalized) {
           <mat-icon>info</mat-icon>
         } @else {
-          {{ telemetryCompact ? 'Expand' : 'Collapse' }}
+          <mat-icon>close_fullscreen</mat-icon>
         }
       </button>
-      <p>{{ clockLine }}</p>
+      <p class="telemetry-detail">{{ clockLine }}</p>
       <p class="telemetry-detail">{{ locationLabel }}</p>
       <p class="telemetry-detail">{{ latLonLabel }}</p>
     </aside>

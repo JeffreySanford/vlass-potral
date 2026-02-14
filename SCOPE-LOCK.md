@@ -3,11 +3,14 @@
 > Affiliation note: this is an independent portfolio/community project using public VLASS data and is not an official VLA/NRAO deliverable.
 
 **Date:** 2026-02-07  
-**Status:** LOCKED (No re-litigating)
+**Status:** LOCKED (No re-litigating)  
+**Last Updated:** 2026-02-14
 
 ---
 
 ## What Changed Today
+
+Historical alignment note: this file captures the MVP scope lock event on 2026-02-07. Post-MVP additions now shipped (comments, profiles, docs hub improvements) do not invalidate this lock and are tracked as later execution waves in `TODO.md` and `documentation/planning/roadmap/ROADMAP.md`.
 
 ### ✅ Removed
 
@@ -39,8 +42,8 @@
 
 - Full FITS proxy / caching
 - Mode B (Canvas) viewer
-- Comments / replies (originally deferred in MVP lock; later added as post-MVP extension)
-- User profiles (originally deferred in MVP lock; later added as post-MVP extension)
+- Comments / replies (originally deferred in MVP lock; later implemented post-MVP)
+- User profiles (originally deferred in MVP lock; later implemented post-MVP)
 - Any Rust code (deferred)
 
 ---

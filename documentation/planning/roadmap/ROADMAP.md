@@ -3,10 +3,9 @@
 Status date: 2026-02-14
 
 Canonical scope: `documentation/product/PRODUCT-CHARTER.md` and `SCOPE-LOCK.md`.
-Industry context note: `documentation/planning/INDUSTRY-CONTEXT-AND-FEASIBILITY-2026-02-11.md`.
-External-claims workflow: `documentation/governance/EXTERNAL-RESEARCH-WORKFLOW.md`.
+Industry/external references: `documentation/overview/EXTERNAL-CLAIMS-REFERENCES-APPENDIX-2026-02-11.md` and `documentation/overview/EXTERNAL-ASSET-METADATA-2026-02-11.md`.
 
-**Technical reference:** See [../../architecture/TECHNICAL-ARCHITECTURE.md](../../architecture/TECHNICAL-ARCHITECTURE.md) for detailed MVP stack, development operations, and v1.1/2.0 planning.
+**Technical reference:** See [../../architecture/ARCHITECTURE.md](../../architecture/ARCHITECTURE.md) for detailed MVP stack and systems integration notes.
 
 Tracking rule:
 
@@ -14,39 +13,37 @@ Tracking rule:
 
 - Completed implementation history is journaled in `TODO.md` ("Archived Completed Items") and release notes.
 
-## Near-Term Sprint (2026-02-14 to 2026-02-28): Reliability and Contract Hardening
+## Near-Term Sprint (2026-02-15 to 2026-02-28): Release Readiness and Integration Hardening
 
-Objective: make local/demo execution predictable for senior reviewers while tightening security and configuration boundaries.
-Progress: security boundary hardening, env-loader unification, schema validation, and initial messaging retry hardening are now in place; Rabbit topology policy and monitor connection strategy remain open.
+Objective: preserve deterministic local execution while finishing release-facing quality and integration tasks.
 
-1. Security boundary hardening
+1. Release readiness
 
-- Add auth enforcement for WebSocket `/messaging` namespace.
-- Replace wildcard WS CORS with env-driven allowlist aligned to API CORS.
-- Add automated checks for unauthenticated/cross-origin connection rejection.
+- Calibrate Lighthouse mobile assertions and artifact baselines in CI.
+- Finalize public repository metadata and release checklist.
+- Reduce expected startup warning noise in local run output.
 
-1. Environment contract hardening
+1. Remote compute gateway (next execution step)
 
-- Unify env loading path and remove duplicate parsing paths.
-- Standardize env key names across app/runtime/docs.
-- Add schema validation for startup-time fail-fast behavior.
-- Keep `demo-local` and `prod-like` modes explicitly documented and separated.
+- Transition simulated TACC orchestration flow to real API integration path.
+- Add secure credential/header handling for remote compute requests.
+- Persist job audit trail records in PostgreSQL.
 
-1. Messaging reliability hardening
+1. Provenance and explainable UX
 
-- Remove fixed sleeps and metadata-error suppression in integration path.
-- Add retry/backoff and explicit error metrics for broker publish failures.
-- Make RabbitMQ topology/durability policy explicit by environment.
-- Refactor monitor polling to persistent Kafka admin connectivity.
+- Link job outputs to persistent Aladin snapshots.
+- Add initial agent performance monitoring surfaces.
+- Update symposium packet artifacts for 2026 conference use.
 
-1. Contract and docs consistency
+1. Documentation and governance hygiene
 
-- Resolve OpenAPI contract delta review and commit intentional changes.
-- Fix stale links and path references in `documentation/index/OVERVIEW-V2.md`.
-- Add formatting gate into CI quality path (`format:check:changed` for changed files).
+- Add source/date attribution table for external trend claims.
+- Keep roadmap references constrained to existing docs paths.
+- Keep canonical scope docs synchronized with delivered post-MVP features.
 
 ## Recently Completed (2026-02-14)
 
+- Completed reliability and contract hardening sprint goals (security boundary, env unification, messaging reliability, docs consistency, CI formatting gate).
 - Hardened WebSocket `/messaging` gateway (JWT handshake auth + origin allowlist + gateway tests).
 - Unified API env loading with shared loader and removed duplicated parsing paths.
 - Standardized canonical backend env keys in `.env.example` (`DB_USER`, `DB_NAME`, `API_PORT`) with transitional aliases.
@@ -61,6 +58,9 @@ Progress: security boundary hardening, env-loader unification, schema validation
 - Hardened duplicate-registration e2e test path to reduce flake.
 - Added local reviewer security boundaries to `documentation/setup/ENVIRONMENT-CONFIG.md`.
 - Verified `pnpm e2e:mvp` passing after e2e hardening.
+- Completed internal docs hub vertical slice (`/docs` route + markdown rendering + backend docs content endpoint).
+- Linked architecture and audit strategy references inside frontend docs hub.
+- Completed compact telemetry widget UX polish on landing/auth routes.
 
 ## MVP (v1.0)
 
@@ -98,7 +98,7 @@ Progress: security boundary hardening, env-loader unification, schema validation
 
 - **Internal Documentation Hub**: Centralized technical and scientific guides within the portal UI.
 
-- Status: In-Progress (Posts and moderation complete; Documentation hub scaffolded)
+- Status: complete (posts, moderation, and internal documentation hub complete)
 
 1. Foundations
 
@@ -124,8 +124,6 @@ Progress: security boundary hardening, env-loader unification, schema validation
 
 ### Interim: Scientific Ephemeris Backend (COMPLETED)
 
-See [../phases/PHASE-2-EPHEMERIS-BACKEND.md](../phases/PHASE-2-EPHEMERIS-BACKEND.md) for detailed implementation.
-
 - High-precision coordinate resolution using `astronomy-engine` (TS) and JPL fallback (v1.1 feature).
 
 - Real-time planet/asteroid positions (±0.1 arcsecond accuracy).
@@ -149,7 +147,7 @@ See [../phases/PHASE-2-EPHEMERIS-BACKEND.md](../phases/PHASE-2-EPHEMERIS-BACKEND
 
 ## v1.2 (Scale and AI Gateway) — In-Progress
 
-See [../../architecture/TACC-JOB-ORCHESTRATION-SPIKE.md](../../architecture/TACC-JOB-ORCHESTRATION-SPIKE.md) for detailed implementation.
+Implementation details are tracked in active execution notes in `TODO.md` until dedicated phase docs are restored.
 
 - **Remote Job Orchestration Spike**: Implement backend simulations and frontend console for TACC-scale AI agent steering (AlphaCal, CosmicAI).
 - **Symposium Narrative**: Draft strategic artifacts for the "Explainable Universe" theme and Charlottesville 2026.
@@ -159,8 +157,6 @@ See [../../architecture/TACC-JOB-ORCHESTRATION-SPIKE.md](../../architecture/TACC
 - Target resolution enhancements for minor planets and comets
 
 ## Phase 2: AI Integration Foundation
-
-See [../phases/PHASE-2-README.md](../phases/PHASE-2-README.md) for overview and [../phases/PHASE-2-AI-INTEGRATION.md](../phases/PHASE-2-AI-INTEGRATION.md) for detailed planning.
 
 - Pillar 1: Inference service layer (calibration anomaly detection, AlphaCal, event detection)
 
@@ -177,8 +173,6 @@ See [../phases/PHASE-2-README.md](../phases/PHASE-2-README.md) for overview and 
 
 ## Phase 3: CosmicAI Federation & ngVLA Preparation
 
-See [../phases/PHASE-3-README.md](../phases/PHASE-3-README.md) for overview and [../phases/PHASE-3-COSMICAI-FEDERATION.md](../phases/PHASE-3-COSMICAI-FEDERATION.md) for detailed planning.
-
 - Pillar 1: Dataset federation (NRAO + CosmicAI curations + TACC)
 
 - Pillar 2: TACC compute integration (Slurm + remote job orchestration)
@@ -187,7 +181,7 @@ See [../phases/PHASE-3-README.md](../phases/PHASE-3-README.md) for overview and 
   - **NRAO Radar Integration**: Messaging frameworks (Kafka/RabbitMQ) for inter-site job notification.
   - **Site-to-Site Benchmarking**: Latency profiling and data-bus throughput metrics for ngVLA scale.
   - **Common System Software**: Integrated Radar visualization (Range-Doppler) in the AI Control Plane.
-  - See: [NRAO-RADAR-INTEGRATION.md](../NRAO-RADAR-INTEGRATION.md)
+  - See active planning notes in `TODO.md` and `SCOPE-LOCK.md` until dedicated phase docs are restored.
 
 - Pillar 4: Explainability aggregation (multi-model consensus, uncertainty quantification)
 
@@ -204,7 +198,7 @@ To keep external positioning grounded in executable work:
 2. [ ] Add run-audit trail and lineage metadata model extension in shared models.
 3. [ ] Add "independent/non-affiliated" presentation checklist to demo/release workflow.
 4. [ ] Keep external ecosystem claims source-dated and marked as planning hypotheses until verified.
-5. [x] Publish a symposium packet (architecture, gates, scope boundaries, integration-ready APIs). (`SYMPOSIUM-2026-NARRATIVE-DRAFT.md`)
+5. [x] Publish a symposium packet (architecture, gates, scope boundaries, integration-ready APIs).
 
 ## Phase 4: Remote Compute & TACC Orchestration (ACTIVE)
 
@@ -213,8 +207,7 @@ To keep external positioning grounded in executable work:
 - **Next High-Priority**: Transition from simulation to live TACC API headers; Job-to-Snapshot provenance linkage.
 
 ## Funding & Cost Strategy
-
-See [FUNDING-AND-COSTS.md](../funding/FUNDING-AND-COSTS.md) for comprehensive cost breakdown, grant strategy, and timeline to funding (NSF SI², DOE ASCR, NVIDIA GPU Research, NSF CIS).
+Funding-specific artifacts are tracked separately and should be re-linked here only when their canonical file paths are restored.
 
 ## v2 (Deferred to Post-Phase 3)
 

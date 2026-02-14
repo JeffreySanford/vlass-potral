@@ -13,6 +13,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   imports: [
@@ -30,6 +32,8 @@ import { MatSortModule } from '@angular/material/sort';
     MatSlideToggleModule,
     MatTableModule,
     MatSortModule,
+    MatDialogModule,
+    MatCheckboxModule,
   ],
   exports: [
     MatToolbarModule,
@@ -46,6 +50,8 @@ import { MatSortModule } from '@angular/material/sort';
     MatSlideToggleModule,
     MatTableModule,
     MatSortModule,
+    MatDialogModule,
+    MatCheckboxModule,
   ],
 })
 export class MaterialModule {}

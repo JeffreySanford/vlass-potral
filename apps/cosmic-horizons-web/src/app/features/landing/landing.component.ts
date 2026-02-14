@@ -11,6 +11,8 @@ import {
 import { Router } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
 import { finalize, startWith } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthSessionService } from '../../services/auth-session.service';
 import {
   SkyPreview,
@@ -19,6 +21,7 @@ import {
 import { UserRole } from '../../services/auth-session.service';
 import { AuthApiService } from '../auth/auth-api.service';
 import { AppLoggerService } from '../../services/app-logger.service';
+import { GdprLocationDialogComponent } from './gdpr-location-dialog/gdpr-location-dialog.component';
 
 interface LandingPillar {
   icon: string;
@@ -105,6 +108,7 @@ export class LandingComponent implements OnInit, OnDestroy {
   showTelemetryOverlay = false;
   telemetryCompact = true;
   clockLine = '';
+  private locationPromptHandled = false;
 
   private clockSubscription?: Subscription;
 
@@ -116,6 +120,8 @@ export class LandingComponent implements OnInit, OnDestroy {
   private readonly logger = inject(AppLoggerService);
   private readonly ngZone = inject(NgZone);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
 
   constructor() {
     this.showTelemetryOverlay = isPlatformBrowser(this.platformId);
@@ -204,39 +210,74 @@ export class LandingComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.preview.personalized) {
-      this.personalizePreview();
+    if (this.shouldPromptForLocation) {
+      this.showGdprDialog();
       return;
     }
 
     this.toggleTelemetryCompact();
   }
 
-  private personalizePreview(): void {
+  private showGdprDialog(): void {
+    this.dialog.open(GdprLocationDialogComponent, {
+      width: '480px',
+      maxWidth: '90vw',
+      disableClose: true,
+      panelClass: 'gdpr-location-dialog-panel',
+    }).afterClosed().subscribe((result) => {
+      this.locationPromptHandled = true;
+      this.telemetryCompact = false;
+      if (result) {
+        this.personalizePreviewWithLocation(result.latitude, result.longitude);
+      }
+    });
+  }
+
+  get shouldPromptForLocation(): boolean {
+    return !this.preview.personalized && !this.locationPromptHandled;
+  }
+
+  private personalizePreviewWithLocation(latitude: number, longitude: number): void {
     this.locating = true;
     this.locationMessage = '';
 
-    this.skyPreviewService.personalizeFromBrowserLocation().subscribe({
+    this.skyPreviewService.personalizeFromCoordinates(latitude, longitude).subscribe({
       next: (preview) => {
         if (preview) {
           this.preview = preview;
           this.syncTelemetryFromPreview();
-          this.locationMessage = `Sky preview personalized for region ${preview.geohash.toUpperCase()}.`;
+          this.locationMessage = `Sky preview personalized for coordinates LAT ${latitude.toFixed(4)} LON ${longitude.toFixed(4)}.`;
           this.telemetryCompact = false;
+          this.updateBackgroundImage();
+          this.snackBar.open('Sky map personalized to your overhead location.', 'Dismiss', {
+            duration: 3200,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         } else {
-          this.locationMessage =
-            'Location services are unavailable in this environment.';
+          this.locationMessage = 'Failed to personalize preview. Using default.';
         }
       },
       error: () => {
         this.locating = false;
-        this.locationMessage =
-          'Location permission was denied. Using default preview.';
+        this.locationMessage = 'Error personalizing preview. Using default.';
       },
       complete: () => {
         this.locating = false;
       },
     });
+  }
+
+  private updateBackgroundImage(): void {
+    const element = document.querySelector('.landing-container') as HTMLElement;
+    if (element) {
+      element.style.backgroundImage = `linear-gradient(145deg, rgba(16, 23, 38, 0.54) 0%, rgba(11, 18, 33, 0.62) 45%, rgba(17, 24, 39, 0.68) 100%), 
+        radial-gradient(circle at 10% 15%, rgba(255, 166, 77, 0.12) 0%, transparent 42%), 
+        radial-gradient(circle at 85% 20%, rgba(0, 169, 255, 0.1) 0%, transparent 42%), 
+        url('${this.preview.imageUrl}')`;
+      element.style.backgroundSize = '200%, 200%, 200%, cover';
+      element.style.backgroundPosition = 'center, center, center, center 38%';
+    }
   }
 
   private syncTelemetryFromPreview(): void {

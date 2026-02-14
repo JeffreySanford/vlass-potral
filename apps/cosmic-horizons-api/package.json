@@ -101,7 +101,8 @@
       },
       "test": {
         "options": {
-          "passWithNoTests": true
+          "passWithNoTests": true,
+          "runInBand": true
         }
       }
     }

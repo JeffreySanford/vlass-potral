@@ -25,6 +25,27 @@
         "tags": ["App"]
       }
     },
+    "/api/internal-docs/content/{docId}": {
+      "get": {
+        "operationId": "AppController_getDocumentationContent",
+        "parameters": [
+          {
+            "name": "docId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["App"]
+      }
+    },
     "/api/users": {
       "get": {
         "operationId": "AppController_getAllUsers",
