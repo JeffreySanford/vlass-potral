@@ -1,8 +1,32 @@
-<div class="login-container" [style.--sky-preview-url]="'url(' + preview.imageUrl + ')'">
+<div
+  class="login-container"
+  [style.--sky-preview-url]="'url(' + preview.imageUrl + ')'"
+>
   @if (showTelemetryOverlay) {
-    <aside class="sky-meta-panel" [class.compact]="telemetryCompact" aria-label="Sky background telemetry">
-      <button type="button" class="telemetry-toggle" (click)="toggleTelemetryCompact()">
-        {{ telemetryCompact ? 'Expand' : 'Compact' }}
+    <aside
+      class="sky-meta-panel"
+      [class.compact]="telemetryCompact"
+      aria-label="Sky background telemetry"
+    >
+      <button
+        type="button"
+        class="telemetry-toggle"
+        (click)="onTelemetryControl()"
+        [attr.aria-label]="
+          preview.personalized
+            ? telemetryCompact
+              ? 'Expand telemetry details'
+              : 'Collapse telemetry details'
+            : 'Detect location and personalize background'
+        "
+      >
+        @if (locating) {
+          <mat-icon class="locating-icon">my_location</mat-icon>
+        } @else if (!preview.personalized) {
+          <mat-icon>info</mat-icon>
+        } @else {
+          {{ telemetryCompact ? 'Expand' : 'Collapse' }}
+        }
       </button>
       <p>{{ clockLine }}</p>
       <p class="telemetry-detail">{{ locationLabel }}</p>
@@ -15,19 +39,10 @@
     </mat-card-header>
     <mat-card-content>
       <p class="subtitle">Continue to your Cosmic Horizon workspace.</p>
-      <p class="affiliation-note">Independent project by Jeffrey Sanford using public astronomy data; not affiliated with VLA/NRAO.</p>
-      <div class="preview-controls">
-        <button mat-stroked-button type="button" (click)="personalizePreview()" [disabled]="locating">
-          @if (locating) {
-            Detecting location...
-          } @else {
-            Personalize background
-          }
-        </button>
-        @if (locationMessage) {
-          <p class="preview-note">{{ locationMessage }}</p>
-        }
-      </div>
+      <p class="affiliation-note">
+        Independent project by Jeffrey Sanford using public astronomy data; not
+        affiliated with VLA/NRAO.
+      </p>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="on">
         @if (error) {
           <div class="error-alert" role="alert" aria-live="polite">
@@ -81,7 +96,10 @@
             <span>Login</span>
           }
           @if (loading) {
-            <mat-spinner diameter="20" [attr.aria-label]="'Logging in...'"></mat-spinner>
+            <mat-spinner
+              diameter="20"
+              [attr.aria-label]="'Logging in...'"
+            ></mat-spinner>
             <span>Logging in...</span>
           }
         </button>

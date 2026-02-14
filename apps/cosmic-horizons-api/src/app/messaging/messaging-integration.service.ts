@@ -1,18 +1,39 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy, Optional } from '@nestjs/common';
-import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+  OnModuleDestroy,
+  Optional,
+} from '@nestjs/common';
+import {
+  ClientProxy,
+  ClientProxyFactory,
+  Transport,
+} from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { MessagingService } from './messaging.service';
 import { LoggingService } from '../logging/logging.service';
 import { MessagingStatsService } from './messaging-stats.service';
-import { Subscription, delay } from 'rxjs';
+import { firstValueFrom, Subscription, timeout } from 'rxjs';
 import { Kafka, Partitioners } from 'kafkajs';
+import { Channel, Connection, connect } from 'amqplib';
 
 @Injectable()
-export class MessagingIntegrationService implements OnModuleInit, OnModuleDestroy {
+export class MessagingIntegrationService
+  implements OnModuleInit, OnModuleDestroy
+{
   private readonly logger = new Logger(MessagingIntegrationService.name);
   private rabbitClient?: ClientProxy;
   private kafkaClient?: ClientProxy;
   private subscription?: Subscription;
+  private rabbitConnected = false;
+  private kafkaConnected = false;
+  private shuttingDown = false;
+  private rabbitUrl = '';
+  private rabbitQueue = 'element_telemetry_queue';
+  private rabbitExchange = 'element.telemetry.exchange';
+  private rabbitRoutingKey = 'element.telemetry';
+  private rabbitQueueDurable = false;
 
   constructor(
     private readonly configService: ConfigService,
@@ -24,15 +45,31 @@ export class MessagingIntegrationService implements OnModuleInit, OnModuleDestro
   }
 
   private initializeClients() {
-    const kafkaBrokers = [`${this.configService.get('KAFKA_HOST') || 'localhost'}:${this.configService.get('KAFKA_PORT') || '9092'}`];
+    const kafkaBrokers = [
+      `${this.configService.get('KAFKA_HOST') || 'localhost'}:${this.configService.get('KAFKA_PORT') || '9092'}`,
+    ];
+    this.rabbitUrl = `amqp://${this.configService.get('RABBITMQ_USER')}:${this.configService.get('RABBITMQ_PASS')}@${this.configService.get('RABBITMQ_HOST')}:${this.configService.get('RABBITMQ_PORT')}`;
+    this.rabbitQueue =
+      this.configService.get<string>('RABBITMQ_QUEUE_NAME') ??
+      'element_telemetry_queue';
+    this.rabbitExchange =
+      this.configService.get<string>('RABBITMQ_EXCHANGE_NAME') ??
+      'element.telemetry.exchange';
+    this.rabbitRoutingKey =
+      this.configService.get<string>('RABBITMQ_ROUTING_KEY') ??
+      'element.telemetry';
+    this.rabbitQueueDurable = this.getBooleanConfig(
+      'RABBITMQ_QUEUE_DURABLE',
+      false,
+    );
 
     this.rabbitClient = ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: {
-        urls: [`amqp://${this.configService.get('RABBITMQ_USER')}:${this.configService.get('RABBITMQ_PASS')}@${this.configService.get('RABBITMQ_HOST')}:${this.configService.get('RABBITMQ_PORT')}`],
-        queue: 'element_telemetry_queue',
+        urls: [this.rabbitUrl],
+        queue: this.rabbitQueue,
         queueOptions: {
-          durable: false,
+          durable: this.rabbitQueueDurable,
         },
       },
     });
@@ -40,6 +77,7 @@ export class MessagingIntegrationService implements OnModuleInit, OnModuleDestro
     this.kafkaClient = ClientProxyFactory.create({
       transport: Transport.KAFKA,
       options: {
+        producerOnlyMode: true,
         client: {
           clientId: 'cosmic-horizons-array-element',
           brokers: kafkaBrokers,
@@ -59,7 +97,7 @@ export class MessagingIntegrationService implements OnModuleInit, OnModuleDestro
   onModuleInit() {
     // Initialize clients (deferred from constructor)
     this.initializeClients();
-    
+
     // Fire up infrastructure connections asynchronously WITHOUT blocking module init
     // This allows TypeOrmModule and other core modules to finish loading first
     this.initializeInfrastructure().catch((err) => {
@@ -68,111 +106,280 @@ export class MessagingIntegrationService implements OnModuleInit, OnModuleDestro
   }
 
   private async initializeInfrastructure() {
-    try {
-      await this.rabbitClient.connect();
-      this.logger.log('Connected to RabbitMQ');
-      await this.loggingService?.add({
-        type: 'system',
-        severity: 'info',
-        message: 'MessagingIntegrationService connected to RabbitMQ',
-      });
-      this.statsService.recordPersistentWrite();
-    } catch (err) {
-      this.logger.error('Failed to connect to RabbitMQ', err);
-      this.statsService.recordError();
-    }
+    await this.ensureRabbitTopologyWithRetry();
+    await this.connectRabbitWithRetry();
+    await this.ensureKafkaTopicsWithRetry();
+    await this.connectKafkaWithRetry();
 
-    // Explicitly create topics using Admin client to prevent metadata race conditions
-    try {
-      const kafka = new Kafka({
-        clientId: 'cosmic-horizons-admin',
-        brokers: [`${this.configService.get('KAFKA_HOST') || 'localhost'}:${this.configService.get('KAFKA_PORT') || '9092'}`],
-      });
-      const admin = kafka.admin();
-      await admin.connect();
-      await admin.createTopics({
-        waitForLeaders: true,
-        topics: [
-          { 
-            topic: 'element.raw_data', 
-            numPartitions: 1, 
-            replicationFactor: 1 
-          }
-        ],
-      });
-      this.logger.log('Kafka topics ensured (element.raw_data)');
-      await admin.disconnect();
-    } catch (err) {
-      this.logger.warn('Could not ensure Kafka topics via Admin client: ' + (err as Error).message);
-      this.statsService.recordError();
-    }
-
-    // Give Kafka broker more time to settle internal metadata after healthcheck
-    await new Promise(resolve => setTimeout(resolve, 5000));
-
-    try {
-      await this.kafkaClient.connect();
-      this.logger.log('Connected to Kafka');
-      await this.loggingService?.add({
-        type: 'system',
-        severity: 'info',
-        message: 'MessagingIntegrationService connected to Kafka',
-      });
-      this.statsService.recordPersistentWrite();
-    } catch (err) {
-      this.logger.error('Failed to connect to Kafka', err);
-      await this.loggingService?.add({
-        type: 'system',
-        severity: 'error',
-        message: `Failed to connect to Kafka: ${(err as Error).message}`,
-      });
-      this.statsService.recordPersistentWrite();
-      this.statsService.recordError();
-    }
-
-    // Subscribe to telemetry and push to brokers
-    // Use a 5-second delay to ensure topics are created and metadata is stable
-    this.subscription = this.messagingService.telemetry$.pipe(
-      delay(5000)
-    ).subscribe({
+    // Subscribe to telemetry and push to brokers.
+    // Publish path uses bounded retry/backoff without startup sleeps.
+    this.subscription = this.messagingService.telemetry$.subscribe({
       next: (packet) => {
-        // Push to RabbitMQ (Management/Telemetry Plane)
-        this.rabbitClient.emit('element.telemetry', packet).subscribe({
-          error: (err) => {
-            this.statsService.recordError();
-            this.logger.error('RabbitMQ emit error', err);
-          }
-        });
-        this.statsService.recordRabbitPublished();
-        
-        // Every packet also goes to Kafka (Data Plane simulation)
-        try {
-          this.kafkaClient.emit('element.raw_data', {
-            ...packet,
-            data_chunk: 'base64_simulated_payload_representing_visibilities'
-          }).subscribe({
-            error: (err: Error) => {
-              if (err.message?.includes('Metadata')) {
-                return;
-              }
-              this.statsService.recordError();
-              this.logger.error('Kafka emit error', err);
-            }
-          });
-          this.statsService.recordKafkaPublished();
-        } catch (err) {
-          this.statsService.recordError();
-          this.logger.error('Kafka emit synchronous error', err);
-        }
+        void this.publishPacket(packet);
       },
       error: (err) => {
         this.statsService.recordError();
         this.logger.error('Telemetry subscription error', err);
-      }
+      },
     });
   }
 
+  private async publishPacket(packet: unknown): Promise<void> {
+    if (this.shuttingDown) {
+      return;
+    }
+
+    await Promise.allSettled([
+      this.publishRabbit(packet),
+      this.publishKafka({
+        ...(packet as Record<string, unknown>),
+        data_chunk: 'base64_simulated_payload_representing_visibilities',
+      }),
+    ]);
+  }
+
+  private async publishRabbit(packet: unknown): Promise<void> {
+    if (!this.rabbitConnected) {
+      await this.connectRabbitWithRetry(2);
+    }
+    if (!this.rabbitClient) {
+      this.statsService.recordError();
+      this.logger.error('RabbitMQ client is not initialized');
+      return;
+    }
+
+    try {
+      await this.emitWithRetry(
+        this.rabbitClient,
+        this.rabbitRoutingKey,
+        packet,
+        'RabbitMQ',
+      );
+      this.statsService.recordRabbitPublished();
+    } catch (err) {
+      this.statsService.recordError();
+      this.logger.error('RabbitMQ publish failed after retries', err);
+    }
+  }
+
+  private async publishKafka(packet: unknown): Promise<void> {
+    if (!this.kafkaConnected) {
+      await this.connectKafkaWithRetry(2);
+    }
+    if (!this.kafkaClient) {
+      this.statsService.recordError();
+      this.logger.error('Kafka client is not initialized');
+      return;
+    }
+
+    try {
+      await this.emitWithRetry(this.kafkaClient, 'element.raw_data', packet, 'Kafka');
+      this.statsService.recordKafkaPublished();
+    } catch (err) {
+      this.statsService.recordError();
+      this.logger.error('Kafka publish failed after retries', err);
+    }
+  }
+
+  private async connectRabbitWithRetry(maxAttempts = 5): Promise<void> {
+    if (this.rabbitConnected || !this.rabbitClient) {
+      return;
+    }
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      try {
+        await this.rabbitClient.connect();
+        this.rabbitConnected = true;
+        this.logger.log('Connected to RabbitMQ');
+        await this.loggingService?.add({
+          type: 'system',
+          severity: 'info',
+          message: 'MessagingIntegrationService connected to RabbitMQ',
+        });
+        this.statsService.recordPersistentWrite();
+        return;
+      } catch (err) {
+        this.statsService.recordError();
+        if (attempt === maxAttempts) {
+          this.logger.error('Failed to connect to RabbitMQ after retries', err);
+          return;
+        }
+        const waitMs = this.backoffMs(attempt);
+        this.logger.warn(
+          `RabbitMQ connection attempt ${attempt}/${maxAttempts} failed; retrying in ${waitMs}ms`,
+        );
+        await this.sleep(waitMs);
+      }
+    }
+  }
+
+  private async ensureRabbitTopologyWithRetry(maxAttempts = 5): Promise<void> {
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      let connection: Connection | undefined;
+      let channel: Channel | undefined;
+
+      try {
+        connection = await connect(this.rabbitUrl);
+        channel = await connection.createChannel();
+        await channel.assertExchange(this.rabbitExchange, 'topic', {
+          durable: this.rabbitQueueDurable,
+        });
+        await channel.assertQueue(this.rabbitQueue, {
+          durable: this.rabbitQueueDurable,
+        });
+        await channel.bindQueue(
+          this.rabbitQueue,
+          this.rabbitExchange,
+          this.rabbitRoutingKey,
+        );
+        this.logger.log(
+          `RabbitMQ topology ensured (${this.rabbitExchange} -> ${this.rabbitQueue} [${this.rabbitRoutingKey}], durable=${this.rabbitQueueDurable})`,
+        );
+        return;
+      } catch (err) {
+        this.statsService.recordError();
+        if (attempt === maxAttempts) {
+          this.logger.error(
+            'Failed to ensure RabbitMQ topology after retries',
+            err,
+          );
+          return;
+        }
+        const waitMs = this.backoffMs(attempt);
+        this.logger.warn(
+          `RabbitMQ topology attempt ${attempt}/${maxAttempts} failed; retrying in ${waitMs}ms`,
+        );
+        await this.sleep(waitMs);
+      } finally {
+        await channel?.close().catch(() => undefined);
+        await connection?.close().catch(() => undefined);
+      }
+    }
+  }
+
+  private async ensureKafkaTopicsWithRetry(maxAttempts = 5): Promise<void> {
+    const kafka = new Kafka({
+      clientId: 'cosmic-horizons-admin',
+      brokers: [
+        `${this.configService.get('KAFKA_HOST') || 'localhost'}:${this.configService.get('KAFKA_PORT') || '9092'}`,
+      ],
+    });
+    const admin = kafka.admin();
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      try {
+        await admin.connect();
+        await admin.createTopics({
+          waitForLeaders: true,
+          topics: [
+            {
+              topic: 'element.raw_data',
+              numPartitions: 1,
+              replicationFactor: 1,
+            },
+          ],
+        });
+        this.logger.log('Kafka topics ensured (element.raw_data)');
+        return;
+      } catch (err) {
+        this.statsService.recordError();
+        if (attempt === maxAttempts) {
+          this.logger.error('Failed to ensure Kafka topics after retries', err);
+          return;
+        }
+        const waitMs = this.backoffMs(attempt);
+        this.logger.warn(
+          `Kafka topic ensure attempt ${attempt}/${maxAttempts} failed; retrying in ${waitMs}ms`,
+        );
+        await this.sleep(waitMs);
+      } finally {
+        await admin.disconnect().catch(() => undefined);
+      }
+    }
+  }
+
+  private async connectKafkaWithRetry(maxAttempts = 5): Promise<void> {
+    if (this.kafkaConnected || !this.kafkaClient) {
+      return;
+    }
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      try {
+        await this.kafkaClient.connect();
+        this.kafkaConnected = true;
+        this.logger.log('Connected to Kafka');
+        await this.loggingService?.add({
+          type: 'system',
+          severity: 'info',
+          message: 'MessagingIntegrationService connected to Kafka',
+        });
+        this.statsService.recordPersistentWrite();
+        return;
+      } catch (err) {
+        this.statsService.recordError();
+        if (attempt === maxAttempts) {
+          this.logger.error('Failed to connect to Kafka after retries', err);
+          await this.loggingService?.add({
+            type: 'system',
+            severity: 'error',
+            message: `Failed to connect to Kafka: ${(err as Error).message}`,
+          });
+          this.statsService.recordPersistentWrite();
+          return;
+        }
+        const waitMs = this.backoffMs(attempt);
+        this.logger.warn(
+          `Kafka connection attempt ${attempt}/${maxAttempts} failed; retrying in ${waitMs}ms`,
+        );
+        await this.sleep(waitMs);
+      }
+    }
+  }
+
+  private async emitWithRetry(
+    client: ClientProxy,
+    event: string,
+    payload: unknown,
+    brokerName: 'RabbitMQ' | 'Kafka',
+    maxAttempts = 3,
+  ): Promise<void> {
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      try {
+        await firstValueFrom(client.emit(event, payload).pipe(timeout(5000)));
+        return;
+      } catch (err) {
+        if (attempt === maxAttempts) {
+          throw err;
+        }
+        const waitMs = this.backoffMs(attempt);
+        this.logger.warn(
+          `${brokerName} emit attempt ${attempt}/${maxAttempts} failed for ${event}; retrying in ${waitMs}ms`,
+        );
+        await this.sleep(waitMs);
+      }
+    }
+  }
+
+  private backoffMs(attempt: number): number {
+    const base = 250;
+    return Math.min(base * 2 ** (attempt - 1), 4000);
+  }
+
+  private async sleep(ms: number): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private getBooleanConfig(key: string, fallback: boolean): boolean {
+    const raw = this.configService.get<string>(key);
+    if (!raw) {
+      return fallback;
+    }
+    const normalized = raw.trim().toLowerCase();
+    return ['1', 'true', 'yes', 'on'].includes(normalized);
+  }
+
   async onModuleDestroy() {
+    this.shuttingDown = true;
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

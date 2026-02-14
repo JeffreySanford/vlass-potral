@@ -3,24 +3,118 @@
 
 .landing-container {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   min-height: 100vh;
+  background-color: #060b16;
   background-image:
-    linear-gradient(145deg, rgba(16, 23, 38, 0.24) 0%, rgba(11, 18, 33, 0.28) 45%, rgba(17, 24, 39, 0.32) 100%),
-    radial-gradient(circle at 10% 15%, rgba(255, 166, 77, 0.12) 0%, transparent 42%),
-    radial-gradient(circle at 85% 20%, rgba(0, 169, 255, 0.1) 0%, transparent 42%),
-    var(--sky-preview-url, url('/previews/region-default.png'));
-  background-size: cover, auto, auto, 160%;
-  background-position: center, center, center, center 38%;
+    linear-gradient(
+      145deg,
+      rgba(16, 23, 38, 0.54) 0%,
+      rgba(11, 18, 33, 0.62) 45%,
+      rgba(17, 24, 39, 0.68) 100%
+    ),
+    radial-gradient(
+      circle at 10% 15%,
+      rgba(255, 166, 77, 0.12) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(0, 169, 255, 0.1) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      1px 1px at 12% 18%,
+      rgba(255, 255, 255, 0.9) 98%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1.1px 1.1px at 24% 72%,
+      rgba(255, 255, 255, 0.72) 98%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1.2px 1.2px at 41% 30%,
+      rgba(255, 255, 255, 0.86) 98%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1px 1px at 58% 62%,
+      rgba(255, 255, 255, 0.8) 98%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1.3px 1.3px at 73% 24%,
+      rgba(255, 255, 255, 0.78) 98%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1.1px 1.1px at 87% 74%,
+      rgba(255, 255, 255, 0.88) 98%,
+      transparent 100%
+    );
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
   color: #eef4ff;
   font-family: 'Space Grotesk', 'Avenir Next', 'Segoe UI', sans-serif;
 }
 
-.sky-meta-panel {
+.landing-container::before {
+  content: '';
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 3;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--sky-preview-url, url('/previews/region-default.png'));
+  background-size: 200%;
+  background-position: center 38%;
+  background-repeat: no-repeat;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.landing-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    radial-gradient(
+      1.1px 1.1px at 18px 24px,
+      rgba(255, 255, 255, 0.92) 99%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1px 1px at 64px 88px,
+      rgba(255, 255, 255, 0.72) 99%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1.2px 1.2px at 118px 44px,
+      rgba(255, 255, 255, 0.83) 99%,
+      transparent 100%
+    ),
+    radial-gradient(
+      0.9px 0.9px at 154px 132px,
+      rgba(255, 255, 255, 0.66) 99%,
+      transparent 100%
+    );
+  background-size: 190px 190px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.landing-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+.sky-meta-panel {
+  position: fixed;
+  top: 0.4rem;
+  right: 0.4rem;
+  z-index: 20;
   min-width: 140px;
   padding: 0.3rem 0.45rem;
   border-radius: 0.65rem;
@@ -29,7 +123,10 @@
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
   backdrop-filter: blur(4px);
   animation: telemetry-fade-in 280ms ease-out both;
-  transition: opacity 180ms ease, transform 180ms ease, background-color 180ms ease;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    background-color 180ms ease;
 
   &:hover {
     opacity: 1;
@@ -51,6 +148,11 @@
 }
 
 .telemetry-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.35rem;
+  min-width: 1.35rem;
   border: 0;
   padding: 0;
   margin: 0 0 0.1rem;
@@ -60,6 +162,17 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
+
+  mat-icon {
+    font-size: 0.95rem;
+    width: 0.95rem;
+    height: 0.95rem;
+    line-height: 0.95rem;
+  }
+
+  .locating-icon {
+    animation: telemetry-pulse 900ms ease-in-out infinite;
+  }
 }
 
 @media (max-width: 700px) {
@@ -159,7 +272,11 @@
 
 .welcome-card {
   border-radius: 1.25rem;
-  background: linear-gradient(155deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.04) 100%);
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.11) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 30px 55px rgba(0, 0, 0, 0.35);
   animation: rise-in 650ms 80ms $md3-transition-easing-emphasized both;
@@ -178,7 +295,10 @@
   border-radius: 1rem;
   background: rgba(8, 17, 33, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  transition: transform 220ms ease, border-color 220ms ease, background-color 220ms ease;
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease;
   animation: card-in 420ms both;
 
   &:nth-child(2) {
@@ -255,5 +375,16 @@
   to {
     opacity: 0.96;
     transform: translateY(0);
+  }
+}
+
+@keyframes telemetry-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
   }
 }

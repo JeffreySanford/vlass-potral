@@ -1,8 +1,32 @@
-<div class="landing-container" [style.--sky-preview-url]="'url(' + preview.imageUrl + ')'">
+<div
+  class="landing-container"
+  [style.--sky-preview-url]="'url(' + preview.imageUrl + ')'"
+>
   @if (showTelemetryOverlay) {
-    <aside class="sky-meta-panel" [class.compact]="telemetryCompact" aria-label="Sky background telemetry">
-      <button type="button" class="telemetry-toggle" (click)="toggleTelemetryCompact()">
-        {{ telemetryCompact ? 'Expand' : 'Compact' }}
+    <aside
+      class="sky-meta-panel"
+      [class.compact]="telemetryCompact"
+      aria-label="Sky background telemetry"
+    >
+      <button
+        type="button"
+        class="telemetry-toggle"
+        (click)="onTelemetryControl()"
+        [attr.aria-label]="
+          preview.personalized
+            ? telemetryCompact
+              ? 'Expand telemetry details'
+              : 'Collapse telemetry details'
+            : 'Detect location and personalize background'
+        "
+      >
+        @if (locating) {
+          <mat-icon class="locating-icon">my_location</mat-icon>
+        } @else if (!preview.personalized) {
+          <mat-icon>info</mat-icon>
+        } @else {
+          {{ telemetryCompact ? 'Expand' : 'Collapse' }}
+        }
       </button>
       <p>{{ clockLine }}</p>
       <p class="telemetry-detail">{{ locationLabel }}</p>
@@ -34,20 +58,10 @@
       <p class="subtitle caution">
         Enterprise Gateway for NSF-Simons CosmicAI Integration.
       </p>
-      <p class="affiliation-note">Independent project by Jeffrey Sanford using public VLASS data; not affiliated with VLA/NRAO.</p>
-    </section>
-
-    <section class="preview-controls">
-      <button mat-stroked-button type="button" (click)="personalizePreview()" [disabled]="locating">
-        @if (locating) {
-          Detecting location...
-        } @else {
-          Personalize background
-        }
-      </button>
-      @if (locationMessage) {
-        <p class="location-note">{{ locationMessage }}</p>
-      }
+      <p class="affiliation-note">
+        Independent project by Jeffrey Sanford using public VLASS data; not
+        affiliated with VLA/NRAO.
+      </p>
     </section>
 
     <mat-card class="welcome-card">

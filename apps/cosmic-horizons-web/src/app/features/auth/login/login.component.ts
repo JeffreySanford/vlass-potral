@@ -1,5 +1,13 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, NgZone, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -7,7 +15,10 @@ import { interval, Subscription } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 import { AuthApiService } from '../auth-api.service';
 import { AuthSessionService } from '../../../services/auth-session.service';
-import { SkyPreview, SkyPreviewService } from '../../../services/sky-preview.service';
+import {
+  SkyPreview,
+  SkyPreviewService,
+} from '../../../services/sky-preview.service';
 import { AppLoggerService } from '../../../services/app-logger.service';
 
 @Component({
@@ -54,14 +65,24 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (
+      isPlatformBrowser(this.platformId) &&
+      this.authSessionService.isAuthenticated()
+    ) {
+      const returnUrl =
+        this.route.snapshot.queryParamMap.get('returnUrl') || '/landing';
+      void this.router.navigateByUrl(returnUrl);
+      return;
+    }
+
     if (isPlatformBrowser(this.platformId)) {
       this.ngZone.runOutsideAngular(() => {
-        this.clockSubscription = interval(1000).pipe(
-          startWith(0),
-        ).subscribe(() => {
-          this.clockLine = this.buildClockLine();
-          this.cdr.detectChanges();
-        });
+        this.clockSubscription = interval(1000)
+          .pipe(startWith(0))
+          .subscribe(() => {
+            this.clockLine = this.buildClockLine();
+            this.cdr.detectChanges();
+          });
       });
     }
   }
@@ -98,14 +119,18 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.authApiService.login({ email, password }).subscribe({
       next: (response) => {
-        console.log('[LOGIN_DEBUG] Login successful, received response:', response);
+        console.log(
+          '[LOGIN_DEBUG] Login successful, received response:',
+          response,
+        );
         this.authSessionService.setSession(response);
         this.logger.info('auth', 'login_success', {
           user_id: response.user.id,
           user_role: response.user.role,
         });
 
-        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/landing';
+        const returnUrl =
+          this.route.snapshot.queryParamMap.get('returnUrl') || '/landing';
         console.log('[LOGIN_DEBUG] Navigating to:', returnUrl);
         this.loading = false;
         this.router.navigateByUrl(returnUrl);
@@ -133,7 +158,20 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.telemetryCompact = !this.telemetryCompact;
   }
 
-  personalizePreview(): void {
+  onTelemetryControl(): void {
+    if (this.locating) {
+      return;
+    }
+
+    if (!this.preview.personalized) {
+      this.personalizePreview();
+      return;
+    }
+
+    this.toggleTelemetryCompact();
+  }
+
+  private personalizePreview(): void {
     this.locating = true;
     this.locationMessage = '';
 
@@ -143,13 +181,16 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.preview = preview;
           this.syncTelemetryFromPreview();
           this.locationMessage = `Preview personalized for region ${preview.geohash.toUpperCase()}.`;
+          this.telemetryCompact = false;
         } else {
-          this.locationMessage = 'Location services are unavailable in this browser.';
+          this.locationMessage =
+            'Location services are unavailable in this browser.';
         }
       },
       error: () => {
         this.locating = false;
-        this.locationMessage = 'Location permission denied. Continuing with default preview.';
+        this.locationMessage =
+          'Location permission denied. Continuing with default preview.';
       },
       complete: () => {
         this.locating = false;
@@ -170,7 +211,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private buildClockLine(): string {
     const now = new Date();
-    const localTime = now.toLocaleTimeString('en-US', { hour12: false, timeZoneName: 'short' });
+    const localTime = now.toLocaleTimeString('en-US', {
+      hour12: false,
+      timeZoneName: 'short',
+    });
     const zuluTime = now.toUTCString().slice(17, 25);
     return `LCL ${localTime} | ZUL ${zuluTime}`;
   }

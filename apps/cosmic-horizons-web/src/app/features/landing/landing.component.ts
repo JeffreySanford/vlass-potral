@@ -1,10 +1,21 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, NgZone, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
 import { finalize, startWith } from 'rxjs/operators';
 import { AuthSessionService } from '../../services/auth-session.service';
-import { SkyPreview, SkyPreviewService } from '../../services/sky-preview.service';
+import {
+  SkyPreview,
+  SkyPreviewService,
+} from '../../services/sky-preview.service';
 import { UserRole } from '../../services/auth-session.service';
 import { AuthApiService } from '../auth/auth-api.service';
 import { AppLoggerService } from '../../services/app-logger.service';
@@ -125,12 +136,12 @@ export class LandingComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.ngZone.runOutsideAngular(() => {
-        this.clockSubscription = interval(1000).pipe(
-          startWith(0),
-        ).subscribe(() => {
-          this.clockLine = this.buildClockLine();
-          this.cdr.detectChanges();
-        });
+        this.clockSubscription = interval(1000)
+          .pipe(startWith(0))
+          .subscribe(() => {
+            this.clockLine = this.buildClockLine();
+            this.cdr.detectChanges();
+          });
       });
     }
   }
@@ -188,7 +199,20 @@ export class LandingComponent implements OnInit, OnDestroy {
     this.telemetryCompact = !this.telemetryCompact;
   }
 
-  personalizePreview(): void {
+  onTelemetryControl(): void {
+    if (this.locating) {
+      return;
+    }
+
+    if (!this.preview.personalized) {
+      this.personalizePreview();
+      return;
+    }
+
+    this.toggleTelemetryCompact();
+  }
+
+  private personalizePreview(): void {
     this.locating = true;
     this.locationMessage = '';
 
@@ -198,13 +222,16 @@ export class LandingComponent implements OnInit, OnDestroy {
           this.preview = preview;
           this.syncTelemetryFromPreview();
           this.locationMessage = `Sky preview personalized for region ${preview.geohash.toUpperCase()}.`;
+          this.telemetryCompact = false;
         } else {
-          this.locationMessage = 'Location services are unavailable in this environment.';
+          this.locationMessage =
+            'Location services are unavailable in this environment.';
         }
       },
       error: () => {
         this.locating = false;
-        this.locationMessage = 'Location permission was denied. Using default preview.';
+        this.locationMessage =
+          'Location permission was denied. Using default preview.';
       },
       complete: () => {
         this.locating = false;
@@ -225,9 +252,11 @@ export class LandingComponent implements OnInit, OnDestroy {
 
   private buildClockLine(): string {
     const now = new Date();
-    const localTime = now.toLocaleTimeString('en-US', { hour12: false, timeZoneName: 'short' });
+    const localTime = now.toLocaleTimeString('en-US', {
+      hour12: false,
+      timeZoneName: 'short',
+    });
     const zuluTime = now.toUTCString().slice(17, 25);
     return `LCL ${localTime} | ZUL ${zuluTime}`;
   }
-
 }

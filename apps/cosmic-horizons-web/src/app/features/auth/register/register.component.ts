@@ -7,7 +7,10 @@ import { Observable, interval } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AuthApiService } from '../auth-api.service';
 import { AuthSessionService } from '../../../services/auth-session.service';
-import { SkyPreview, SkyPreviewService } from '../../../services/sky-preview.service';
+import {
+  SkyPreview,
+  SkyPreviewService,
+} from '../../../services/sky-preview.service';
 import { AppLoggerService } from '../../../services/app-logger.service';
 
 @Component({
@@ -87,29 +90,31 @@ export class RegisterComponent {
     const password = this.registerForm.value.password as string;
 
     this.loading = true;
-    this.authApiService.register({
-      username,
-      email,
-      password,
-      display_name: username,
-    }).subscribe({
-      next: (response) => {
-        this.authSessionService.setSession(response);
-        this.logger.info('auth', 'register_success', {
-          user_id: response.user.id,
-          user_role: response.user.role,
-        });
-        this.loading = false;
-        this.router.navigate(['/landing']);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.loading = false;
-        this.error = this.errorFromHttp(error);
-        this.logger.info('auth', 'register_failed', {
-          status_code: error.status,
-        });
-      },
-    });
+    this.authApiService
+      .register({
+        username,
+        email,
+        password,
+        display_name: username,
+      })
+      .subscribe({
+        next: (response) => {
+          this.authSessionService.setSession(response);
+          this.logger.info('auth', 'register_success', {
+            user_id: response.user.id,
+            user_role: response.user.role,
+          });
+          this.loading = false;
+          this.router.navigate(['/landing']);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.loading = false;
+          this.error = this.errorFromHttp(error);
+          this.logger.info('auth', 'register_failed', {
+            status_code: error.status,
+          });
+        },
+      });
   }
 
   login(): void {
@@ -120,7 +125,20 @@ export class RegisterComponent {
     this.telemetryCompact = !this.telemetryCompact;
   }
 
-  personalizePreview(): void {
+  onTelemetryControl(): void {
+    if (this.locating) {
+      return;
+    }
+
+    if (!this.preview.personalized) {
+      this.personalizePreview();
+      return;
+    }
+
+    this.toggleTelemetryCompact();
+  }
+
+  private personalizePreview(): void {
     this.locating = true;
     this.locationMessage = '';
 
@@ -130,13 +148,16 @@ export class RegisterComponent {
           this.preview = preview;
           this.syncTelemetryFromPreview();
           this.locationMessage = `Background personalized for region ${preview.geohash.toUpperCase()}.`;
+          this.telemetryCompact = false;
         } else {
-          this.locationMessage = 'Location services are unavailable in this browser.';
+          this.locationMessage =
+            'Location services are unavailable in this browser.';
         }
       },
       error: () => {
         this.locating = false;
-        this.locationMessage = 'Location permission denied. Using default background.';
+        this.locationMessage =
+          'Location permission denied. Using default background.';
       },
       complete: () => {
         this.locating = false;
@@ -157,7 +178,10 @@ export class RegisterComponent {
 
   private buildClockLine(): string {
     const now = new Date();
-    const localTime = now.toLocaleTimeString('en-US', { hour12: false, timeZoneName: 'short' });
+    const localTime = now.toLocaleTimeString('en-US', {
+      hour12: false,
+      timeZoneName: 'short',
+    });
     const zuluTime = now.toUTCString().slice(17, 25);
     return `LCL ${localTime} | ZUL ${zuluTime}`;
   }

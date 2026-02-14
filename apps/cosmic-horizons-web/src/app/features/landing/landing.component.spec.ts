@@ -81,7 +81,9 @@ describe('LandingComponent', () => {
         }),
     };
     authApiService = {
-      logout: vi.fn().mockReturnValue(of({ message: 'Logged out successfully' })),
+      logout: vi
+        .fn()
+        .mockReturnValue(of({ message: 'Logged out successfully' })),
     };
 
     await TestBed.configureTestingModule({
@@ -120,7 +122,6 @@ describe('LandingComponent', () => {
     expect(text).toContain('My Profile');
     expect(text).toContain('Moderation Console');
     expect(text).toContain('System Logs');
-    expect(text).toContain('Personalize background');
   });
 
   it('renders deferred list from scope lock', () => {
@@ -141,7 +142,9 @@ describe('LandingComponent', () => {
   });
 
   it('navigates to logs for admin users', () => {
-    const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    const navigateSpy = vi
+      .spyOn(router, 'navigateByUrl')
+      .mockResolvedValue(true);
 
     component.openLogs();
 
@@ -161,7 +164,9 @@ describe('LandingComponent', () => {
   });
 
   it('navigates when opening a mission route card', () => {
-    const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    const navigateSpy = vi
+      .spyOn(router, 'navigateByUrl')
+      .mockResolvedValue(true);
 
     component.openRouteLink({
       icon: 'workspaces',
@@ -172,8 +177,8 @@ describe('LandingComponent', () => {
     expect(navigateSpy).toHaveBeenCalledWith('/jobs');
   });
 
-  it('personalizes preview and shows region notice', () => {
-    component.personalizePreview();
+  it('personalizes preview and shows region notice from telemetry control', () => {
+    component.onTelemetryControl();
 
     expect(component.preview.personalized).toBe(true);
     expect(component.preview.geohash).toBe('u09t');
