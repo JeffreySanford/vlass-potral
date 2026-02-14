@@ -15,10 +15,10 @@ jobs:
   main:
     runs-on: ubuntu-latest
     env:
-      NX_DAEMON: "false"
-      JWT_SECRET: "e2e-test-jwt-secret-min-32-characters-long"
-      SESSION_SECRET: "e2e-test-session-secret-min-32-characters"
-      NODE_ENV: "development"
+      NX_DAEMON: 'false'
+      JWT_SECRET: 'e2e-test-jwt-secret-min-32-characters-long'
+      SESSION_SECRET: 'e2e-test-session-secret-min-32-characters'
+      NODE_ENV: 'development'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -49,6 +49,7 @@ jobs:
 
       - run: pnpm run security:audit
       - run: pnpm nx run docs-policy:check
+      - run: pnpm run format:check:changed
       - name: Run unit tests (verbose)
         shell: bash
         run: |

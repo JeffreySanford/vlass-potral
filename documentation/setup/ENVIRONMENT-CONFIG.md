@@ -31,15 +31,45 @@ Cosmic Horizons uses a **tiered environment configuration system** that separate
    pnpm start:all
    ```
 
+   `start:all` preserves running Docker state/volumes.  
+   Use `pnpm start:all:reset` only when you need a full infra teardown/rebuild.
+
+### Local Demo Security Boundaries
+
+This repository supports a **demo-local** operating mode for senior engineers running the full stack on their own machine. It is intentionally not production hardening.
+
+#### Mode: `demo-local` (expected for this repo)
+
+- Seeded users and dev credentials are allowed for local testing only.
+- Services are expected to bind to localhost where possible.
+- `.env.example` remains small and non-sensitive.
+- `.env.local` carries local overrides and any sensitive values used for personal testing.
+- Never reuse demo credentials outside local/dev.
+
+#### Mode: `prod-like` (future hardening target)
+
+- No seeded credentials.
+- No default/shared secrets.
+- Secrets injected from runtime secret stores or CI/CD secret managers.
+- Strict auth, CORS, session store, and transport security policies enabled.
+
+#### Reviewer Checklist (Local Run)
+
+1. Confirm this run is `demo-local` and not production.
+2. Use `.env.local` for any sensitive overrides; do not commit it.
+3. Keep `.env.example` free of secrets and limited to safe defaults.
+4. If you add a new env key, add it to docs and config validation in the same change.
+5. If behavior depends on production-only controls, gate it behind explicit environment flags.
+
 ### Test Users
 
 The following users are automatically seeded in the database on initialization:
 
-| Username | Email | Password | Role | Usage |
-|----------|-------|----------|------|-------|
-| testuser | <test@cosmic.local> | Password123! | user | Standard user testing |
-| adminuser | <admin@cosmic.local> | AdminPassword123! | admin | Admin features testing |
-| admin | <admin-direct@cosmic.local> | AdminPassword123! | admin | Admin convenience alias |
+| Username  | Email                       | Password          | Role  | Usage                   |
+| --------- | --------------------------- | ----------------- | ----- | ----------------------- |
+| testuser  | <test@cosmic.local>         | Password123!      | user  | Standard user testing   |
+| adminuser | <admin@cosmic.local>        | AdminPassword123! | admin | Admin features testing  |
+| admin     | <admin-direct@cosmic.local> | AdminPassword123! | admin | Admin convenience alias |
 
 **Login URL:** <http://localhost:4200/auth/login>
 
@@ -52,7 +82,7 @@ The following users are automatically seeded in the database on initialization:
 ```dotenv
 # Non-sensitive defaults everyone needs
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=15432
 FRONTEND_URL=http://localhost:4200
 LOG_LEVEL=info
 
@@ -93,7 +123,7 @@ GitHub Actions and CI pipelines use **environment variables** set in GitHub Secr
    ```yaml
    env:
      DB_HOST: localhost
-     DB_PORT: 5432
+     DB_PORT: 15432
      # Sensitive values come from secrets
      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
      JWT_SECRET: ${{ secrets.JWT_SECRET }}
@@ -150,9 +180,10 @@ Example for `DB_PASSWORD`:
 **Check:**
 
 1. - `DB_HOST` matches your postgres container
-2. - `DB_PORT` matches postgres port (usually 5432)
-3. - `DB_USERNAME` and `DB_PASSWORD` match container startup
-4. - PostgreSQL container is running: `docker ps | grep postgres`
+2. - `DB_PORT` matches postgres host port (usually 15432 in this repo)
+3. - `DB_USER` and `DB_PASSWORD` match container startup
+4. - `DB_NAME` matches the target database
+5. - PostgreSQL container is running: `docker ps`
 
 ### Problem: Tests fail on GitHub Actions
 

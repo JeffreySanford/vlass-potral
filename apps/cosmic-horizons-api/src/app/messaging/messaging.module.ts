@@ -5,9 +5,10 @@ import { MessagingIntegrationService } from './messaging-integration.service';
 import { MessagingGateway } from './messaging.gateway';
 import { MessagingMonitorService } from './messaging-monitor.service';
 import { MessagingStatsService } from './messaging-stats.service';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [],
+  imports: [AuthModule],
   providers: [
     MessagingService,
     MessagingStatsService,

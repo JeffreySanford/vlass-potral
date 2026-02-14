@@ -10,9 +10,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/health": {
@@ -24,9 +22,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/users": {
@@ -38,9 +34,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       },
       "post": {
         "operationId": "AppController_createUser",
@@ -60,9 +54,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/users/{id}": {
@@ -83,9 +75,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       },
       "put": {
         "operationId": "AppController_updateUser",
@@ -114,9 +104,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       },
       "delete": {
         "operationId": "AppController_deleteUser",
@@ -135,9 +123,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/posts": {
@@ -149,9 +135,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       },
       "post": {
         "operationId": "AppController_createPost",
@@ -171,9 +155,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/posts/published": {
@@ -185,9 +167,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/posts/{id}": {
@@ -208,9 +188,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       },
       "put": {
         "operationId": "AppController_updatePost",
@@ -239,9 +217,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       },
       "delete": {
         "operationId": "AppController_deletePost",
@@ -260,9 +236,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/posts/{id}/publish": {
@@ -283,9 +257,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/posts/{id}/unpublish": {
@@ -306,9 +278,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/posts/{id}/hide": {
@@ -329,9 +299,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/posts/{id}/unhide": {
@@ -352,9 +320,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/posts/{id}/lock": {
@@ -375,9 +341,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/posts/{id}/unlock": {
@@ -398,9 +362,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/users/{userId}/posts": {
@@ -421,9 +383,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/api/admin/logs": {
@@ -452,9 +412,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "AdminLogs"
-        ]
+        "tags": ["AdminLogs"]
       }
     },
     "/api/admin/logs/summary": {
@@ -466,9 +424,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "AdminLogs"
-        ]
+        "tags": ["AdminLogs"]
       }
     },
     "/api/auth/register": {
@@ -490,9 +446,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/api/auth/login": {
@@ -514,9 +468,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       },
       "get": {
         "operationId": "AuthController_gitHubLogin",
@@ -526,9 +478,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/api/auth/refresh": {
@@ -550,9 +500,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/api/auth/github/callback": {
@@ -564,9 +512,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/api/auth/me": {
@@ -578,9 +524,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/api/auth/csrf-token": {
@@ -592,9 +536,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/api/auth/logout": {
@@ -616,9 +558,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/api/view/state": {
@@ -640,9 +580,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Viewer"
-        ]
+        "tags": ["Viewer"]
       }
     },
     "/api/view/snapshot": {
@@ -664,9 +602,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Viewer"
-        ]
+        "tags": ["Viewer"]
       }
     },
     "/api/view/cutout": {
@@ -727,9 +663,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Viewer"
-        ]
+        "tags": ["Viewer"]
       }
     },
     "/api/view/labels/nearby": {
@@ -774,9 +708,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Viewer"
-        ]
+        "tags": ["Viewer"]
       }
     },
     "/api/view/telemetry": {
@@ -788,9 +720,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Viewer"
-        ]
+        "tags": ["Viewer"]
       }
     },
     "/api/view/{shortId}": {
@@ -811,9 +741,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Viewer"
-        ]
+        "tags": ["Viewer"]
       }
     },
     "/api/view/ephem/search": {
@@ -825,9 +753,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Ephemeris"
-        ]
+        "tags": ["Ephemeris"]
       }
     },
     "/api/comments/post/{postId}": {
@@ -848,9 +774,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Comments"
-        ]
+        "tags": ["Comments"]
       }
     },
     "/api/comments": {
@@ -872,9 +796,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Comments"
-        ]
+        "tags": ["Comments"]
       }
     },
     "/api/comments/{id}": {
@@ -905,9 +827,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Comments"
-        ]
+        "tags": ["Comments"]
       },
       "delete": {
         "operationId": "CommentsController_deleteComment",
@@ -926,9 +846,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Comments"
-        ]
+        "tags": ["Comments"]
       }
     },
     "/api/comments/{id}/report": {
@@ -959,9 +877,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Comments"
-        ]
+        "tags": ["Comments"]
       }
     },
     "/api/comments/{id}/hide": {
@@ -982,9 +898,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Comments"
-        ]
+        "tags": ["Comments"]
       }
     },
     "/api/comments/{id}/unhide": {
@@ -1005,9 +919,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Comments"
-        ]
+        "tags": ["Comments"]
       }
     },
     "/api/comments/reports/all": {
@@ -1019,9 +931,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Comments"
-        ]
+        "tags": ["Comments"]
       }
     },
     "/api/comments/reports/{id}/resolve": {
@@ -1042,9 +952,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Comments"
-        ]
+        "tags": ["Comments"]
       }
     },
     "/api/profiles/{username}": {
@@ -1065,9 +973,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Profile"
-        ]
+        "tags": ["Profile"]
       }
     },
     "/api/profiles/me": {
@@ -1079,9 +985,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Profile"
-        ]
+        "tags": ["Profile"]
       }
     },
     "/api/messaging/sites": {
@@ -1093,9 +997,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Messaging"
-        ]
+        "tags": ["Messaging"]
       }
     },
     "/api/messaging/elements": {
@@ -1107,9 +1009,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Messaging"
-        ]
+        "tags": ["Messaging"]
       }
     },
     "/api/messaging/sites/{siteId}/elements": {
@@ -1130,9 +1030,19 @@
             "description": ""
           }
         },
-        "tags": [
-          "Messaging"
-        ]
+        "tags": ["Messaging"]
+      }
+    },
+    "/api/messaging/stats": {
+      "get": {
+        "operationId": "MessagingController_getLiveStats",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["Messaging"]
       }
     },
     "/api/jobs/submit": {
@@ -1144,9 +1054,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/submit-batch": {
@@ -1158,9 +1066,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/{id}/status": {
@@ -1181,9 +1087,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/{id}": {
@@ -1204,9 +1108,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/history/list": {
@@ -1218,9 +1120,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/search": {
@@ -1232,9 +1132,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/optimize": {
@@ -1246,9 +1144,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/metrics": {
@@ -1260,9 +1156,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/resources/available": {
@@ -1274,9 +1168,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/dataset/stage": {
@@ -1288,9 +1180,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/dataset/{id}/staging-status": {
@@ -1311,9 +1201,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/dataset/{id}/validate": {
@@ -1334,9 +1222,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/dataset/{id}/optimize": {
@@ -1357,9 +1243,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     },
     "/api/jobs/dataset/estimate-transfer": {
@@ -1371,9 +1255,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Jobs"
-        ]
+        "tags": ["Jobs"]
       }
     }
   },

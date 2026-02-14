@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { AppLoggerService } from './app-logger.service';
+import { AuthSessionService } from './auth-session.service';
 
 export interface ArrayElementStatus {
   id: string;
@@ -90,7 +91,7 @@ export interface MessagingLiveStats {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MessagingService {
   private apiUrl = 'http://localhost:3000/api/messaging';
@@ -99,20 +100,37 @@ export class MessagingService {
   private statsSubject = new Subject<MessagingLiveStats>();
   private readonly http = inject(HttpClient);
   private readonly logger = inject(AppLoggerService);
+  private readonly authSessionService = inject(AuthSessionService);
 
   constructor() {
-    this.logger.info('messaging', 'Initializing MessagingService', { transport: 'websocket' });
+    this.logger.info('messaging', 'Initializing MessagingService', {
+      transport: 'websocket',
+    });
+    const token = this.authSessionService.getToken();
     this.socket = io('http://localhost:3000/messaging', {
       path: '/socket.io',
-      transports: ['websocket']
+      transports: ['websocket'],
+      withCredentials: true,
+      auth: {
+        token: token ?? undefined,
+      },
     });
 
     this.socket.on('connect', () => {
-      this.logger.info('messaging', 'WebSocket connected to /messaging namespace');
+      this.logger.info(
+        'messaging',
+        'WebSocket connected to /messaging namespace',
+      );
     });
 
     this.socket.on('disconnect', (reason: string) => {
       this.logger.warn('messaging', 'WebSocket disconnected', { reason });
+    });
+
+    this.socket.on('connect_error', (error: Error) => {
+      this.logger.warn('messaging', 'WebSocket connection error', {
+        message: error.message,
+      });
     });
 
     this.socket.on('telemetry_update', (data: TelemetryPacket) => {
@@ -141,7 +159,9 @@ export class MessagingService {
   }
 
   getElementsBySite(siteId: string): Observable<ArrayElementStatus[]> {
-    return this.http.get<ArrayElementStatus[]>(`${this.apiUrl}/sites/${siteId}/elements`);
+    return this.http.get<ArrayElementStatus[]>(
+      `${this.apiUrl}/sites/${siteId}/elements`,
+    );
   }
 
   getLiveStats(): Observable<MessagingLiveStats> {

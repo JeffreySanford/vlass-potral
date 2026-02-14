@@ -5,7 +5,7 @@
 
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
@@ -13,31 +13,9 @@ import session from 'express-session';
 import * as passportImport from 'passport';
 import helmet from 'helmet';
 import { getSessionSecret } from './app/config/security.config';
+import { loadEnvFromFirstAvailable } from './app/config/env-loader';
 
-const envCandidates = [
-  resolve(process.cwd(), '.env.local'),
-  resolve(process.cwd(), '.env'),
-  resolve(process.cwd(), '../../.env.local'),
-  resolve(process.cwd(), '../../.env'),
-];
-const envPath = envCandidates.find((path) => existsSync(path));
-
-if (envPath) {
-  const envFile = readFileSync(envPath, 'utf8');
-  for (const rawLine of envFile.split(/\r?\n/)) {
-    const line = rawLine.trim();
-    if (!line || line.startsWith('#')) {
-      continue;
-    }
-    const separator = line.indexOf('=');
-    if (separator <= 0) {
-      continue;
-    }
-    const key = line.slice(0, separator).trim();
-    const value = line.slice(separator + 1).trim().replace(/^['"]|['"]$/g, '');
-    process.env[key] = value;
-  }
-}
+loadEnvFromFirstAvailable();
 
 const passport =
   (passportImport as unknown as { default?: typeof passportImport }).default ??
@@ -50,7 +28,8 @@ async function bootstrap() {
       process.env['GITHUB_CLIENT_ID'] = 'placeholder-for-openapi-generation';
     }
     if (!process.env['GITHUB_CLIENT_SECRET']) {
-      process.env['GITHUB_CLIENT_SECRET'] = 'placeholder-for-openapi-generation';
+      process.env['GITHUB_CLIENT_SECRET'] =
+        'placeholder-for-openapi-generation';
     }
 
     const app = await NestFactory.create(AppModule);
@@ -66,17 +45,34 @@ async function bootstrap() {
       .build();
     const openApiDocument = SwaggerModule.createDocument(app, openApiConfig);
     if (process.env['GENERATE_OPENAPI_SPEC'] === 'true') {
-      const outputPath = resolve(process.cwd(), 'documentation', 'reference', 'api', 'openapi.json');
-      mkdirSync(resolve(process.cwd(), 'documentation', 'reference', 'api'), { recursive: true });
-      writeFileSync(outputPath, JSON.stringify(openApiDocument, null, 2), 'utf8');
+      const outputPath = resolve(
+        process.cwd(),
+        'documentation',
+        'reference',
+        'api',
+        'openapi.json',
+      );
+      mkdirSync(resolve(process.cwd(), 'documentation', 'reference', 'api'), {
+        recursive: true,
+      });
+      writeFileSync(
+        outputPath,
+        JSON.stringify(openApiDocument, null, 2),
+        'utf8',
+      );
       await app.close();
       Logger.log(`OpenAPI spec generated at ${outputPath}`);
       return;
     }
     SwaggerModule.setup(`${globalPrefix}/docs`, app, openApiDocument);
-    app.getHttpAdapter().get(`/${globalPrefix}/openapi.json`, (_req: unknown, res: { json: (body: unknown) => void }) => {
-      res.json(openApiDocument);
-    });
+    app
+      .getHttpAdapter()
+      .get(
+        `/${globalPrefix}/openapi.json`,
+        (_req: unknown, res: { json: (body: unknown) => void }) => {
+          res.json(openApiDocument);
+        },
+      );
     app.use(
       helmet({
         contentSecurityPolicy: false,
@@ -123,7 +119,10 @@ async function bootstrap() {
     Logger.log(`📦 Database: ${process.env.DB_HOST}:${process.env.DB_PORT}`);
     Logger.log(`🔒 CORS enabled for: ${corsOrigin}`);
   } catch (error) {
-    Logger.error('Failed to start application', error instanceof Error ? error.message : error);
+    Logger.error(
+      'Failed to start application',
+      error instanceof Error ? error.message : error,
+    );
     process.exit(1);
   }
 }
@@ -133,11 +132,7 @@ bootstrap();
 function attachCsrfMiddleware(
   app: {
     use: (
-      callback: (
-        req: CsrfRequest,
-        res: CsrfResponse,
-        next: () => void,
-      ) => void,
+      callback: (req: CsrfRequest, res: CsrfResponse, next: () => void) => void,
     ) => void;
   },
   globalPrefix: string,

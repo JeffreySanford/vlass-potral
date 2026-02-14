@@ -43,7 +43,7 @@ Edit `.env.local` with your configuration (optional for local development).
 pnpm run start:infra
 ```
 
-This starts PostgreSQL and Redis containers.
+This starts infrastructure without tearing down existing containers/volumes.
 
 ### 5. Start Development Servers
 
@@ -85,18 +85,21 @@ pnpm nx run-many --target=lint --all
 
 ## Key Commands
 
-| Command | Purpose |
-|---------|---------|
-| `pnpm nx serve cosmos-horizons-api` | Start API dev server |
-| `pnpm nx serve cosmic-horizons-web` | Start web dev server |
-| `pnpm nx run-many --target=build --all` | Build all projects |
-| `pnpm nx run-many --target=test --all` | Run all unit tests |
-| `pnpm run start:infra` | Start Docker infrastructure |
-| `pnpm run start:ports:free` | Free up used ports |
+| Command                                 | Purpose                                                |
+| --------------------------------------- | ------------------------------------------------------ |
+| `pnpm nx serve cosmos-horizons-api`     | Start API dev server                                   |
+| `pnpm nx serve cosmic-horizons-web`     | Start web dev server                                   |
+| `pnpm nx run-many --target=build --all` | Build all projects                                     |
+| `pnpm nx run-many --target=test --all`  | Run all unit tests                                     |
+| `pnpm run start:infra`                  | Start Docker infrastructure (state-preserving)         |
+| `pnpm run start:infra:reset`            | Rebuild and reset Docker infrastructure (destructive)  |
+| `pnpm run start:all`                    | Start infra + web/api without resetting Docker volumes |
+| `pnpm run start:all:reset`              | Reset infra, then start web/api                        |
+| `pnpm run start:ports:free`             | Free up used ports                                     |
 
 ## Project Structure
 
-``` text
+```text
 cosmic-horizons/
 ├── apps/
 │   ├── cosmic-horizons-api/        # NestJS backend
@@ -127,6 +130,12 @@ docker compose down -v
 # Rebuild
 pnpm run start:infra
 ```
+
+### Expected Startup Noise (Normal)
+
+- One-time Kafka coordinator/topic metadata messages may appear during the first few seconds of broker warm-up.
+- A brief RabbitMQ management API miss can occur immediately after boot before queue metadata is available.
+- These are transient during startup; persistent/repeating errors after ~15 seconds indicate a real issue.
 
 ### Clear Cache
 

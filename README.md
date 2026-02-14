@@ -61,7 +61,8 @@ pnpm build
 ```bash
 pnpm start:web      # nx serve cosmic-horizons-web
 pnpm start:api      # nx serve cosmic-horizons-api
-pnpm start:all      # free ports + docker infra + web/api serve
+pnpm start:all      # free ports + start infra (no teardown) + web/api serve
+pnpm start:all:reset # full infra reset (down --volumes + rebuild) + web/api serve
 pnpm test           # nx run-many --target=test --all
 pnpm test:web       # nx test cosmic-horizons-web
 pnpm test:api       # nx test cosmic-horizons-api

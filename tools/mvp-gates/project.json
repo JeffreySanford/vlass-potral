@@ -5,10 +5,40 @@
   "root": "tools/mvp-gates",
   "sourceRoot": "tools/mvp-gates",
   "targets": {
+    "ports-free": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "pnpm run start:ports:free"
+      }
+    },
+    "e2e-web-mvp": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["ports-free"],
+      "options": {
+        "command": "pnpm nx run cosmic-horizons-web-e2e:e2e-mvp"
+      }
+    },
+    "e2e-web-perf": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["e2e-web-mvp"],
+      "options": {
+        "command": "pnpm nx run cosmic-horizons-web-e2e:e2e-perf"
+      }
+    },
+    "e2e-api": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["e2e-web-perf"],
+      "options": {
+        "command": "pnpm nx run cosmic-horizons-api-e2e:e2e"
+      }
+    },
     "e2e": {
       "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": ["e2e-api"],
       "options": {
-        "command": "pnpm run start:ports:free && pnpm nx run cosmic-horizons-web-e2e:e2e-mvp && pnpm nx run cosmic-horizons-web-e2e:e2e-perf && pnpm nx run cosmic-horizons-api-e2e:e2e"
+        "command": "echo mvp-gates e2e completed"
       }
     },
     "perf": {

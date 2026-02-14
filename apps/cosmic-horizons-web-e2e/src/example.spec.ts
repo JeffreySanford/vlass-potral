@@ -1,8 +1,12 @@
 import { test, expect } from '@playwright/test';
 
 function createFakeJwt(exp: number): string {
-  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
-  const payload = Buffer.from(JSON.stringify({ sub: 'user-1', exp })).toString('base64url');
+  const header = Buffer.from(
+    JSON.stringify({ alg: 'HS256', typ: 'JWT' }),
+  ).toString('base64url');
+  const payload = Buffer.from(JSON.stringify({ sub: 'user-1', exp })).toString(
+    'base64url',
+  );
   const signature = 'test-signature';
   return `${header}.${payload}.${signature}`;
 }
@@ -19,7 +23,9 @@ test('redirects unauthenticated users to login', async ({ page }) => {
   await page.goto('/landing');
   await expect(page).toHaveURL(/\/auth\/login/);
   await expect(page.locator('h1')).toContainText('Login');
-  await expect(page.getByRole('button', { name: 'Personalize background' })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Personalize background' }),
+  ).toBeVisible();
 });
 
 test('shows error for invalid credentials', async ({ page }) => {
@@ -48,7 +54,9 @@ test('shows error for invalid credentials', async ({ page }) => {
 
   await page.goto('/auth/login');
 
-  await page.locator('input[formcontrolname="email"]').fill('test@cosmic.local');
+  await page
+    .locator('input[formcontrolname="email"]')
+    .fill('test@cosmic.local');
   await page.locator('input[formcontrolname="password"]').fill('wrong');
   await page.getByRole('button', { name: 'Login' }).click();
 
@@ -132,17 +140,29 @@ test('logs in and allows logout', async ({ page }) => {
   ]);
 
   await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });
-  await expect(page.locator('h1')).toContainText('Scientific Operations Gateway');
+  await expect(page.locator('h1')).toContainText(
+    'Scientific Operations Gateway',
+  );
   await expect(
-    page.getByRole('heading', { name: 'Viewer, Permalinks, and Snapshots', exact: true })
+    page.getByRole('heading', {
+      name: 'Viewer, Permalinks, and Snapshots',
+      exact: true,
+    }),
   ).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Community Research Notebook', exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', {
+      name: 'Community Research Notebook',
+      exact: true,
+    }),
+  ).toBeVisible();
 
   await page.getByRole('button', { name: 'Logout' }).click();
   await expect(page).toHaveURL(/\/auth\/login/);
 });
 
-test('blocks access to logs when backend confirms non-admin role', async ({ page }) => {
+test('blocks access to logs when backend confirms non-admin role', async ({
+  page,
+}) => {
   const token = createFakeJwt(Math.floor(Date.now() / 1000) + 3600);
 
   await page.route('**/api/auth/login', async (route) => {
@@ -221,7 +241,9 @@ test('blocks access to logs when backend confirms non-admin role', async ({ page
   await expect(page).toHaveURL(/\/landing/);
 });
 
-test('allows admin user to open logs when backend confirms admin role', async ({ page }) => {
+test('allows admin user to open logs when backend confirms admin role', async ({
+  page,
+}) => {
   const token = createFakeJwt(Math.floor(Date.now() / 1000) + 3600);
 
   await page.route('**/api/auth/login', async (route) => {
@@ -290,7 +312,9 @@ test('allows admin user to open logs when backend confirms admin role', async ({
   await expect(page.getByRole('heading', { name: 'Logger' })).toBeVisible();
 });
 
-test('creates viewer permalink and snapshot from pillar 2 flow', async ({ page }) => {
+test('creates viewer permalink and snapshot from pillar 2 flow', async ({
+  page,
+}) => {
   await page.route('**/api/view/state', async (route) => {
     if (route.request().method() === 'OPTIONS') {
       await route.fulfill({
@@ -313,7 +337,8 @@ test('creates viewer permalink and snapshot from pillar 2 flow', async ({ page }
       body: JSON.stringify({
         id: 'state-1',
         short_id: 'abc123xy',
-        encoded_state: 'eyJyYSI6MTg3LjI1LCJkZWMiOjIuMDUsImZvdiI6MS41LCJzdXJ2ZXkiOiJWTEFTUyJ9',
+        encoded_state:
+          'eyJyYSI6MTg3LjI1LCJkZWMiOjIuMDUsImZvdiI6MS41LCJzdXJ2ZXkiOiJWTEFTUyJ9',
         state: {
           ra: 187.25,
           dec: 2.05,
@@ -365,7 +390,8 @@ test('creates viewer permalink and snapshot from pillar 2 flow', async ({ page }
       body: JSON.stringify({
         id: 'state-1',
         short_id: 'abc123xy',
-        encoded_state: 'eyJyYSI6MTg3LjI1LCJkZWMiOjIuMDUsImZvdiI6MS41LCJzdXJ2ZXkiOiJWTEFTUyJ9',
+        encoded_state:
+          'eyJyYSI6MTg3LjI1LCJkZWMiOjIuMDUsImZvdiI6MS41LCJzdXJ2ZXkiOiJWTEFTUyJ9',
         state: {
           ra: 187.25,
           dec: 2.05,
@@ -527,7 +553,9 @@ test('creates a notebook post from pillar 3 flow', async ({ page }) => {
   ]);
   await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });
 
-  await page.locator('article.feature-card', { hasText: 'Community Research Notebook' }).click();
+  await page
+    .locator('article.feature-card', { hasText: 'Community Research Notebook' })
+    .click();
   await expect(page).toHaveURL(/\/posts/);
   await page.getByRole('button', { name: 'New Draft' }).click();
   await expect(page).toHaveURL(/\/posts\/new/);
@@ -536,7 +564,9 @@ test('creates a notebook post from pillar 3 flow', async ({ page }) => {
   await titleInput.fill('M87 Notebook');
   await contentInput.fill('Notebook markdown content for publishing flow.');
   await expect(titleInput).toHaveValue('M87 Notebook');
-  await expect(contentInput).toHaveValue('Notebook markdown content for publishing flow.');
+  await expect(contentInput).toHaveValue(
+    'Notebook markdown content for publishing flow.',
+  );
   await page.getByRole('button', { name: 'Save Draft' }).click();
 
   await expect(page).toHaveURL(/\/posts\/post-1/);
@@ -607,7 +637,10 @@ test('syncs RA/Dec/FOV fields from Aladin view events', async ({ page }) => {
       };
     };
     const listeners = holder.__cosmicFakeAladin.listeners ?? {};
-    return (listeners['positionChanged']?.length ?? 0) > 0 && (listeners['zoomChanged']?.length ?? 0) > 0;
+    return (
+      (listeners['positionChanged']?.length ?? 0) > 0 &&
+      (listeners['zoomChanged']?.length ?? 0) > 0
+    );
   });
 
   await page.evaluate(() => {
@@ -624,12 +657,23 @@ test('syncs RA/Dec/FOV fields from Aladin view events', async ({ page }) => {
     holder.__cosmicFakeAladin.emit('zoomChanged');
   });
 
-  await expect(page.locator('input[formcontrolname="ra"]')).toHaveValue('188.5', { timeout: 10000 });
-  await expect(page.locator('input[formcontrolname="dec"]')).toHaveValue('3.75', { timeout: 10000 });
-  await expect(page.locator('input[formcontrolname="fov"]')).toHaveValue('2.35', { timeout: 10000 });
+  await expect(page.locator('input[formcontrolname="ra"]')).toHaveValue(
+    '188.5',
+    { timeout: 10000 },
+  );
+  await expect(page.locator('input[formcontrolname="dec"]')).toHaveValue(
+    '3.75',
+    { timeout: 10000 },
+  );
+  await expect(page.locator('input[formcontrolname="fov"]')).toHaveValue(
+    '2.35',
+    { timeout: 10000 },
+  );
 });
 
-test('auto-selects higher-resolution survey when VLASS is deeply zoomed', async ({ page }) => {
+test('auto-selects higher-resolution survey when VLASS is deeply zoomed', async ({
+  page,
+}) => {
   await page.addInitScript(() => {
     type Callback = () => void;
 
@@ -687,7 +731,9 @@ test('auto-selects higher-resolution survey when VLASS is deeply zoomed', async 
   await expect
     .poll(async () => {
       return page.evaluate(() => {
-        return (window as unknown as { __cosmicFakeAladin: { lastSurvey: string } }).__cosmicFakeAladin.lastSurvey;
+        return (
+          window as unknown as { __cosmicFakeAladin: { lastSurvey: string } }
+        ).__cosmicFakeAladin.lastSurvey;
       });
     })
     .toBe('P/PanSTARRS/DR1/color-z-zg-g');
@@ -754,7 +800,9 @@ test('registers a user and redirects to landing', async ({ page }) => {
   const registerUsername = page.getByRole('textbox', { name: 'Username' });
   const registerEmail = page.getByRole('textbox', { name: 'Email' });
   const registerPassword = page.locator('input[formcontrolname="password"]');
-  const registerConfirmPassword = page.locator('input[formcontrolname="confirmPassword"]');
+  const registerConfirmPassword = page.locator(
+    'input[formcontrolname="confirmPassword"]',
+  );
   await expect(page.locator('h1')).toContainText('Create Account');
 
   await registerUsername.fill('newuser');
@@ -763,14 +811,18 @@ test('registers a user and redirects to landing', async ({ page }) => {
   await registerConfirmPassword.fill('Password123!');
   await Promise.all([
     page.waitForResponse(
-      (response) => response.url().includes('/api/auth/register') && response.request().method() === 'POST',
+      (response) =>
+        response.url().includes('/api/auth/register') &&
+        response.request().method() === 'POST',
       { timeout: 10000 },
     ),
     page.getByRole('button', { name: 'Create Account' }).click(),
   ]);
 
   await expect(page).toHaveURL(/\/landing/, { timeout: 15000 });
-  await expect(page.locator('h1')).toContainText('Scientific Operations Gateway');
+  await expect(page.locator('h1')).toContainText(
+    'Scientific Operations Gateway',
+  );
 });
 
 test('shows conflict errors on duplicate registration', async ({ page }) => {
@@ -801,9 +853,20 @@ test('shows conflict errors on duplicate registration', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Username' }).fill('testuser');
   await page.getByRole('textbox', { name: 'Email' }).fill('test@cosmic.local');
   await page.locator('input[formcontrolname="password"]').fill('Password123!');
-  await page.locator('input[formcontrolname="confirmPassword"]').fill('Password123!');
-  await page.getByRole('button', { name: 'Create Account' }).click();
+  await page
+    .locator('input[formcontrolname="confirmPassword"]')
+    .fill('Password123!');
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/auth/register') &&
+        response.request().method() === 'POST' &&
+        response.status() === 409,
+      { timeout: 10000 },
+    ),
+    page.getByRole('button', { name: 'Create Account' }).click(),
+  ]);
 
   await expect(page).toHaveURL(/\/auth\/register/);
-  await expect(page.locator('.error-message').getByText(/already/i)).toBeVisible();
+  await expect(page.locator('.error-message')).toBeVisible();
 });

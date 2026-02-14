@@ -33,9 +33,9 @@ Redis is running without password authentication, but the NestJS client is attem
    ```yaml
    redis:
      image: redis:7-alpine
-     command: redis-server --appendonly yes  # No --requirepass
+     command: redis-server --appendonly yes # No --requirepass
      ports:
-       - "127.0.0.1:6379:6379"
+       - '127.0.0.1:6379:6379'
    ```
 
 3. Restart Redis:
@@ -62,7 +62,7 @@ Redis is running without password authentication, but the NestJS client is attem
      environment:
        REDIS_PASSWORD: ${REDIS_PASSWORD}
      ports:
-       - "127.0.0.1:6379:6379"
+       - '127.0.0.1:6379:6379'
    ```
 
 2. Set strong password in `.env`:
@@ -239,8 +239,8 @@ services:
       RABBITMQ_DEFAULT_PASS: guest
       RABBITMQ_ERLANG_COOKIE: cosmic-horizons-secret
     ports:
-      - "127.0.0.1:5672:5672"
-      - "127.0.0.1:15672:15672"
+      - '127.0.0.1:5672:5672'
+      - '127.0.0.1:15672:15672'
     volumes:
       - cosmic-horizons-rabbitmq-data:/var/lib/rabbitmq
     networks:
@@ -260,7 +260,7 @@ services:
       ZOOKEEPER_SYNC_LIMIT: 2
       ZOOKEEPER_INIT_LIMIT: 5
     ports:
-      - "127.0.0.1:2181:2181"
+      - '127.0.0.1:2181:2181'
     volumes:
       - cosmic-horizons-zookeeper-data:/var/lib/zookeeper/data
       - cosmic-horizons-zookeeper-logs:/var/lib/zookeeper/log
@@ -280,20 +280,26 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_LOG_RETENTION_HOURS: 168
-      KAFKA_LOG_RETENTION_BYTES: 107374182400  # 100 GB
+      KAFKA_LOG_RETENTION_BYTES: 107374182400 # 100 GB
       KAFKA_COMPRESSION_TYPE: snappy
       KAFKA_NUM_NETWORK_THREADS: 8
       KAFKA_NUM_IO_THREADS: 8
     ports:
-      - "127.0.0.1:9092:9092"
+      - '127.0.0.1:9092:9092'
     volumes:
       - cosmic-horizons-kafka-data:/var/lib/kafka/data
     networks:
       - cosmic-horizons-network
     healthcheck:
-      test: ["CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092"]
+      test:
+        [
+          'CMD',
+          'kafka-broker-api-versions.sh',
+          '--bootstrap-server',
+          'localhost:9092',
+        ]
       interval: 5s
       timeout: 10s
       retries: 5
@@ -308,14 +314,14 @@ services:
       POSTGRES_PASSWORD: cosmic_horizons_password_dev
       POSTGRES_DB: cosmic_horizons
     ports:
-      - "127.0.0.1:15432:5432"
+      - '127.0.0.1:15432:5432'
     volumes:
       - cosmic-horizons-postgres-data:/var/lib/postgresql/data
       - ./docs/database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - cosmic-horizons-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cosmic_horizons_user"]
+      test: ['CMD-SHELL', 'pg_isready -U cosmic_horizons_user']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -330,13 +336,13 @@ services:
       --appendonly yes
       --loglevel warning
     ports:
-      - "127.0.0.1:6379:6379"
+      - '127.0.0.1:6379:6379'
     volumes:
       - cosmic-horizons-redis-data:/data
     networks:
       - cosmic-horizons-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -370,7 +376,7 @@ Create/update `.env` at repository root:
 ```bash
 # Application
 NODE_ENV=development
-PORT=3000
+API_PORT=3000
 
 # Database
 DB_HOST=localhost

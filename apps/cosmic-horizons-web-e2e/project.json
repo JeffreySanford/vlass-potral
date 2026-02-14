@@ -8,6 +8,7 @@
   "targets": {
     "e2e": {
       "executor": "nx:run-commands",
+      "cache": false,
       "options": {
         "command": "playwright test",
         "cwd": "apps/cosmic-horizons-web-e2e"
@@ -15,6 +16,7 @@
     },
     "e2e-perf": {
       "executor": "nx:run-commands",
+      "cache": false,
       "options": {
         "command": "playwright test src/perf.spec.ts --project=chromium",
         "cwd": "apps/cosmic-horizons-web-e2e"

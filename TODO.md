@@ -1,9 +1,39 @@
 # TODO
 
-Status date: 2026-02-13 (Updated)
+Status date: 2026-02-14 (Updated)
 
 Canonical scope:
 `documentation/product/PRODUCT-CHARTER.md` + `SCOPE-LOCK.md`.
+
+## Current Execution Wave (2026-02-14 to 2026-02-28)
+
+Focus: reliability hardening for senior-reviewer local runs, contract clarity, and predictable CI signals.
+
+- [ ] **P0 Security/Boundary Hardening**
+  - [x] Add authenticated WebSocket connect guard for `/messaging` namespace
+  - [x] Replace `origin: '*'` with env-driven allowlist aligned to API CORS
+  - [x] Add gateway tests for cross-origin unauthenticated rejection
+
+- [x] **P0 Environment Contract Unification**
+  - [x] Consolidate env loading to one path (remove manual duplication)
+  - [x] Standardize key names (`DB_USER/DB_NAME/API_PORT`) and remove compatibility aliases
+  - [x] Add config schema validation (fail-fast for wrong/missing keys)
+  - [x] Document `demo-local` vs `prod-like` run modes in setup docs
+
+- [x] **P1 Messaging Reliability**
+  - [x] Remove fixed startup sleeps in messaging integration
+  - [x] Replace metadata-error suppression with retry/backoff + explicit error counters
+  - [x] Define RabbitMQ topology explicitly (exchange/queue/binding) with durability by env
+  - [x] Keep Kafka admin monitor connection persistent (connect-once, reconnect-on-failure)
+
+- [ ] **P1 Contract/Docs Consistency**
+  - [x] Review and intentionally accept OpenAPI delta (`/api/messaging/stats`)
+  - [x] Update `documentation/reference/api/openapi.json` to include accepted contract delta
+  - [x] Resolve stale links in `documentation/index/OVERVIEW-V2.md` (`ENV.md`, `DEMO.md`)
+
+- [x] **P2 CI Signal Stability**
+  - [x] Add changed-file Prettier gate (`format:check:changed`) in CI quality path
+  - [x] Investigate/track residual `mvp-gates:e2e` flaky-task signal in Nx
 
 ## Type Safety Infrastructure (COMPLETED 2026-02-12)
 
@@ -38,19 +68,16 @@ Canonical scope:
   - [x] Fixed auth.service logger initialization (replaced undefined with console.warn)
   - [x] Added structured error responses with INVALID_CREDENTIALS error code
   - [x] Tested with testuser, adminuser, admin credentials
-  
 - [x] Ephemeris Feature Polish
   - [x] Fixed results display to match backend response schema
   - [x] Updated template to display accuracy_arcsec, object_type, source instead of non-existent fields
   - [x] Created dedicated ephemeris search route at `/ephem` (authenticated)
   - [x] Added lazy-loaded ephemeris module to app.routes.ts
   - [x] Verified calculations with Mars and Venus targets
-  
 - [x] Test Suite TypeScript Fixes (5 errors resolved)
   - [x] ephemeris-warmup.service.spec.ts: Added target property to 3 mock objects (lines 112, 240, 260)
   - [x] ephemeris.service.error.spec.ts: Added target property to 2 mock objects (lines 64, 463, 530)
   - [x] All mock EphemerisResult objects now include: target, ra, dec, accuracy_arcsec, epoch, source, object_type
-  
 - [x] Build and Deployment Validation
   - [x] Backend build successful (4 pre-existing warnings only)
   - [x] Frontend compilation successful (all bundles created)
@@ -175,34 +202,29 @@ Canonical scope:
   - [x] tacc-integration.credential-security.spec.ts (36 tests) - Auth & security
   - [x] job-audit-trail.spec.ts (45 tests) - Job lifecycle tracking
   - [x] tacc-integration.error-handling.spec.ts (40 tests) - Resilience patterns
-  
 - [x] Comprehensive audit trail infrastructure
   - [x] Full job lifecycle persistence (QUEUED → COMPLETED)
   - [x] Performance metrics capture (execution_time, gpu_utilization, memory_used)
   - [x] TACC job ID linkage for cross-system tracking
   - [x] Error context & retry tracking
   - [x] Data lineage and query capabilities
-  
 - [x] Error handling & retry strategies
   - [x] Transient vs permanent error classification
   - [x] Exponential backoff (1000ms base, 2x multiplier, 30s cap)
   - [x] Circuit breaker pattern (open/closed/half-open states)
   - [x] Idempotency support with idempotency keys
   - [x] Fallback mechanisms and recovery strategies
-  
 - [x] Security & credential management
   - [x] API key/secret lifecycle management
   - [x] HTTPS enforcement validation
   - [x] Rate limiting & quota management
   - [x] Audit compliance logging
   - [x] No credentials in debug output
-  
 - [x] Documentation
   - [x] TEST-COVERAGE-PRIORITY-4A-COMPLETE.md (350+ lines)
   - [x] Audit strategy guide
   - [x] Error handling patterns
   - [x] Performance metrics documentation
-  
 - [x] Fix all TypeScript compilation errors (30+ issues)
 - [x] Fix all markdown linting warnings (4 code blocks)
 - [x] Git commit & push (148 files, 46,100 insertions)
@@ -239,14 +261,12 @@ Canonical scope:
   - [ ] NestJS RabbitMQ integration
   - [ ] Dead Letter Queue handlers
   - [ ] Target: 45 tests, sub-100ms latency
-  
 - [ ] Sprint 5.2: Kafka Integration (3 weeks)
   - [ ] Set up 3-broker Kafka cluster with Zookeeper
   - [ ] Kafka topics with retention policies
   - [ ] NestJS Kafka integration
   - [ ] Schema Registry for compatibility
   - [ ] Target: 40 tests, 1000+ events/second
-  
 - [ ] Sprint 5.3: Job Orchestration Events (2 weeks)
   - [ ] Job submission → event publishing
   - [ ] Job status change events
@@ -269,21 +289,18 @@ Canonical scope:
   - [ ] Broadcast channels for job updates
   - [ ] Reconnection logic
   - [ ] Target: 55 tests, 500+ concurrent connections
-  
 - [ ] Sprint 6.2: Real-Time Dashboards (4 weeks)
   - [ ] Angular/React dashboard components
   - [ ] Real-time job status visualization
   - [ ] Performance metrics charts
   - [ ] GPU utilization heatmaps
   - [ ] Target: 60 tests, 60 FPS rendering
-  
 - [ ] Sprint 6.3: Performance Analytics (3 weeks)
   - [ ] Time-series data collection
   - [ ] Analytics queries and aggregations
   - [ ] Historical performance charts
   - [ ] Anomaly detection system
   - [ ] Target: 55 tests, real-time alerts
-  
 - [ ] Sprint 6.4: Aladin Integration (2 weeks)
   - [ ] Aladin sky viewer integration
   - [ ] Source positions & detections display
@@ -307,21 +324,18 @@ Canonical scope:
   - [ ] Chained job submissions
   - [ ] Workflow versioning & rollback
   - [ ] Target: 50 tests
-  
 - [ ] Sprint 7.2: Advanced Caching (2 weeks)
   - [ ] Multi-tier caching (Redis/S3)
   - [ ] Cache invalidation strategies
   - [ ] Cache warming logic
   - [ ] Cache analytics
   - [ ] Target: 40 tests, 40-60% query reduction
-  
 - [ ] Sprint 7.3: GPU Optimization (3 weeks)
   - [ ] GPU profiling & tuning
   - [ ] Dynamic batch sizing
   - [ ] Mixed-precision inference
   - [ ] Memory allocation optimization
   - [ ] Target: 35 tests, 25-35% throughput gain
-  
 - [ ] Sprint 7.4: Scale Testing & Hardening (2 weeks)
   - [ ] Load testing (100+ concurrent jobs)
   - [ ] Broker failover validation
@@ -359,19 +373,16 @@ Canonical scope:
 **MVP Pre-Deploy Checklist** (Before Public Release):
 
 - [x] Run full release gate locally and record results:
-  `pnpm nx run docs-policy:check && pnpm nx run-many --target=test --all && pnpm nx run mvp-gates:e2e`
-  **Results**: ✅ **All required gates PASSED** (Feb 11, 2026 12:53 UTC)
+      `pnpm nx run docs-policy:check && pnpm nx run-many --target=test --all && pnpm nx run mvp-gates:e2e`
+      **Results**: ✅ **All required gates PASSED** (Feb 11, 2026 12:53 UTC)
   - Docs Policy: PASSED (100% consistency)
   - Unit/Integration Tests: PASSED (177/177 tests across shared-models, cosmic-horizons-api, cosmic-horizons-web)
   - MVP E2E Gates: PASSED (40/40 tests across web MVP/perf + api e2e)
   - Note: Nx flagged one flaky task signal for `mvp-gates:e2e`; investigate stability.
-  
 - [x] Finish Pillar 3 workflow gaps: post lifecycle edge cases, revision diff UX, and moderation hide/lock flow completion
-  **Status**: COMPLETE - Post lifecycle (draft→published→hidden/locked) fully tested and working via E2E tests
-  
+      **Status**: COMPLETE - Post lifecycle (draft→published→hidden/locked) fully tested and working via E2E tests
 - [x] Reduce login route Lighthouse FCP/performance regressions (currently warning-level in local mobile profile)
-  **FIX APPLIED** (Feb 11): Optimized LoginComponent and LandingComponent using NgZone.runOutsideAngular() to move clock interval outside Angular zone + manual ChangeDetectorRef.detectChanges(). Should resolve Lighthouse performance warnings.
-  
+      **FIX APPLIED** (Feb 11): Optimized LoginComponent and LandingComponent using NgZone.runOutsideAngular() to move clock interval outside Angular zone + manual ChangeDetectorRef.detectChanges(). Should resolve Lighthouse performance warnings.
 - [x] Add API contract regression check in CI (OpenAPI diff check against committed `documentation/reference/api/openapi.json`)
 - [ ] Calibrate Lighthouse mobile assertions and keep artifact baselines in CI for trend comparison
 - [ ] Finalize public-repo metadata checklist: description, topics, website link, and security feature toggles in GitHub settings
@@ -393,6 +404,52 @@ See `documentation/frontend/VIEWER-IMPROVEMENTS-ANALYSIS.md` for complete analys
 
 ## Archived Completed Items
 
+Completed on 2026-02-14:
+
+- [x] Harden WebSocket `/messaging` gateway:
+  - Auth token required at handshake
+  - JWT + user validation enforced
+  - Origin allowlist aligned with `FRONTEND_URL`
+  - Added gateway auth/origin tests (`messaging.gateway.spec.ts`)
+- [x] Unify API env loading path with shared loader:
+  - Added `apps/cosmic-horizons-api/src/app/config/env-loader.ts`
+  - Removed duplicate parsing logic from `main.ts` and `database.config.ts`
+- [x] Align canonical backend env keys:
+  - `.env.example` now uses `DB_USER`, `DB_NAME`, `API_PORT`
+  - Added compatibility mapping for legacy key aliases during transition
+- [x] Align env documentation with canonical keys:
+  - Updated `documentation/reference/ENV-REFERENCE.md`
+  - Updated `documentation/setup/ENVIRONMENT-CONFIG.md` troubleshooting keys
+- [x] Add runtime environment schema validation:
+  - Added `env-validation.ts` with production fail-fast rules and alias conflict detection
+  - Wired validation into `ConfigModule.forRoot` and startup bootstrap path
+- [x] Harden messaging integration publish path:
+  - Removed fixed startup/stream sleeps
+  - Replaced metadata suppression with bounded retry/backoff and explicit failure logging
+- [x] Add CI formatting gate for changed files:
+  - Added `scripts/check-format-changed.mjs`
+  - Wired `format:check:changed` into `quality:ci` and `.github/workflows/ci.yml`
+- [x] Restore deleted overview document: `documentation/index/OVERVIEW-V2.md`
+- [x] Create execution critique: `documentation/index/OVERVIEW-V2-CRITIQUE.md`
+- [x] Fix OpenAPI check runner to use one-shot target:
+      `scripts/check-openapi.mjs` now runs `pnpm nx run cosmic-horizons-api:openapi`
+- [x] Stabilize duplicate-registration e2e assertion:
+      `apps/cosmic-horizons-web-e2e/src/example.spec.ts` now waits for 409 response before UI assertion
+- [x] Add setup policy for reviewer-local mode:
+      `documentation/setup/ENVIRONMENT-CONFIG.md` → "Local Demo Security Boundaries"
+- [x] Re-run MVP e2e chain locally:
+      `pnpm e2e:mvp` passing after e2e test hardening
+- [x] Remove transitional env alias compatibility (canonical-only keys):
+      dropped `DB_USERNAME`/`DB_DATABASE`/`PORT` compatibility in runtime validation and config consumers
+- [x] Make RabbitMQ telemetry topology explicit and env-driven:
+      added exchange/queue/routing-key declaration with durability toggle before publisher connect
+- [x] Keep Kafka monitor admin connection persistent:
+      switched monitor from per-poll connect/disconnect to connect-once and reconnect-on-failure behavior
+- [x] Reduce `mvp-gates:e2e` flake signal noise:
+      added API e2e health-check readiness gate (`/api/health`) after port-open,
+      decomposed `mvp-gates:e2e` into ordered sub-targets to avoid port collisions,
+      and disabled cache for web/api e2e targets to keep CI execution live/deterministic
+
 Completed on 2026-02-11:
 
 - [x] Align all documentation with source-of-truth models (SCOPE-LOCK/ROADMAP)
@@ -409,23 +466,23 @@ Completed on 2026-02-11:
 Completed on 2026-02-10:
 
 - [x] Implement label hover with responsive debouncing
-  Added mouseleave handler to clear labels when cursor exits viewer canvas
-  Adjusted debounce from 300ms to 1000ms (1 second) for bandwidth efficiency
-  Labels now appear on hover and disappear when cursor moves off
-  See `apps/cosmic-horizons-web/src/app/features/viewer/viewer.component.html` and `.ts`
+      Added mouseleave handler to clear labels when cursor exits viewer canvas
+      Adjusted debounce from 300ms to 1000ms (1 second) for bandwidth efficiency
+      Labels now appear on hover and disappear when cursor moves off
+      See `apps/cosmic-horizons-web/src/app/features/viewer/viewer.component.html` and `.ts`
 
 Completed on 2026-02-07:
 
 - [x] Fix planet/ephemeris object resolution in viewer
-  Multi-layered resolver: Aladin → SkyBot → VizieR → Hardcoded fallback
-  Adds support for Mars, Venus, Jupiter, Saturn, Uranus, Neptune queries
-  See `documentation/architecture/TARGET-RESOLUTION-EPHEMERIS.md` for technical details
-  See `documentation/architecture/EPHEMERIS-SCOPE-DECISION.md` for v1.1 planning
-  Debugging guide: `documentation/architecture/MARS-RESOLUTION-DEBUGGING.md`
+      Multi-layered resolver: Aladin → SkyBot → VizieR → Hardcoded fallback
+      Adds support for Mars, Venus, Jupiter, Saturn, Uranus, Neptune queries
+      See `documentation/architecture/TARGET-RESOLUTION-EPHEMERIS.md` for technical details
+      See `documentation/architecture/EPHEMERIS-SCOPE-DECISION.md` for v1.1 planning
+      Debugging guide: `documentation/architecture/MARS-RESOLUTION-DEBUGGING.md`
 - [x] Keep baseline green:
-  `pnpm nx run-many --target=test --all`
+      `pnpm nx run-many --target=test --all`
 - [x] Keep MVP e2e gate green:
-  `pnpm nx run mvp-gates:e2e`
+      `pnpm nx run mvp-gates:e2e`
 - [x] Complete JWT auth foundation (seeded credential login, token guard, logout/session cleanup)
 - [x] Add auth-focused e2e coverage (unauthenticated redirect, invalid login, successful login/logout)
 - [x] Add API auth unit coverage for login edge cases and JWT strategy validation
@@ -433,8 +490,8 @@ Completed on 2026-02-07:
 - [x] Validate SSR performance targets (FCP/LCP) with Playwright perf gate
 - [x] Verify audit and rate limiting behavior on critical write paths
 - [x] Ship Pillar 2 vertical slice:
-  `/view` route, viewer state encoding, permalink creation/resolution,
-  PNG snapshot API + filesystem artifact write, and matching web/api e2e tests
+      `/view` route, viewer state encoding, permalink creation/resolution,
+      PNG snapshot API + filesystem artifact write, and matching web/api e2e tests
 - [x] Replace interim viewer renderer with Aladin Lite Mode A and bind RA/Dec/FOV sync
 - [x] Add viewer center labeling persisted inside encoded/permalink state
 - [x] Add FITS cutout download path (`GET /api/view/cutout`) for science data export
@@ -473,4 +530,5 @@ Completed on 2026-02-07:
 - `documentation/planning/roadmap/ROADMAP.md` should stay future-facing, not become a done-work log.
 
 ---
-*Independent portal using public VLASS data; not affiliated with VLA/NRAO.*
+
+_Independent portal using public VLASS data; not affiliated with VLA/NRAO._

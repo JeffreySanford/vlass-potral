@@ -1,6 +1,6 @@
 # Roadmap
 
-Status date: 2026-02-13
+Status date: 2026-02-14
 
 Canonical scope: `documentation/product/PRODUCT-CHARTER.md` and `SCOPE-LOCK.md`.
 Industry context note: `documentation/planning/INDUSTRY-CONTEXT-AND-FEASIBILITY-2026-02-11.md`.
@@ -13,6 +13,54 @@ Tracking rule:
 - `ROADMAP.md` is forward-looking (what is next).
 
 - Completed implementation history is journaled in `TODO.md` ("Archived Completed Items") and release notes.
+
+## Near-Term Sprint (2026-02-14 to 2026-02-28): Reliability and Contract Hardening
+
+Objective: make local/demo execution predictable for senior reviewers while tightening security and configuration boundaries.
+Progress: security boundary hardening, env-loader unification, schema validation, and initial messaging retry hardening are now in place; Rabbit topology policy and monitor connection strategy remain open.
+
+1. Security boundary hardening
+
+- Add auth enforcement for WebSocket `/messaging` namespace.
+- Replace wildcard WS CORS with env-driven allowlist aligned to API CORS.
+- Add automated checks for unauthenticated/cross-origin connection rejection.
+
+1. Environment contract hardening
+
+- Unify env loading path and remove duplicate parsing paths.
+- Standardize env key names across app/runtime/docs.
+- Add schema validation for startup-time fail-fast behavior.
+- Keep `demo-local` and `prod-like` modes explicitly documented and separated.
+
+1. Messaging reliability hardening
+
+- Remove fixed sleeps and metadata-error suppression in integration path.
+- Add retry/backoff and explicit error metrics for broker publish failures.
+- Make RabbitMQ topology/durability policy explicit by environment.
+- Refactor monitor polling to persistent Kafka admin connectivity.
+
+1. Contract and docs consistency
+
+- Resolve OpenAPI contract delta review and commit intentional changes.
+- Fix stale links and path references in `documentation/index/OVERVIEW-V2.md`.
+- Add formatting gate into CI quality path (`format:check:changed` for changed files).
+
+## Recently Completed (2026-02-14)
+
+- Hardened WebSocket `/messaging` gateway (JWT handshake auth + origin allowlist + gateway tests).
+- Unified API env loading with shared loader and removed duplicated parsing paths.
+- Standardized canonical backend env keys in `.env.example` (`DB_USER`, `DB_NAME`, `API_PORT`) with transitional aliases.
+- Aligned env docs to canonical backend key names.
+- Restored `documentation/index/OVERVIEW-V2.md`.
+- Added critical execution guide: `documentation/index/OVERVIEW-V2-CRITIQUE.md`.
+- Added runtime env schema validation and canonical/alias conflict checks.
+- Removed fixed messaging sleeps and metadata suppression; added retry/backoff publish path.
+- Accepted and regenerated OpenAPI contract delta for `/api/messaging/stats`.
+- Added changed-file formatting gate to CI (`format:check:changed`).
+- Fixed OpenAPI regression check runner to use one-shot target (`cosmic-horizons-api:openapi`).
+- Hardened duplicate-registration e2e test path to reduce flake.
+- Added local reviewer security boundaries to `documentation/setup/ENVIRONMENT-CONFIG.md`.
+- Verified `pnpm e2e:mvp` passing after e2e hardening.
 
 ## MVP (v1.0)
 
@@ -190,7 +238,8 @@ See [FUNDING-AND-COSTS.md](../funding/FUNDING-AND-COSTS.md) for comprehensive co
 
 ---
 
-*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+_Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved._
 
 ---
-*Independent portal using public VLASS data; not affiliated with VLA/NRAO.*
+
+_Independent portal using public VLASS data; not affiliated with VLA/NRAO._

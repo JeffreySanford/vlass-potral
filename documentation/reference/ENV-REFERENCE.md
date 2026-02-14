@@ -4,81 +4,82 @@ Complete reference of all environment variables used by Cosmic Horizons.
 
 ## Database
 
-| Variable | Type | Default | Required | Usage |
-|----------|------|---------|----------|-------|
-| `DB_TYPE` | string | `postgres` | No | Database system (always postgres) |
-| `DB_HOST` | string | `localhost` | Yes | PostgreSQL hostname |
-| `DB_PORT` | number | `5432` | No | PostgreSQL port |
-| `DB_USERNAME` | string | `postgres` | Yes | Database user |
-| `DB_PASSWORD` | string | `postgres` | Yes | Database password (SENSITIVE) |
-| `DB_DATABASE` | string | `cosmic_horizons` | No | Database name |
+| Variable      | Type   | Default                        | Required | Usage                                       |
+| ------------- | ------ | ------------------------------ | -------- | ------------------------------------------- |
+| `DB_TYPE`     | string | `postgres`                     | No       | Database system (always postgres)           |
+| `DB_HOST`     | string | `localhost`                    | Yes      | PostgreSQL hostname                         |
+| `DB_PORT`     | number | `15432`                        | No       | PostgreSQL host port (local Docker mapping) |
+| `DB_USER`     | string | `cosmic_horizons_user`         | Yes      | Database user                               |
+| `DB_PASSWORD` | string | `cosmic_horizons_password_dev` | Yes      | Database password (SENSITIVE)               |
+| `DB_NAME`     | string | `cosmic_horizons`              | No       | Database name                               |
 
 ## Redis
 
-| Variable | Type | Default | Required | Usage |
-|----------|------|---------|----------|-------|
-| `REDIS_HOST` | string | `localhost` | Yes | Redis hostname |
-| `REDIS_PORT` | number | `6379` | No | Redis port |
-| `REDIS_PASSWORD` | string | (empty) | No | Redis password (SENSITIVE) |
-| `REDIS_DB` | number | `0` | No | Redis database number |
+| Variable             | Type    | Default     | Required | Usage                                              |
+| -------------------- | ------- | ----------- | -------- | -------------------------------------------------- |
+| `REDIS_HOST`         | string  | `localhost` | Yes      | Redis hostname                                     |
+| `REDIS_PORT`         | number  | `6379`      | No       | Redis port                                         |
+| `REDIS_PASSWORD`     | string  | (empty)     | No       | Redis password (SENSITIVE)                         |
+| `REDIS_AUTH_ENABLED` | boolean | `false`     | No       | Enable Redis password auth in local/prod-like runs |
+| `REDIS_DB`           | number  | `0`         | No       | Redis database number                              |
 
 ## Server
 
-| Variable | Type | Default | Required | Usage |
-|----------|------|---------|----------|-------|
-| `NODE_ENV` | string | `development` | No | Application environment |
-| `PORT` | number | `3000` | No | API server port |
-| `SERVER_HOST` | string | `0.0.0.0` | No | API server bind address |
-| `FRONTEND_PORT` | number | `4200` | No | Frontend dev server port |
-| `FRONTEND_URL` | string | `http://localhost:4200` | Yes | Frontend public URL |
+| Variable        | Type   | Default                 | Required | Usage                    |
+| --------------- | ------ | ----------------------- | -------- | ------------------------ |
+| `NODE_ENV`      | string | `development`           | No       | Application environment  |
+| `API_PORT`      | number | `3000`                  | No       | API server port          |
+| `SERVER_HOST`   | string | `0.0.0.0`               | No       | API server bind address  |
+| `FRONTEND_PORT` | number | `4200`                  | No       | Frontend dev server port |
+| `FRONTEND_URL`  | string | `http://localhost:4200` | Yes      | Frontend public URL      |
 
 ## Authentication
 
-| Variable | Type | Default | Required | Usage |
-|----------|------|---------|----------|-------|
-| `JWT_SECRET` | string | (dev-default) | Yes | JWT signing key (min 32 chars, SENSITIVE) |
-| `JWT_EXPIRES_IN` | string | `7d` | No | JWT token expiration |
-| `SESSION_SECRET` | string | (dev-default) | Yes | Express session secret (SENSITIVE) |
+| Variable         | Type   | Default       | Required | Usage                                     |
+| ---------------- | ------ | ------------- | -------- | ----------------------------------------- |
+| `JWT_SECRET`     | string | (dev-default) | Yes      | JWT signing key (min 32 chars, SENSITIVE) |
+| `JWT_EXPIRES_IN` | string | `7d`          | No       | JWT token expiration                      |
+| `SESSION_SECRET` | string | (dev-default) | Yes      | Express session secret (SENSITIVE)        |
 
 ## GitHub OAuth
 
-| Variable | Type | Default | Required | Usage |
-|----------|------|---------|----------|-------|
-| `GITHUB_CLIENT_ID` | string | (none) | No | OAuth app client ID |
-| `GITHUB_CLIENT_SECRET` | string | (none) | No | OAuth app client secret (SENSITIVE) |
-| `GITHUB_CALLBACK_URL` | string | `http://localhost:3000/api/auth/github/callback` | No | OAuth callback endpoint |
+| Variable               | Type   | Default                                          | Required | Usage                               |
+| ---------------------- | ------ | ------------------------------------------------ | -------- | ----------------------------------- |
+| `GITHUB_CLIENT_ID`     | string | (none)                                           | No       | OAuth app client ID                 |
+| `GITHUB_CLIENT_SECRET` | string | (none)                                           | No       | OAuth app client secret (SENSITIVE) |
+| `GITHUB_CALLBACK_URL`  | string | `http://localhost:3000/api/auth/github/callback` | No       | OAuth callback endpoint             |
 
 ## Logging
 
-| Variable | Type | Default | Required | Usage |
-|----------|------|---------|----------|-------|
-| `LOG_LEVEL` | string | `info` | No | Logging level (debug/info/warn/error) |
-| `LOGS_REDIS_ENABLED` | boolean | `false` | No | Enable Redis-based audit logging |
-| `AUDIT_RETENTION_DAYS` | number | `90` | No | Retention period for audit logs |
+| Variable               | Type    | Default | Required | Usage                                 |
+| ---------------------- | ------- | ------- | -------- | ------------------------------------- |
+| `LOG_LEVEL`            | string  | `info`  | No       | Logging level (debug/info/warn/error) |
+| `LOGS_REDIS_ENABLED`   | boolean | `false` | No       | Enable Redis-based audit logging      |
+| `AUDIT_RETENTION_DAYS` | number  | `90`    | No       | Retention period for audit logs       |
 
 ## Features
 
-| Variable | Type | Default | Required | Usage |
-|----------|------|---------|----------|-------|
-| `EPHEMERIS_ENABLED` | boolean | `true` | No | Enable ephemeris search feature |
-| `EPHEMERIS_CACHE_ENABLED` | boolean | `true` | No | Enable ephemeris result caching |
-| `EPHEMERIS_CACHE_TTL_HOURS` | number | `24` | No | Ephemeris cache time-to-live |
-| `COMMENTS_ENABLED` | boolean | `true` | No | Enable comments/threading feature |
-| `JOBS_ENABLED` | boolean | `true` | No | Enable remote jobs/TACC feature |
+| Variable                    | Type    | Default | Required | Usage                             |
+| --------------------------- | ------- | ------- | -------- | --------------------------------- |
+| `EPHEMERIS_ENABLED`         | boolean | `true`  | No       | Enable ephemeris search feature   |
+| `EPHEMERIS_CACHE_ENABLED`   | boolean | `true`  | No       | Enable ephemeris result caching   |
+| `EPHEMERIS_CACHE_TTL_HOURS` | number  | `24`    | No       | Ephemeris cache time-to-live      |
+| `COMMENTS_ENABLED`          | boolean | `true`  | No       | Enable comments/threading feature |
+| `JOBS_ENABLED`              | boolean | `true`  | No       | Enable remote jobs/TACC feature   |
 
 ## Application Info
 
-| Variable | Type | Default | Required | Usage |
-|----------|------|---------|----------|-------|
-| `APP_VERSION` | string | `1.1.1` | No | Application version |
-| `APP_NAME` | string | `Cosmic Horizons API` | No | Application display name |
+| Variable      | Type   | Default               | Required | Usage                    |
+| ------------- | ------ | --------------------- | -------- | ------------------------ |
+| `APP_VERSION` | string | `1.1.1`               | No       | Application version      |
+| `APP_NAME`    | string | `Cosmic Horizons API` | No       | Application display name |
 
 ## Development-Only
 
-| Variable | Type | Default | Required | Usage |
-|----------|------|---------|----------|-------|
-| `COSMIC_HORIZONS_API_BASE_URL` | string | `https://api.cosmic-horizons.org` | No | Cosmic Horizons data API base |
-| `COSMIC_HORIZONS_API_TIMEOUT` | number | `30000` | No | API timeout in milliseconds |
+| Variable                       | Type   | Default                           | Required | Usage                         |
+| ------------------------------ | ------ | --------------------------------- | -------- | ----------------------------- |
+| `COSMIC_HORIZONS_API_BASE_URL` | string | `https://api.cosmic-horizons.org` | No       | Cosmic Horizons data API base |
+| `COSMIC_HORIZONS_API_TIMEOUT`  | number | `30000`                           | No       | API timeout in milliseconds   |
 
 ## Examples
 
@@ -87,9 +88,10 @@ Complete reference of all environment variables used by Cosmic Horizons.
 ```dotenv
 NODE_ENV=development
 DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
+DB_PORT=15432
+DB_USER=cosmic_horizons_user
+DB_PASSWORD=cosmic_horizons_password_dev
+DB_NAME=cosmic_horizons
 REDIS_HOST=localhost
 REDIS_PORT=6379
 FRONTEND_URL=http://localhost:4200
@@ -100,7 +102,7 @@ LOG_LEVEL=info
 
 ### GitHub Actions (.secrets.env via CI)
 
-``` text
+```text
 DB_PASSWORD=${{ secrets.DB_PASSWORD }}
 JWT_SECRET=${{ secrets.JWT_SECRET }} (min 32 chars)
 SESSION_SECRET=${{ secrets.SESSION_SECRET }}
@@ -154,7 +156,7 @@ export FRONTEND_URL=https://cosmichorizons.org
 
 ### "Missing required environment variable: JWT_SECRET"
 
-- In development: copy .env.example to .env.local
+- In development: copy `apps/cosmic-horizons-api/.env.example` to `apps/cosmic-horizons-api/.env.local`
 - In production: set JWT_SECRET environment variable with min 32 chars
 
 ### "Configuration validation failed"

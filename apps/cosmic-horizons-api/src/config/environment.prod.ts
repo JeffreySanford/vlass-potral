@@ -18,7 +18,7 @@ export const environment: EnvironmentConfig = {
   },
 
   server: {
-    port: parseInt(process.env['PORT'] || '3000', 10),
+    port: parseInt(process.env['API_PORT'] || '3000', 10),
     host: process.env['SERVER_HOST'] || '0.0.0.0',
   },
 
@@ -26,16 +26,19 @@ export const environment: EnvironmentConfig = {
     type: 'postgres',
     host: validateRequired('DB_HOST', process.env['DB_HOST']),
     port: parseInt(validateRequired('DB_PORT', process.env['DB_PORT']), 10),
-    username: validateRequired('DB_USERNAME', process.env['DB_USERNAME']),
+    username: validateRequired('DB_USER', process.env['DB_USER']),
     password: validateRequired('DB_PASSWORD', process.env['DB_PASSWORD']),
-    database: validateRequired('DB_DATABASE', process.env['DB_DATABASE']),
+    database: validateRequired('DB_NAME', process.env['DB_NAME']),
     synchronize: false,
     logging: false,
   },
 
   redis: {
     host: validateRequired('REDIS_HOST', process.env['REDIS_HOST']),
-    port: parseInt(validateRequired('REDIS_PORT', process.env['REDIS_PORT']), 10),
+    port: parseInt(
+      validateRequired('REDIS_PORT', process.env['REDIS_PORT']),
+      10,
+    ),
     password: process.env['REDIS_PASSWORD'],
     db: 0,
   },
@@ -43,13 +46,25 @@ export const environment: EnvironmentConfig = {
   auth: {
     jwtSecret: validateRequired('JWT_SECRET', process.env['JWT_SECRET'], 32),
     jwtExpiresIn: process.env['JWT_EXPIRES_IN'] || '7d',
-    sessionSecret: validateRequired('SESSION_SECRET', process.env['SESSION_SECRET']),
+    sessionSecret: validateRequired(
+      'SESSION_SECRET',
+      process.env['SESSION_SECRET'],
+    ),
   },
 
   github: {
-    clientId: validateRequired('GITHUB_CLIENT_ID', process.env['GITHUB_CLIENT_ID']),
-    clientSecret: validateRequired('GITHUB_CLIENT_SECRET', process.env['GITHUB_CLIENT_SECRET']),
-    callbackUrl: validateRequired('GITHUB_CALLBACK_URL', process.env['GITHUB_CALLBACK_URL']),
+    clientId: validateRequired(
+      'GITHUB_CLIENT_ID',
+      process.env['GITHUB_CLIENT_ID'],
+    ),
+    clientSecret: validateRequired(
+      'GITHUB_CLIENT_SECRET',
+      process.env['GITHUB_CLIENT_SECRET'],
+    ),
+    callbackUrl: validateRequired(
+      'GITHUB_CALLBACK_URL',
+      process.env['GITHUB_CALLBACK_URL'],
+    ),
   },
 
   frontend: {
@@ -71,10 +86,15 @@ export const environment: EnvironmentConfig = {
   },
 
   logging: {
-    level: (process.env['LOG_LEVEL'] as 'debug' | 'info' | 'warn' | 'error') || 'info',
+    level:
+      (process.env['LOG_LEVEL'] as 'debug' | 'info' | 'warn' | 'error') ||
+      'info',
     prettyPrint: false, // No pretty printing in production
     redisEnabled: process.env['LOGS_REDIS_ENABLED'] === 'true',
-    auditRetentionDays: parseInt(process.env['AUDIT_RETENTION_DAYS'] || '90', 10),
+    auditRetentionDays: parseInt(
+      process.env['AUDIT_RETENTION_DAYS'] || '90',
+      10,
+    ),
   },
 };
 
@@ -85,18 +105,22 @@ export const environment: EnvironmentConfig = {
  * @param minLength - Optional minimum length for the value
  * @throws If value is not set or too short
  */
-function validateRequired(name: string, value: string | undefined, minLength?: number): string {
+function validateRequired(
+  name: string,
+  value: string | undefined,
+  minLength?: number,
+): string {
   if (!value) {
     throw new Error(
       `Missing required environment variable: ${name}. ` +
-        `Production deployments require all critical environment variables to be set.`
+        `Production deployments require all critical environment variables to be set.`,
     );
   }
 
   if (minLength && value.length < minLength) {
     throw new Error(
       `Environment variable ${name} is too short. ` +
-        `Minimum length required: ${minLength} characters.`
+        `Minimum length required: ${minLength} characters.`,
     );
   }
 

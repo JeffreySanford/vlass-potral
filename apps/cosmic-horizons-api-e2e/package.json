@@ -10,6 +10,7 @@
     "targets": {
       "e2e": {
         "executor": "@nx/jest:jest",
+        "cache": false,
         "outputs": [
           "{projectRoot}/test-output/jest/coverage"
         ],

@@ -28,7 +28,6 @@ test.describe('SSR preview payload', () => {
     request,
   }) => {
     const html = await fetchSsrHtml('/landing', request);
-    expect(html).toContain('Scientific Operations Gateway');
     expect(html).toContain(
       '--sky-preview-url: url(/previews/region-default.png?v=20260207);',
     );

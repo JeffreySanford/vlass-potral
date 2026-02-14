@@ -1,17 +1,24 @@
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Kafka } from 'kafkajs';
+import { Kafka, logLevel } from 'kafkajs';
 import Redis from 'ioredis';
 import { Pool } from 'pg';
 import type { MessagingInfraSnapshot } from './messaging.types';
 
 const POLL_INTERVAL_MS = 2000;
+const STARTUP_GRACE_MS = 8000;
 
 @Injectable()
 export class MessagingMonitorService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(MessagingMonitorService.name);
   private pollHandle: NodeJS.Timeout | null = null;
   private kafkaAdmin: ReturnType<Kafka['admin']> | null = null;
+  private kafkaAdminConnected = false;
   private redisClient: Redis | null = null;
   private postgresPool: Pool | null = null;
 
@@ -44,10 +51,12 @@ export class MessagingMonitorService implements OnModuleInit, OnModuleDestroy {
 
   onModuleInit(): void {
     this.initializeClients();
-    void this.poll();
-    this.pollHandle = setInterval(() => {
+    setTimeout(() => {
       void this.poll();
-    }, POLL_INTERVAL_MS);
+      this.pollHandle = setInterval(() => {
+        void this.poll();
+      }, POLL_INTERVAL_MS);
+    }, STARTUP_GRACE_MS);
   }
 
   async onModuleDestroy(): Promise<void> {
@@ -56,12 +65,13 @@ export class MessagingMonitorService implements OnModuleInit, OnModuleDestroy {
       this.pollHandle = null;
     }
 
-    if (this.kafkaAdmin) {
+    if (this.kafkaAdmin && this.kafkaAdminConnected) {
       try {
         await this.kafkaAdmin.disconnect();
       } catch {
         // ignore shutdown failures
       }
+      this.kafkaAdminConnected = false;
       this.kafkaAdmin = null;
     }
 
@@ -94,12 +104,19 @@ export class MessagingMonitorService implements OnModuleInit, OnModuleDestroy {
     const kafka = new Kafka({
       clientId: 'cosmic-horizons-monitor',
       brokers: [`${kafkaHost}:${kafkaPort}`],
+      logLevel: logLevel.NOTHING,
     });
     this.kafkaAdmin = kafka.admin();
 
     const redisHost = this.config.get<string>('REDIS_HOST') ?? 'localhost';
     const redisPort = Number(this.config.get<string>('REDIS_PORT') ?? '6379');
-    const redisPassword = this.config.get<string>('REDIS_PASSWORD') ?? undefined;
+    const redisAuthEnabled =
+      (
+        this.config.get<string>('REDIS_AUTH_ENABLED') ?? 'false'
+      ).toLowerCase() === 'true';
+    const redisPassword = redisAuthEnabled
+      ? (this.config.get<string>('REDIS_PASSWORD')?.trim() ?? undefined)
+      : undefined;
     this.redisClient = new Redis({
       host: redisHost,
       port: redisPort,
@@ -111,7 +128,8 @@ export class MessagingMonitorService implements OnModuleInit, OnModuleDestroy {
     const dbHost = this.config.get<string>('DB_HOST') ?? 'localhost';
     const dbPort = Number(this.config.get<string>('DB_PORT') ?? '15432');
     const dbUser = this.config.get<string>('DB_USER') ?? 'cosmic_horizons_user';
-    const dbPass = this.config.get<string>('DB_PASSWORD') ?? 'cosmic_horizons_password_dev';
+    const dbPass =
+      this.config.get<string>('DB_PASSWORD') ?? 'cosmic_horizons_password_dev';
     const dbName = this.config.get<string>('DB_NAME') ?? 'cosmic_horizons';
     this.postgresPool = new Pool({
       host: dbHost,
@@ -145,7 +163,8 @@ export class MessagingMonitorService implements OnModuleInit, OnModuleDestroy {
 
   private async pollRabbitMq(): Promise<MessagingInfraSnapshot['rabbitmq']> {
     const host = this.config.get<string>('RABBITMQ_HOST') ?? 'localhost';
-    const managementPort = this.config.get<string>('RABBITMQ_MANAGEMENT_PORT') ?? '15672';
+    const managementPort =
+      this.config.get<string>('RABBITMQ_MANAGEMENT_PORT') ?? '15672';
     const user = this.config.get<string>('RABBITMQ_USER') ?? 'guest';
     const pass = this.config.get<string>('RABBITMQ_PASS') ?? 'guest';
     const url = `http://${host}:${managementPort}/api/queues/%2F/element_telemetry_queue`;
@@ -197,9 +216,13 @@ export class MessagingMonitorService implements OnModuleInit, OnModuleDestroy {
 
     const started = Date.now();
     try {
-      await this.kafkaAdmin.connect();
-      const offsets = await this.kafkaAdmin.fetchTopicOffsets('element.raw_data');
-      const latestOffset = offsets.reduce((acc, item) => acc + Number(item.offset), 0);
+      await this.ensureKafkaAdminConnected();
+      const offsets =
+        await this.kafkaAdmin.fetchTopicOffsets('element.raw_data');
+      const latestOffset = offsets.reduce(
+        (acc, item) => acc + Number(item.offset),
+        0,
+      );
 
       return {
         connected: true,
@@ -209,22 +232,30 @@ export class MessagingMonitorService implements OnModuleInit, OnModuleDestroy {
       };
     } catch (error) {
       this.logger.debug(`Kafka monitor failed: ${(error as Error).message}`);
+      if (this.kafkaAdmin && this.kafkaAdminConnected) {
+        await this.kafkaAdmin.disconnect().catch(() => undefined);
+      }
+      this.kafkaAdminConnected = false;
       return {
         connected: false,
         latencyMs: null,
         latestOffset: null,
         partitions: null,
       };
-    } finally {
-      try {
-        await this.kafkaAdmin.disconnect();
-      } catch {
-        // ignored
-      }
     }
   }
 
-  private async pollPostgres(): Promise<MessagingInfraSnapshot['storage']['postgres']> {
+  private async ensureKafkaAdminConnected(): Promise<void> {
+    if (!this.kafkaAdmin || this.kafkaAdminConnected) {
+      return;
+    }
+    await this.kafkaAdmin.connect();
+    this.kafkaAdminConnected = true;
+  }
+
+  private async pollPostgres(): Promise<
+    MessagingInfraSnapshot['storage']['postgres']
+  > {
     if (!this.postgresPool) {
       return {
         connected: false,
@@ -248,7 +279,9 @@ export class MessagingMonitorService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private async pollRedis(): Promise<MessagingInfraSnapshot['storage']['redis']> {
+  private async pollRedis(): Promise<
+    MessagingInfraSnapshot['storage']['redis']
+  > {
     if (!this.redisClient) {
       return {
         connected: false,

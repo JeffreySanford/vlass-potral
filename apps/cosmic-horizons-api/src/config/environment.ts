@@ -93,7 +93,7 @@ export const environment: EnvironmentConfig = {
   },
 
   server: {
-    port: parseInt(process.env['PORT'] || '3000', 10),
+    port: parseInt(process.env['API_PORT'] || '3000', 10),
     host: process.env['SERVER_HOST'] || '0.0.0.0',
   },
 
@@ -101,9 +101,9 @@ export const environment: EnvironmentConfig = {
     type: 'postgres',
     host: process.env['DB_HOST'] || 'localhost',
     port: parseInt(process.env['DB_PORT'] || '5432', 10),
-    username: process.env['DB_USERNAME'] || 'postgres',
+    username: process.env['DB_USER'] || 'postgres',
     password: process.env['DB_PASSWORD'] || 'postgres',
-    database: process.env['DB_DATABASE'] || 'cosmic_horizons',
+    database: process.env['DB_NAME'] || 'cosmic_horizons',
     synchronize: false, // Never use synchronize in production
     logging: process.env['NODE_ENV'] === 'development',
   },
@@ -123,8 +123,11 @@ export const environment: EnvironmentConfig = {
 
   github: {
     clientId: process.env['GITHUB_CLIENT_ID'] || 'dev_github_client_id',
-    clientSecret: process.env['GITHUB_CLIENT_SECRET'] || 'dev_github_client_secret',
-    callbackUrl: process.env['GITHUB_CALLBACK_URL'] || 'http://localhost:3000/api/auth/github/callback',
+    clientSecret:
+      process.env['GITHUB_CLIENT_SECRET'] || 'dev_github_client_secret',
+    callbackUrl:
+      process.env['GITHUB_CALLBACK_URL'] ||
+      'http://localhost:3000/api/auth/github/callback',
   },
 
   frontend: {
@@ -146,9 +149,14 @@ export const environment: EnvironmentConfig = {
   },
 
   logging: {
-    level: (process.env['LOG_LEVEL'] as 'debug' | 'info' | 'warn' | 'error') || 'info',
+    level:
+      (process.env['LOG_LEVEL'] as 'debug' | 'info' | 'warn' | 'error') ||
+      'info',
     prettyPrint: process.env['NODE_ENV'] === 'development',
     redisEnabled: process.env['LOGS_REDIS_ENABLED'] === 'true',
-    auditRetentionDays: parseInt(process.env['AUDIT_RETENTION_DAYS'] || '90', 10),
+    auditRetentionDays: parseInt(
+      process.env['AUDIT_RETENTION_DAYS'] || '90',
+      10,
+    ),
   },
 };

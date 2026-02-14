@@ -56,7 +56,7 @@ Browser
 Shared contracts:
   -> libs/shared/models
 
-```text
+```
 
 Primary paths:
 
@@ -180,7 +180,7 @@ Required CI signals:
 
 - OpenAPI generation + artifact publication + contract diff checks.
 
-- Documentation baseline refresh (`ENV`, `DEMO`, architecture, runbooks).
+- Documentation baseline refresh (`ENV-REFERENCE`, `QUICK-START`, architecture, runbooks).
 
 ### `v2.1-collaboration`
 
@@ -222,9 +222,9 @@ Required CI signals:
 
 - Current architecture: `documentation/architecture/ARCHITECTURE.md`
 
-- Environment contract: `documentation/operations/ENV.md`
+- Environment contract: `documentation/reference/ENV-REFERENCE.md`
 
-- Demo flow: `documentation/operations/DEMO.md`
+- Demo flow: `documentation/operations/QUICK-START.md`
 
 - Roadmap: `documentation/planning/roadmap/ROADMAP.md`
 
@@ -238,8 +238,8 @@ Required CI signals:
 
 - Lighthouse mobile report generated per CI run.
 
-## - `documentation/operations/DEMO.md` reproducible by a new reviewer in under 3 minutes
+- `documentation/operations/QUICK-START.md` reproducible by a new reviewer in under 3 minutes
 
 ---
 
-*Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved.*
+_Cosmic Horizon Development - (c) 2026 Jeffrey Sanford. All rights reserved._
