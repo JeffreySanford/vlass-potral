@@ -7,50 +7,72 @@
  * CRITICAL: This must run before any imports of Angular modules or Forms
  */
 
-// IMMEDIATE polyfill - must be set before any module imports
+// AGGRESSIVE POLYFILL - must be set before any module imports
 // Polyfill for jsdom/headless test environment used in GitHub Actions CI
-// Angular Forms' _isAndroid() function requires navigator.platform to exist
-if (typeof globalThis !== 'undefined' && globalThis.navigator) {
-  // Forcefully define navigator.platform with writable descriptor
-  try {
-    const descriptor = Object.getOwnPropertyDescriptor(globalThis.navigator, 'platform');
-    // If already defined but empty, also override
-    if (!descriptor || !globalThis.navigator.platform || globalThis.navigator.platform === '') {
+// Angular Forms' _isAndroid() function requires navigator.platform to exist and not be null/undefined
+(function setupNavigatorPolyfill() {
+  const PLATFORM_VALUE = 'Linux x86_64';
+
+  // Setup globalThis.navigator.platform
+  if (typeof globalThis !== 'undefined' && globalThis.navigator) {
+    try {
+      // Force delete and redefine to ensure it's truly set
+      const descriptor = Object.getOwnPropertyDescriptor(globalThis.navigator, 'platform');
+      
+      if (!descriptor || descriptor.configurable !== false) {
+        // Try to delete and redefine
+        try {
+          delete (globalThis.navigator as any).platform;
+        } catch (e) {
+          // Ignore deletion errors, might not be possible
+        }
+      }
+
+      // Now define it fresh
       Object.defineProperty(globalThis.navigator, 'platform', {
-        value: 'Linux x86_64',
+        value: PLATFORM_VALUE,
         writable: true,
         configurable: true,
         enumerable: true,
       });
-    }
-  } catch (error) {
-    // If descriptor fails, try direct assignment
-    try {
-      (globalThis.navigator as any).platform = 'Linux x86_64';
-    } catch (e) {
-      console.warn('[WARNING] Could not set navigator.platform:', e);
+    } catch (error) {
+      // Fallback: direct assignment
+      try {
+        (globalThis.navigator as any).platform = PLATFORM_VALUE;
+      } catch (e) {
+        console.warn('[WARNING] Could not set globalThis.navigator.platform:', e);
+      }
     }
   }
-}
 
-// Also set on window.navigator for compatibility
-if (typeof window !== 'undefined' && window.navigator) {
-  try {
-    if (!window.navigator.platform || window.navigator.platform === '') {
+  // Setup window.navigator.platform for legacy support
+  if (typeof window !== 'undefined' && window.navigator) {
+    try {
+      const descriptor = Object.getOwnPropertyDescriptor(window.navigator, 'platform');
+      
+      if (!descriptor || descriptor.configurable !== false) {
+        try {
+          delete (window.navigator as any).platform;
+        } catch (e) {
+          // Ignore
+        }
+      }
+
       Object.defineProperty(window.navigator, 'platform', {
-        value: 'Linux x86_64',
+        value: PLATFORM_VALUE,
         writable: true,
         configurable: true,
+        enumerable: true,
       });
-    }
-  } catch (error) {
-    try {
-      (window.navigator as any).platform = 'Linux x86_64';
-    } catch (e) {
-      console.warn('[WARNING] Could not set window.navigator.platform:', e);
+    } catch (error) {
+      try {
+        (window.navigator as any).platform = PLATFORM_VALUE;
+      } catch (e) {
+        console.warn('[WARNING] Could not set window.navigator.platform:', e);
+      }
     }
   }
-}
+})();
 
 // Ensure getComputedStyle is available
 if (typeof window !== 'undefined' && !window.getComputedStyle) {
