@@ -28,13 +28,15 @@ services:
       - "127.0.0.1:${REDIS_PORT:-6379}:6379"
     volumes:
       - cosmic-horizons-redis-data:/data
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-cosmic_horizons_redis_dev}
+    # Development: auth disabled to avoid WRONGPASS errors with empty REDIS_PASSWORD
+    # Production: add --requirepass ${REDIS_PASSWORD} if needed
+    command: redis-server --appendonly yes
     healthcheck:
       test:
         - CMD
         - sh
         - '-c'
-        - redis-cli -a ${REDIS_PASSWORD:-cosmic_horizons_redis_dev} --raw ping
+        - redis-cli --raw ping
       interval: 10s
       timeout: 5s
       retries: 5
