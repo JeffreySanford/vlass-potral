@@ -33,7 +33,10 @@ export interface StagingStatus {
 export class DatasetStagingService implements OnModuleDestroy {
   private readonly logger = new Logger(DatasetStagingService.name);
   private stagingCache: Map<string, StagingStatus> = new Map();
-  private readonly stagingIntervals = new Map<string, ReturnType<typeof setInterval>>();
+  private readonly stagingIntervals = new Map<
+    string,
+    ReturnType<typeof setInterval>
+  >();
 
   /**
    * Validate dataset readiness for processing
@@ -47,7 +50,9 @@ export class DatasetStagingService implements OnModuleDestroy {
       name: `Dataset-${datasetId.slice(0, 8)}`,
       size_gb: Math.floor(Math.random() * 500) + 50, // 50-550 GB
       format: 'FITS',
-      created_date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+      created_date: new Date(
+        Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000,
+      ),
       ready_for_processing: true,
       staging_location: `/tacc/scratch/${datasetId}`,
       staging_progress: 100,
@@ -59,7 +64,9 @@ export class DatasetStagingService implements OnModuleDestroy {
    */
   async stageDataset(request: StagingRequest): Promise<StagingStatus> {
     const { dataset_id, target_resource, priority } = request;
-    this.logger.log(`Staging dataset ${dataset_id} to ${target_resource} (priority: ${priority})`);
+    this.logger.log(
+      `Staging dataset ${dataset_id} to ${target_resource} (priority: ${priority})`,
+    );
 
     // In phase 1, simulate staging
     // In phase 2, initiate actual GLOBUS transfer
@@ -83,7 +90,7 @@ export class DatasetStagingService implements OnModuleDestroy {
    */
   async getStagingStatus(datasetId: string): Promise<StagingStatus | null> {
     const cached = this.stagingCache.get(datasetId);
-    
+
     if (cached) {
       return cached;
     }
@@ -96,7 +103,10 @@ export class DatasetStagingService implements OnModuleDestroy {
   /**
    * Estimate transfer time based on size
    */
-  estimateTransferTime(sizeGb: number): { minMinutes: number; maxMinutes: number } {
+  estimateTransferTime(sizeGb: number): {
+    minMinutes: number;
+    maxMinutes: number;
+  } {
     // Assume 1 Gbps network bandwidth
     const estimatedSeconds = (sizeGb * 8) / 1; // 8 bits per byte, 1 Gbps
     const minMinutes = Math.ceil(estimatedSeconds / 60);
@@ -121,7 +131,9 @@ export class DatasetStagingService implements OnModuleDestroy {
     recommendations.push('Data staging to NVMe tier for 3x faster I/O');
     speedup *= 3;
 
-    recommendations.push('Verify FITS header alignment for sequential read efficiency');
+    recommendations.push(
+      'Verify FITS header alignment for sequential read efficiency',
+    );
     speedup *= 1.1;
 
     return {
@@ -139,7 +151,7 @@ export class DatasetStagingService implements OnModuleDestroy {
     let progress = 0;
     const interval = setInterval(() => {
       progress += Math.random() * 15;
-      
+
       if (progress >= 100) {
         progress = 100;
         const status = this.stagingCache.get(datasetId);

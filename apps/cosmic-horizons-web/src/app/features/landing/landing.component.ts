@@ -219,53 +219,69 @@ export class LandingComponent implements OnInit, OnDestroy {
   }
 
   private showGdprDialog(): void {
-    this.dialog.open(GdprLocationDialogComponent, {
-      width: '480px',
-      maxWidth: '90vw',
-      disableClose: true,
-      panelClass: 'gdpr-location-dialog-panel',
-    }).afterClosed().subscribe((result) => {
-      this.locationPromptHandled = true;
-      this.expandTelemetryPanel();
-      if (result) {
-        this.personalizePreviewWithLocation(result.latitude, result.longitude);
-      }
-    });
+    this.dialog
+      .open(GdprLocationDialogComponent, {
+        width: '480px',
+        maxWidth: '90vw',
+        disableClose: true,
+        panelClass: 'gdpr-location-dialog-panel',
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        this.locationPromptHandled = true;
+        this.expandTelemetryPanel();
+        if (result) {
+          this.personalizePreviewWithLocation(
+            result.latitude,
+            result.longitude,
+          );
+        }
+      });
   }
 
   get shouldPromptForLocation(): boolean {
     return !this.preview.personalized && !this.locationPromptHandled;
   }
 
-  private personalizePreviewWithLocation(latitude: number, longitude: number): void {
+  private personalizePreviewWithLocation(
+    latitude: number,
+    longitude: number,
+  ): void {
     this.locating = true;
     this.locationMessage = '';
 
-    this.skyPreviewService.personalizeFromCoordinates(latitude, longitude).subscribe({
-      next: (preview) => {
-        if (preview) {
-          this.preview = preview;
-          this.syncTelemetryFromPreview();
-          this.locationMessage = `Sky preview personalized for coordinates LAT ${latitude.toFixed(4)} LON ${longitude.toFixed(4)}.`;
-          this.expandTelemetryPanel();
-          this.updateBackgroundImage();
-          this.snackBar.open('Sky map personalized to your overhead location.', 'Dismiss', {
-            duration: 3200,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
-        } else {
-          this.locationMessage = 'Failed to personalize preview. Using default.';
-        }
-      },
-      error: () => {
-        this.locating = false;
-        this.locationMessage = 'Error personalizing preview. Using default.';
-      },
-      complete: () => {
-        this.locating = false;
-      },
-    });
+    this.skyPreviewService
+      .personalizeFromCoordinates(latitude, longitude)
+      .subscribe({
+        next: (preview) => {
+          if (preview) {
+            this.preview = preview;
+            this.syncTelemetryFromPreview();
+            this.locationMessage = `Sky preview personalized for coordinates LAT ${latitude.toFixed(4)} LON ${longitude.toFixed(4)}.`;
+            this.expandTelemetryPanel();
+            this.updateBackgroundImage();
+            this.snackBar.open(
+              'Sky map personalized to your overhead location.',
+              'Dismiss',
+              {
+                duration: 3200,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              },
+            );
+          } else {
+            this.locationMessage =
+              'Failed to personalize preview. Using default.';
+          }
+        },
+        error: () => {
+          this.locating = false;
+          this.locationMessage = 'Error personalizing preview. Using default.';
+        },
+        complete: () => {
+          this.locating = false;
+        },
+      });
   }
 
   private expandTelemetryPanel(): void {

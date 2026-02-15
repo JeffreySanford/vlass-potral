@@ -86,7 +86,7 @@ describe('DatasetStagingService', () => {
 
       await service.stageDataset(request);
 
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const status = await service.getStagingStatus('dataset-1');
 

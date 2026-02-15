@@ -45,7 +45,7 @@ describe('MessagingService', () => {
   it('should distribute elements across 5 sites', () => {
     const sites = service.getSites();
     expect(sites.length).toBe(5);
-    sites.forEach(site => {
+    sites.forEach((site) => {
       const siteElements = service.getElementsBySite(site.id);
       expect(siteElements.length).toBe(12);
     });
@@ -53,7 +53,7 @@ describe('MessagingService', () => {
 
   it('should provide aggregate data rates for sites', () => {
     const sites = service.getSites();
-    sites.forEach(site => {
+    sites.forEach((site) => {
       expect(site.totalDataRateGbps).toBeGreaterThan(0);
       expect(site.activeElements).toBe(12);
     });
@@ -61,9 +61,7 @@ describe('MessagingService', () => {
 
   it('should emit telemetry updates', (done) => {
     service.onModuleInit(); // Start simulation
-    service.telemetry$.pipe(
-      take(1)
-    ).subscribe(packet => {
+    service.telemetry$.pipe(take(1)).subscribe((packet) => {
       expect(packet.elementId).toBeDefined();
       expect(packet.sourceId).toBeDefined();
       expect(packet.targetId).toBeDefined();

@@ -1,4 +1,8 @@
-import { DatasetStagingService, StagingRequest, StagingStatus } from './dataset-staging.service';
+import {
+  DatasetStagingService,
+  StagingRequest,
+  StagingStatus,
+} from './dataset-staging.service';
 
 describe('DatasetStagingService - Comprehensive Coverage', () => {
   let service: DatasetStagingService;
@@ -21,7 +25,9 @@ describe('DatasetStagingService - Comprehensive Coverage', () => {
     });
 
     it('should return dataset with correct name format', async () => {
-      const result = await service.validateDataset('long-dataset-identifier-abc123');
+      const result = await service.validateDataset(
+        'long-dataset-identifier-abc123',
+      );
 
       expect(result.name).toContain('Dataset-long-');
     });
@@ -178,10 +184,10 @@ describe('DatasetStagingService - Comprehensive Coverage', () => {
       };
 
       await service.stageDataset(request);
-      
+
       // Small delay to allow progress simulation
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       const status = await service.getStagingStatus('dataset-1');
       expect(status).toBeDefined();
     });
@@ -255,13 +261,13 @@ describe('DatasetStagingService - Comprehensive Coverage', () => {
     it('should recommend NVMe tier staging', async () => {
       const result = await service.optimizeDatasetLayout('dataset-1');
 
-      expect(result.recommendations.some(r => r.includes('NVMe'))).toBe(true);
+      expect(result.recommendations.some((r) => r.includes('NVMe'))).toBe(true);
     });
 
     it('should include FITS header alignment recommendations', async () => {
       const result = await service.optimizeDatasetLayout('dataset-1');
 
-      expect(result.recommendations.some(r => r.includes('FITS'))).toBe(true);
+      expect(result.recommendations.some((r) => r.includes('FITS'))).toBe(true);
     });
   });
 
@@ -276,8 +282,12 @@ describe('DatasetStagingService - Comprehensive Coverage', () => {
     it('should apply 50% buffer to max estimate', () => {
       const result = service.estimateTransferTime(100);
 
-      expect(result.maxMinutes).toBeGreaterThanOrEqual(result.minMinutes * 1.5 * 0.99);
-      expect(result.maxMinutes).toBeLessThanOrEqual(result.minMinutes * 1.5 * 1.01);
+      expect(result.maxMinutes).toBeGreaterThanOrEqual(
+        result.minMinutes * 1.5 * 0.99,
+      );
+      expect(result.maxMinutes).toBeLessThanOrEqual(
+        result.minMinutes * 1.5 * 1.01,
+      );
     });
 
     it('should scale linearly with dataset size', () => {
@@ -313,11 +323,11 @@ describe('DatasetStagingService - Comprehensive Coverage', () => {
       }
 
       const results = await Promise.all(
-        requests.map(r => service.stageDataset(r)),
+        requests.map((r) => service.stageDataset(r)),
       );
 
       expect(results).toHaveLength(5);
-      expect(results.every(r => r.status === 'in_progress')).toBe(true);
+      expect(results.every((r) => r.status === 'in_progress')).toBe(true);
     });
 
     it('should maintain independent progress for each dataset', async () => {
@@ -339,7 +349,12 @@ describe('DatasetStagingService - Comprehensive Coverage', () => {
       expect(status1).toBeDefined();
       expect(status2).toBeDefined();
       // Different datasets should have different estimated times based on priority
-      if (status1 && status1.estimated_time_minutes && status2 && status2.estimated_time_minutes) {
+      if (
+        status1 &&
+        status1.estimated_time_minutes &&
+        status2 &&
+        status2.estimated_time_minutes
+      ) {
         expect(status2.estimated_time_minutes).toBeLessThan(
           status1.estimated_time_minutes,
         );
@@ -412,7 +427,7 @@ describe('DatasetStagingService - Comprehensive Coverage', () => {
         );
       }
 
-      expect(results.every(r => r.estimated_time_minutes === 15)).toBe(true);
+      expect(results.every((r) => r.estimated_time_minutes === 15)).toBe(true);
     });
   });
 
@@ -468,7 +483,7 @@ describe('DatasetStagingService - Comprehensive Coverage', () => {
       });
 
       const status1 = await service.getStagingStatus('dataset-1');
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
       const status2 = await service.getStagingStatus('dataset-1');
 
       // Both should still be in_progress (Phase 1 simulates indefinitely or until completion)
@@ -489,7 +504,7 @@ describe('DatasetStagingService - Comprehensive Coverage', () => {
 
       expect(result.progress).toBe(0);
 
-      await new Promise(resolve => setTimeout(resolve, 2500));
+      await new Promise((resolve) => setTimeout(resolve, 2500));
 
       const status = await service.getStagingStatus('dataset-1');
       if (status && status.progress !== undefined) {

@@ -280,7 +280,9 @@ describe('LandingComponent', () => {
     component.onTelemetryControl();
 
     expect(component.preview.personalized).toBe(false);
-    expect(component.locationMessage).toBe('Failed to personalize preview. Using default.');
+    expect(component.locationMessage).toBe(
+      'Failed to personalize preview. Using default.',
+    );
     expect(snackBarOpenSpy).not.toHaveBeenCalled();
   });
 });
