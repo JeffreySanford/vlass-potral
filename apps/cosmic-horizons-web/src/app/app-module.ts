@@ -8,6 +8,7 @@ import { appRoutes } from './app.routes';
 import { MaterialModule } from './shared/material/material.module';
 import { AuthTokenInterceptor } from './interceptors/auth-token.interceptor';
 import { HttpLoggerInterceptor } from './interceptors/http-logger.interceptor';
+import { MockApiInterceptor } from './shared/interceptors/mock-api.interceptor';
 import { FooterComponent } from './shared/layout/footer/footer.component';
 
 @NgModule({
@@ -32,6 +33,11 @@ import { FooterComponent } from './shared/layout/footer/footer.component';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpLoggerInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: MockApiInterceptor,
       multi: true,
     },
   ],
