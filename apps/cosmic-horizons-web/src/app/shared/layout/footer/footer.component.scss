@@ -1,0 +1,47 @@
+.app-footer {
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+  border-top: 1px solid #30363d;
+  padding: 2rem 1rem;
+  margin-top: auto;
+  color: #8b949e;
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  .footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      text-align: center;
+    }
+  }
+
+  .footer-section {
+    p {
+      margin: 0;
+      color: #8b949e;
+
+      &.affiliation {
+        font-size: 0.8125rem;
+        color: #6e7681;
+        font-style: italic;
+      }
+
+      &.copyright {
+        font-size: 0.75rem;
+        color: #484f58;
+        text-align: right;
+
+        @media (max-width: 768px) {
+          text-align: center;
+        }
+      }
+    }
+  }
+}

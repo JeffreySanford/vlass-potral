@@ -8,6 +8,7 @@ import { appRoutes } from './app.routes';
 import { MaterialModule } from './shared/material/material.module';
 import { AuthTokenInterceptor } from './interceptors/auth-token.interceptor';
 import { HttpLoggerInterceptor } from './interceptors/http-logger.interceptor';
+import { FooterComponent } from './shared/layout/footer/footer.component';
 
 @NgModule({
   declarations: [App],
@@ -16,6 +17,7 @@ import { HttpLoggerInterceptor } from './interceptors/http-logger.interceptor';
     BrowserAnimationsModule,
     RouterModule,
     MaterialModule,
+    FooterComponent,
   ],
   providers: [
     provideRouter(appRoutes),
