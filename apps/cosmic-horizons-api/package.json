@@ -108,6 +108,7 @@
     }
   },
   "dependencies": {
+    "@cosmic-horizons/event-models": "workspace:*",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",

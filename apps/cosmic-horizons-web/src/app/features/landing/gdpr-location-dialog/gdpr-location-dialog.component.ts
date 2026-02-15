@@ -1,22 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+
 
 @Component({
   selector: 'app-gdpr-location-dialog',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatIconModule,
-    FormsModule,
-  ],
+  standalone: false,
   templateUrl: './gdpr-location-dialog.component.html',
   styleUrls: ['./gdpr-location-dialog.component.scss'],
 })
@@ -24,12 +12,9 @@ export class GdprLocationDialogComponent {
   private readonly dialogRef = inject(MatDialogRef<GdprLocationDialogComponent>);
 
   userConsent = false;
-  locationData: {
-    latitude: number | null;
-    longitude: number | null;
-  } = {
-    latitude: null,
-    longitude: null,
+  locationData = {
+    latitude: null as number | null,
+    longitude: null as number | null,
   };
   geolocationError = '';
 

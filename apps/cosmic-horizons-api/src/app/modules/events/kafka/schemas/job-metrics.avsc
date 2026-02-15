@@ -1,0 +1,45 @@
+{
+  "type": "record",
+  "namespace": "com.cosmic-horizons.events",
+  "name": "JobMetricsEvent",
+  "doc": "Performance metrics for a job execution",
+  "fields": [
+    {
+      "name": "event_id",
+      "type": "string",
+      "doc": "Unique event identifier (UUID)"
+    },
+    {
+      "name": "event_type",
+      "type": "string",
+      "default": "job.metrics",
+      "doc": "Event type: job.metrics"
+    },
+    {
+      "name": "timestamp",
+      "type": "string",
+      "doc": "ISO 8601 timestamp when metrics were collected"
+    },
+    {
+      "name": "correlation_id",
+      "type": "string",
+      "doc": "Correlation ID for tracing"
+    },
+    {
+      "name": "job_id",
+      "type": "string",
+      "doc": "Associated job ID"
+    },
+    {
+      "name": "schema_version",
+      "type": "int",
+      "default": 1,
+      "doc": "Schema version for compatibility"
+    },
+    {
+      "name": "payload",
+      "type": "string",
+      "doc": "JSON-encoded metrics payload: CPU %, GPU %, memory GB, I/O MB/s, wall time seconds"
+    }
+  ]
+}

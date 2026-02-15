@@ -1,0 +1,45 @@
+{
+  "type": "record",
+  "namespace": "com.cosmic-horizons.events",
+  "name": "NotificationEvent",
+  "doc": "User notification event for email, websocket, and in-app messaging",
+  "fields": [
+    {
+      "name": "event_id",
+      "type": "string",
+      "doc": "Unique event identifier (UUID)"
+    },
+    {
+      "name": "event_type",
+      "type": "string",
+      "default": "notification.sent",
+      "doc": "Event type: notification.sent or notification.read"
+    },
+    {
+      "name": "timestamp",
+      "type": "string",
+      "doc": "ISO 8601 timestamp"
+    },
+    {
+      "name": "correlation_id",
+      "type": "string",
+      "doc": "Correlation ID"
+    },
+    {
+      "name": "user_id",
+      "type": "string",
+      "doc": "Recipient user ID"
+    },
+    {
+      "name": "schema_version",
+      "type": "int",
+      "default": 1,
+      "doc": "Schema version"
+    },
+    {
+      "name": "payload",
+      "type": "string",
+      "doc": "JSON-encoded notification payload: channel (email/websocket/in-app), subject, message, related_job_id"
+    }
+  ]
+}

@@ -36,6 +36,10 @@ const apiPort = Number(env.API_PORT ?? '3000');
 const frontendPort = Number(env.FRONTEND_PORT ?? '4200');
 const PORTS = [apiPort, frontendPort].filter((port, index, array) => Number.isFinite(port) && port > 0 && array.indexOf(port) === index);
 
+function waitMs(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
 function killStaleNxWatchersWindows() {
   const res = spawnSync(
     'powershell',
@@ -146,15 +150,34 @@ if (process.platform === 'win32') {
   killStaleNxWatchersWindows();
 }
 
-const stillBusy = [];
-for (const port of PORTS) {
-  const pids =
-    process.platform === 'win32'
-      ? getListeningPidsWindows(port)
-      : getListeningPidsUnix(port);
-  if (pids.length > 0) {
-    stillBusy.push({ port, pids });
+let stillBusy = [];
+for (let attempt = 1; attempt <= 4; attempt += 1) {
+  stillBusy = [];
+  for (const port of PORTS) {
+    const pids =
+      process.platform === 'win32'
+        ? getListeningPidsWindows(port)
+        : getListeningPidsUnix(port);
+    if (pids.length > 0) {
+      stillBusy.push({ port, pids });
+    }
   }
+
+  if (stillBusy.length === 0) {
+    break;
+  }
+
+  for (const item of stillBusy) {
+    for (const pid of item.pids) {
+      if (process.platform === 'win32') {
+        killPidWindows(pid);
+      } else {
+        killPidUnix(pid);
+      }
+    }
+  }
+
+  waitMs(300);
 }
 
 if (stillBusy.length > 0) {

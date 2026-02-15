@@ -13,6 +13,10 @@ import { CacheModule } from './cache/cache.module';
 import { JobsModule } from './jobs/jobs.module';
 import { LoggingModule } from './logging/logging.module';
 import { MessagingModule } from './messaging/messaging.module';
+import { EventsModule } from './modules/events/events.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { AuditModule } from './modules/audit/audit.module';
+import { HealthModule } from './modules/health/health.module';
 import { RateLimitGuard } from './guards/rate-limit.guard';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestLoggerInterceptor } from './interceptors/request-logger.interceptor';
@@ -50,6 +54,10 @@ const envCandidates = getEnvCandidates();
     LoggingModule,
     MessagingModule,
     JobsModule,
+    EventsModule,
+    NotificationsModule,
+    AuditModule,
+    HealthModule,
   ],
   controllers: [AppController, AdminLogsController],
   providers: [

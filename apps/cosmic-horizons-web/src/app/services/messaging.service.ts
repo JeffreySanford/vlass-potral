@@ -95,7 +95,7 @@ export interface MessagingLiveStats {
 })
 export class MessagingService {
   private apiUrl = 'http://localhost:3000/api/messaging';
-  private socket: Socket;
+  private socket: Socket | null = null;
   private telemetrySubject = new Subject<TelemetryPacket>();
   private statsSubject = new Subject<MessagingLiveStats>();
   private readonly http = inject(HttpClient);
@@ -106,13 +106,30 @@ export class MessagingService {
     this.logger.info('messaging', 'Initializing MessagingService', {
       transport: 'websocket',
     });
+    
+    // Lazy connect: only connect if already authenticated
+    if (this.authSessionService.isAuthenticated()) {
+      this.connectSocket();
+    }
+  }
+
+  private connectSocket(): void {
+    if (this.socket) {
+      return; // Already connected
+    }
+
     const token = this.authSessionService.getToken();
+    if (!token) {
+      this.logger.warn('messaging', 'Cannot connect: no authentication token');
+      return;
+    }
+
     this.socket = io('http://localhost:3000/messaging', {
       path: '/socket.io',
       transports: ['websocket'],
       withCredentials: true,
       auth: {
-        token: token ?? undefined,
+        token: token,
       },
     });
 
@@ -140,6 +157,12 @@ export class MessagingService {
     this.socket.on('stats_update', (stats: MessagingLiveStats) => {
       this.statsSubject.next(stats);
     });
+  }
+
+  ensureConnected(): void {
+    if (!this.socket && this.authSessionService.isAuthenticated()) {
+      this.connectSocket();
+    }
   }
 
   get telemetry$(): Observable<TelemetryPacket> {

@@ -1,0 +1,77 @@
+{
+  "type": "record",
+  "namespace": "com.cosmic-horizons.events",
+  "name": "AuditTrailEvent",
+  "doc": "Audit trail event for compliance (HIPAA/SOC2 - 90 day retention)",
+  "fields": [
+    {
+      "name": "event_id",
+      "type": "string",
+      "doc": "Unique event identifier (UUID)"
+    },
+    {
+      "name": "event_type",
+      "type": "string",
+      "default": "audit.event",
+      "doc": "Event type: audit.event"
+    },
+    {
+      "name": "timestamp",
+      "type": "string",
+      "doc": "ISO 8601 timestamp of the audited action"
+    },
+    {
+      "name": "correlation_id",
+      "type": "string",
+      "doc": "Correlation ID for tracing"
+    },
+    {
+      "name": "actor_id",
+      "type": "string",
+      "doc": "User or system that performed the action"
+    },
+    {
+      "name": "resource_id",
+      "type": "string",
+      "doc": "ID of the resource being audited"
+    },
+    {
+      "name": "resource_type",
+      "type": {
+        "type": "enum",
+        "name": "ResourceType",
+        "symbols": ["job", "notebook", "comment", "user", "dataset"]
+      },
+      "doc": "Type of resource"
+    },
+    {
+      "name": "action",
+      "type": {
+        "type": "enum",
+        "name": "AuditAction",
+        "symbols": [
+          "create",
+          "read",
+          "update",
+          "delete",
+          "execute",
+          "export",
+          "access",
+          "permission_change"
+        ]
+      },
+      "doc": "Action performed on resource"
+    },
+    {
+      "name": "schema_version",
+      "type": "int",
+      "default": 1,
+      "doc": "Schema version"
+    },
+    {
+      "name": "payload",
+      "type": "string",
+      "doc": "JSON-encoded audit payload: old_value, new_value, reason, ip_address, user_agent"
+    }
+  ]
+}

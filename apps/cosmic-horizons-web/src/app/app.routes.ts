@@ -73,6 +73,18 @@ export const appRoutes: Route[] = [
     canActivate: [AuthGuard],
   },
   {
+    path: 'inference',
+    loadChildren: () =>
+      import('./features/inference/inference.module').then((m) => m.InferenceModule),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'jobs-orchestration',
+    loadChildren: () =>
+      import('./features/job-orchestration/job-orchestration.module').then((m) => m.JobOrchestrationModule),
+    canActivate: [AuthGuard],
+  },
+  {
     path: '**',
     redirectTo: 'landing',
   },

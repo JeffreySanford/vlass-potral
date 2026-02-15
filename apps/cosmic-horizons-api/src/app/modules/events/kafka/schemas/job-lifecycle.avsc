@@ -1,0 +1,63 @@
+{
+  "type": "record",
+  "namespace": "com.cosmic-horizons.events",
+  "name": "JobLifecycleEvent",
+  "doc": "Job lifecycle event containing job submission, status changes, completion, and failures",
+  "fields": [
+    {
+      "name": "event_id",
+      "type": "string",
+      "doc": "Unique event identifier (UUID)"
+    },
+    {
+      "name": "event_type",
+      "type": {
+        "type": "enum",
+        "name": "EventType",
+        "symbols": [
+          "job.submitted",
+          "job.status.changed",
+          "job.completed",
+          "job.failed",
+          "job.cancelled"
+        ]
+      },
+      "doc": "Type of job lifecycle event"
+    },
+    {
+      "name": "timestamp",
+      "type": "string",
+      "doc": "ISO 8601 timestamp when event occurred"
+    },
+    {
+      "name": "correlation_id",
+      "type": "string",
+      "doc": "Correlation ID for tracing related events"
+    },
+    {
+      "name": "user_id",
+      "type": "string",
+      "doc": "User ID who triggered the event"
+    },
+    {
+      "name": "schema_version",
+      "type": "int",
+      "default": 1,
+      "doc": "Schema version for compatibility tracking"
+    },
+    {
+      "name": "payload",
+      "type": "string",
+      "doc": "JSON-encoded event payload"
+    },
+    {
+      "name": "headers",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Optional headers metadata"
+    }
+  ]
+}

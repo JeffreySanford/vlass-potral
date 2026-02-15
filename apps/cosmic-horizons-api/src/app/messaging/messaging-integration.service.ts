@@ -269,6 +269,12 @@ export class MessagingIntegrationService
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
       try {
         await admin.connect();
+        const existingTopics = await admin.listTopics();
+        if (existingTopics.includes('element.raw_data')) {
+          this.logger.log('Kafka topics ensured (element.raw_data)');
+          return;
+        }
+
         await admin.createTopics({
           waitForLeaders: true,
           topics: [

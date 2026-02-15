@@ -1,0 +1,20 @@
+{
+  "name": "@cosmic-horizons/event-models",
+  "version": "1.0.0",
+  "description": "Shared event models for RabbitMQ and Kafka event streams",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint . --ext .ts"
+  },
+  "dependencies": {
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.0.0",
+    "@types/uuid": "^9.0.0",
+    "jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  }
+}

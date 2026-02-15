@@ -8,17 +8,17 @@
 
 ## Table of Contents
 
-1. [Overview](#overview)
-2. [Audit Architecture](#audit-architecture)
-3. [Data Classification & Retention](#data-classification--retention)
-4. [Audit Event Types](#audit-event-types)
-5. [Compliance & Standards](#compliance--standards)
-6. [Logging Infrastructure](#logging-infrastructure)
-7. [Security & Privacy](#security--privacy)
-8. [Monitoring & Alerting](#monitoring--alerting)
-9. [Access Control & Permissions](#access-control--permissions)
-10. [Incident Response](#incident-response)
-11. [Implementation Roadmap](#implementation-roadmap)
+1. Overview
+2. Audit Architecture
+3. Data Classification and Retention
+4. Audit Event Types
+5. Compliance and Standards
+6. Logging Infrastructure
+7. Security and Privacy
+8. Monitoring and Alerting
+9. Access Control and Permissions
+10. Incident Response
+11. Implementation Roadmap
 
 ---
 

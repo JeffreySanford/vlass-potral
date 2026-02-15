@@ -20,6 +20,7 @@ describe('MessagingComponent', () => {
       getAllElements: vi.fn(() => of([
         { id: 'VLA-1', siteId: 'site-1', status: 'operational' }
       ])),
+      ensureConnected: vi.fn(),
       telemetry$: telemetrySubject.asObservable(),
       stats$: of({
         at: new Date().toISOString(),

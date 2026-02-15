@@ -17,6 +17,9 @@
     },
     {
       "path": "./apps/cosmic-horizons-web"
+    },
+    {
+      "path": "./libs/shared/event-models"
     }
   ]
 }

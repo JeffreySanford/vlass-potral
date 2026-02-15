@@ -198,6 +198,9 @@ export class MessagingComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sitesLoaded = false;
     this.elementsLoaded = false;
 
+    // Ensure WebSocket connection is established after auth
+    this.messagingService.ensureConnected();
+
     this.messagingService.getSites().pipe(take(1)).subscribe((sites: any) => {
       this.sites = sites as ArraySite[];
       this.sitesLoaded = true;

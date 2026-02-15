@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -18,6 +18,7 @@ interface TaccJobStatus {
 export class JobsConsoleComponent implements OnInit {
   private http = inject(HttpClient);
   private snackBar = inject(MatSnackBar);
+  private cdr = inject(ChangeDetectorRef);
 
   agents = ['AlphaCal', 'ImageReconstruction', 'AnomalyDetection'];
   selectedAgent = 'AlphaCal';
@@ -53,10 +54,12 @@ export class JobsConsoleComponent implements OnInit {
         this.snackBar.open(`Job ${res.jobId} submitted successfully`, 'OK', { duration: 3000 });
         this.pollStatus(res.jobId);
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.snackBar.open('Failed to submit job', 'Close', { duration: 5000 });
         this.isLoading = false;
+        this.cdr.markForCheck();
         console.error(err);
       }
     });

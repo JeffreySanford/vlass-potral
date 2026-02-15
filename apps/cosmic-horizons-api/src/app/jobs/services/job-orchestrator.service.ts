@@ -2,6 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { TaccIntegrationService, TaccJobSubmission } from '../tacc-integration.service';
 import { JobRepository } from '../repositories/job.repository';
 import { Job } from '../entities/job.entity';
+import { EventsService } from '../../modules/events/events.service';
+import { KafkaService } from '../../modules/events/kafka.service';
+import { createEventBase, generateCorrelationId } from '@cosmic-horizons/event-models';
 
 export interface BatchJobRequest {
   jobs: TaccJobSubmission[];
@@ -34,16 +37,78 @@ export class JobOrchestratorService {
   constructor(
     private readonly taccService: TaccIntegrationService,
     private readonly jobRepository: JobRepository,
+    private readonly eventsService: EventsService,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   /**
+   * Publish job notification events to Kafka
+   * Used for external system integration (metrics, notifications, audit)
+   */
+  private async publishJobEventToKafka(
+    eventType: string,
+    jobId: string,
+    payload: Record<string, any>,
+  ): Promise<void> {
+    try {
+      await this.kafkaService.publishJobLifecycleEvent(
+        {
+          event_type: eventType,
+          job_id: jobId,
+          ...payload,
+          timestamp: new Date().toISOString(),
+        },
+        jobId, // partition key for ordering
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to publish ${eventType} to Kafka: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      // Non-blocking - don't fail job operations for Kafka publish failures
+    }
+  }
+
+  /**
+   * Publish metrics for completed job
+   */
+  async publishCompletedJobMetrics(
+    jobId: string,
+    metrics: {
+      executionTimeSeconds: number;
+      cpuUsagePercent: number;
+      memoryUsageMb: number;
+    },
+  ): Promise<void> {
+    try {
+      await this.kafkaService.publishJobMetrics(
+        {
+          event_type: 'job.metrics_recorded',
+          job_id: jobId,
+          cpu_usage_percent: metrics.cpuUsagePercent,
+          memory_usage_mb: metrics.memoryUsageMb,
+          execution_time_seconds: metrics.executionTimeSeconds,
+        },
+        jobId, // partition key
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to publish metrics for job ${jobId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  /**
    * Submit a single job for processing
+   * 
+   * Publishes job.submitted event to RabbitMQ and Kafka
+   * Uses correlation ID for tracing job → status → notification chain
    */
   async submitJob(
     userId: string,
     submission: TaccJobSubmission,
   ): Promise<Job> {
-    this.logger.log(`User ${userId} submitting job for agent: ${submission.agent}`);
+    const correlationId = generateCorrelationId();
+    this.logger.log(`User ${userId} submitting job for agent: ${submission.agent} (trace: ${correlationId})`);
 
     // Create job record
     const job = await this.jobRepository.create({
@@ -54,11 +119,53 @@ export class JobOrchestratorService {
       gpu_count: submission.params.gpu_count,
     });
 
+    // Publish job.submitted event (Phase 3)
+    try {
+      const jobSubmittedEvent = createEventBase(
+        'job.submitted',
+        userId,
+        correlationId,
+        {
+          job_id: job.id,
+          project_id: submission.dataset_id,
+          user_id: userId,
+          job_name: job.agent,
+          tacc_system: 'stampede3', // TODO: Make configurable
+          estimated_runtime_minutes: submission.params.max_runtime_minutes || 60,
+          num_nodes: submission.params.num_nodes || 1,
+          created_at: new Date().toISOString(),
+        },
+        { event_id: job.id + '-submitted' } // Use job ID for idempotency
+      );
+
+      await this.eventsService.publishJobEvent(jobSubmittedEvent);
+      this.logger.debug(`Published job.submitted event (${job.id})`);
+
+      // Publish to Kafka for durability and external system integration (Sprint 5.3)
+      await this.publishJobEventToKafka(
+        'job.submitted',
+        job.id,
+        {
+          user_id: userId,
+          project_id: submission.dataset_id,
+          agent: submission.agent,
+          gpu_count: submission.params.gpu_count,
+          num_nodes: submission.params.num_nodes || 1,
+          created_at: new Date().toISOString(),
+          correlation_id: correlationId,
+        },
+      );
+    } catch (eventError) {
+      this.logger.warn(`Failed to publish job.submitted event: ${eventError}`, eventError);
+      // Continue despite event publishing failure - events are non-blocking
+    }
+
     try {
       // Submit to TACC
       const result = await this.taccService.submitJob(submission);
       
-      // Update with TACC job ID
+      // Update with TACC job ID and status
+      const previousStatus = job.status;
       await this.jobRepository.updateStatus(job.id, 'QUEUING');
       const updatedJob = await this.jobRepository.findById(job.id);
       
@@ -66,11 +173,78 @@ export class JobOrchestratorService {
         updatedJob.tacc_job_id = result.jobId;
         await this.jobRepository.updateResult(job.id, {});
       }
+
+      // Publish job.status.changed event (Phase 3)
+      try {
+        const statusChangedEvent = createEventBase(
+          'job.status.changed',
+          userId,
+          correlationId,
+          {
+            job_id: job.id,
+            previous_status: previousStatus,
+            new_status: 'QUEUING',
+            timestamp: new Date().toISOString(),
+            reason: 'Job submitted to TACC',
+          }
+        );
+
+        await this.eventsService.publishJobEvent(statusChangedEvent);
+        this.logger.debug(`Published job.status.changed event (${job.id})`);
+
+        // Publish to Kafka for state tracking (Sprint 5.3)
+        await this.publishJobEventToKafka(
+          'job.status.changed',
+          job.id,
+          {
+            previous_status: previousStatus,
+            new_status: 'QUEUING',
+            reason: 'Job submitted to TACC',
+            timestamp: new Date().toISOString(),
+          },
+        );
+      } catch (eventError) {
+        this.logger.warn(`Failed to publish job.status.changed event: ${eventError}`, eventError);
+      }
       
       return updatedJob || job;
     } catch (error) {
       this.logger.error(`Failed to submit job ${job.id}: ${error}`);
       await this.jobRepository.updateStatus(job.id, 'FAILED');
+
+      // Publish job.failed event (Phase 3)
+      try {
+        const failedEvent = createEventBase(
+          'job.failed',
+          userId,
+          correlationId,
+          {
+            job_id: job.id,
+            failed_at: new Date().toISOString(),
+            error_code: 500,
+            error_message: error instanceof Error ? error.message : 'Unknown error',
+            logs_path: `/jobs/${job.id}/logs`,
+          }
+        );
+
+        await this.eventsService.publishJobEvent(failedEvent);
+        this.logger.debug(`Published job.failed event (${job.id})`);
+
+        // Publish to Kafka for audit trail (Sprint 5.3)
+        await this.publishJobEventToKafka(
+          'job.failed',
+          job.id,
+          {
+            failed_at: new Date().toISOString(),
+            error_code: 500,
+            error_message: error instanceof Error ? error.message : 'Unknown error',
+            logs_path: `/jobs/${job.id}/logs`,
+          },
+        );
+      } catch (eventError) {
+        this.logger.warn(`Failed to publish job.failed event: ${eventError}`, eventError);
+      }
+
       throw error;
     }
   }
@@ -282,6 +456,22 @@ export class JobOrchestratorService {
     }
 
     await this.jobRepository.updateStatus(jobId, 'CANCELLED');
+
+    // Publish status change to Kafka for tracking (Sprint 5.3)
+    try {
+      await this.publishJobEventToKafka(
+        'job.cancelled',
+        jobId,
+        {
+          previous_status: job.status,
+          new_status: 'CANCELLED',
+          cancelled_at: new Date().toISOString(),
+        },
+      );
+    } catch (error) {
+      this.logger.warn(`Failed to publish job.cancelled event to Kafka: ${error}`);
+    }
+
     return true;
   }
 }

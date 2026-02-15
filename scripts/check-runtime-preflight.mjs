@@ -75,18 +75,39 @@ async function checkDatabaseConnectivity() {
   }
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function main() {
   loadFirstEnvFile();
 
+  const maxAttempts = 10;
+  const retryDelayMs = 2000;
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      await checkDatabaseConnectivity();
+      console.log('Preflight OK: API database credentials are valid.');
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt < maxAttempts) {
+        await sleep(retryDelayMs);
+      }
+    }
+  }
+
   try {
-    await checkDatabaseConnectivity();
-    console.log('Preflight OK: API database credentials are valid.');
+    throw lastError ?? new Error('Unknown preflight failure');
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const dbUser = envValue('DB_USER', 'cosmic_horizons_user');
     const dbName = envValue('DB_NAME', 'cosmic_horizons');
     const dbPort = envValue('DB_PORT', '15432');
     const hints = [
+      `Attempts=${maxAttempts}, retry_delay_ms=${retryDelayMs}`,
       `Configured DB_USER=${dbUser}`,
       `Configured DB_NAME=${dbName}`,
       `Configured DB_PORT=${dbPort}`,

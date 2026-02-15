@@ -3,11 +3,15 @@ import { JobRepository } from '../repositories/job.repository';
 import { JobOrchestratorService } from '../services/job-orchestrator.service';
 import { TaccIntegrationService } from '../tacc-integration.service';
 import { Job } from '../entities/job.entity';
+import { EventsService } from '../../modules/events/events.service';
+import { KafkaService } from '../../modules/events/kafka.service';
 
 describe('JobOrchestratorService', () => {
   let service: JobOrchestratorService;
   let jobRepository: jest.Mocked<JobRepository>;
   let taccService: jest.Mocked<TaccIntegrationService>;
+  let eventsService: jest.Mocked<EventsService>;
+  let kafkaService: jest.Mocked<KafkaService>;
 
   const mockJob: Job = {
     id: 'job-1',
@@ -46,12 +50,30 @@ describe('JobOrchestratorService', () => {
             cancelJob: jest.fn().mockResolvedValue(true),
           },
         },
+        {
+          provide: EventsService,
+          useValue: {
+            publishJobEvent: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: KafkaService,
+          useValue: {
+            publishJobLifecycleEvent: jest.fn().mockResolvedValue(undefined),
+            publishJobMetrics: jest.fn().mockResolvedValue(undefined),
+            publishNotificationEvent: jest.fn().mockResolvedValue(undefined),
+            subscribeToTopic: jest.fn().mockResolvedValue(undefined),
+            disconnect: jest.fn().mockResolvedValue(undefined),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<JobOrchestratorService>(JobOrchestratorService);
     jobRepository = module.get(JobRepository) as jest.Mocked<JobRepository>;
     taccService = module.get(TaccIntegrationService) as jest.Mocked<TaccIntegrationService>;
+    eventsService = module.get(EventsService) as jest.Mocked<EventsService>;
+    kafkaService = module.get(KafkaService) as jest.Mocked<KafkaService>;
   });
 
   describe('submitJob', () => {
@@ -71,6 +93,7 @@ describe('JobOrchestratorService', () => {
         params: submission.params,
         gpu_count: 2,
       });
+      expect(eventsService.publishJobEvent).toHaveBeenCalled();
       expect(taccService.submitJob).toHaveBeenCalledWith(submission);
       expect(result).toBeDefined();
     });
@@ -279,6 +302,327 @@ describe('JobOrchestratorService', () => {
 
       expect(result.jobs).toBeDefined();
       expect(result.total).toBeDefined();
+    });
+  });
+
+  // Sprint 5.3 Week 1: Job Event Publishing to Kafka
+  describe('Kafka Event Publishing', () => {
+    describe('job.submitted events', () => {
+      it('should publish job.submitted event to Kafka on successful submission', async () => {
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const, gpu_count: 2, num_nodes: 4 },
+        };
+
+        await service.submitJob('user-1', submission);
+
+        // Verify Kafka publish was called with correct event type
+        expect(kafkaService.publishJobLifecycleEvent).toHaveBeenCalledWith(
+          expect.objectContaining({
+            event_type: 'job.submitted',
+            job_id: 'job-1',
+            user_id: 'user-1',
+            agent: 'AlphaCal',
+          }),
+          'job-1', // partition key
+        );
+      });
+
+      it('should include correlation ID in submitted event', async () => {
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const, gpu_count: 2 },
+        };
+
+        await service.submitJob('user-1', submission);
+
+        expect(kafkaService.publishJobLifecycleEvent).toHaveBeenCalledWith(
+          expect.objectContaining({
+            event_type: 'job.submitted',
+            gpu_count: 2,
+          }),
+          expect.any(String),
+        );
+      });
+
+      it('should handle Kafka publish failure gracefully', async () => {
+        kafkaService.publishJobLifecycleEvent.mockRejectedValueOnce(
+          new Error('Kafka unavailable'),
+        );
+
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const, gpu_count: 2 },
+        };
+
+        const result = await service.submitJob('user-1', submission);
+
+        // Job should still be created despite Kafka failure
+        expect(result).toBeDefined();
+        expect(jobRepository.create).toHaveBeenCalled();
+      });
+    });
+
+    describe('job status transitions', () => {
+      it('should publish job.status.changed to QUEUING after TACC submission', async () => {
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const, gpu_count: 2 },
+        };
+
+        await service.submitJob('user-1', submission);
+
+        expect(kafkaService.publishJobLifecycleEvent).toHaveBeenCalledWith(
+          expect.objectContaining({
+            event_type: 'job.status.changed',
+            previous_status: 'QUEUED',
+            new_status: 'QUEUING',
+          }),
+          'job-1',
+        );
+      });
+
+      it('should publish job.failed event when submission fails', async () => {
+        taccService.submitJob.mockRejectedValueOnce(new Error('TACC unavailable'));
+
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const },
+        };
+
+        try {
+          await service.submitJob('user-1', submission);
+        } catch (e) {
+          // Expected to throw
+        }
+
+        expect(kafkaService.publishJobLifecycleEvent).toHaveBeenCalledWith(
+          expect.objectContaining({
+            event_type: 'job.failed',
+            error_message: 'TACC unavailable',
+          }),
+          'job-1',
+        );
+      });
+
+      it('should publish job.cancelled event when job is cancelled', async () => {
+        const runningJob = { ...mockJob, status: 'RUNNING' as const, tacc_job_id: 'tacc-123' };
+        jobRepository.findById.mockResolvedValueOnce(runningJob);
+
+        await service.cancelJob('job-1');
+
+        expect(kafkaService.publishJobLifecycleEvent).toHaveBeenCalledWith(
+          expect.objectContaining({
+            event_type: 'job.cancelled',
+            previous_status: 'RUNNING',
+            new_status: 'CANCELLED',
+          }),
+          'job-1',
+        );
+      });
+    });
+
+    describe('partition key strategy', () => {
+      it('should use job_id as partition key for ordering guarantee', async () => {
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const, gpu_count: 2 },
+        };
+
+        await service.submitJob('user-1', submission);
+
+        // All Kafka calls should use job_id as partition key
+        const calls = kafkaService.publishJobLifecycleEvent.mock.calls;
+        calls.forEach((call) => {
+          expect(call[1]).toBe('job-1'); // Second parameter is partition key
+        });
+      });
+
+      it('should maintain event ordering for same job across multiple publishes', async () => {
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const, gpu_count: 2 },
+        };
+
+        await service.submitJob('user-1', submission);
+
+        const calls = kafkaService.publishJobLifecycleEvent.mock.calls;
+
+        // Verify job.submitted comes before job.status.changed
+        const eventTypes = calls
+          .map((call) => call[0].event_type)
+          .filter((type) => ['job.submitted', 'job.status.changed'].includes(type));
+
+        expect(eventTypes[0]).toBe('job.submitted');
+        if (eventTypes.length > 1) {
+          expect(eventTypes[1]).toBe('job.status.changed');
+        }
+      });
+    });
+
+    describe('event metadata and headers', () => {
+      it('should include timestamp in all events', async () => {
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const, gpu_count: 2 },
+        };
+
+        await service.submitJob('user-1', submission);
+
+        const calls = kafkaService.publishJobLifecycleEvent.mock.calls;
+        calls.forEach((call) => {
+          expect(call[0].timestamp).toBeDefined();
+          expect(typeof call[0].timestamp).toBe('string');
+        });
+      });
+
+      it('should include user_id and job_id in all events', async () => {
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const, gpu_count: 2 },
+        };
+
+        await service.submitJob('user-1', submission);
+
+        expect(kafkaService.publishJobLifecycleEvent).toHaveBeenCalledWith(
+          expect.objectContaining({
+            user_id: 'user-1',
+            job_id: 'job-1',
+          }),
+          expect.any(String),
+        );
+      });
+
+      it('should include correlation_id for tracing', async () => {
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const, gpu_count: 2 },
+        };
+
+        await service.submitJob('user-1', submission);
+
+        expect(kafkaService.publishJobLifecycleEvent).toHaveBeenCalledWith(
+          expect.objectContaining({
+            correlation_id: expect.any(String),
+          }),
+          expect.any(String),
+        );
+      });
+    });
+
+    describe('error handling', () => {
+      it('should continue publishing to RabbitMQ even if Kafka fails', async () => {
+        kafkaService.publishJobLifecycleEvent.mockRejectedValueOnce(
+          new Error('Kafka network error'),
+        );
+
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const, gpu_count: 2 },
+        };
+
+        await service.submitJob('user-1', submission);
+
+        // RabbitMQ publish should still happen
+        expect(eventsService.publishJobEvent).toHaveBeenCalled();
+      });
+
+      it('should log warning when Kafka publish fails', async () => {
+        const logSpy = jest.spyOn(service['logger'], 'warn');
+        kafkaService.publishJobLifecycleEvent.mockRejectedValueOnce(
+          new Error('Broker error'),
+        );
+
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const, gpu_count: 2 },
+        };
+
+        try {
+          await service.submitJob('user-1', submission);
+        } catch (e) {
+          // Expected
+        }
+
+        expect(logSpy).toHaveBeenCalledWith(
+          expect.stringContaining('Failed to publish'),
+        );
+        logSpy.mockRestore();
+      });
+    });
+
+    describe('job metrics publishing', () => {
+      it('should allow publishing completed job metrics to Kafka', async () => {
+        const metrics = {
+          executionTimeSeconds: 3600,
+          cpuUsagePercent: 85,
+          memoryUsageMb: 4096,
+        };
+
+        await service.publishCompletedJobMetrics('job-1', metrics);
+
+        expect(kafkaService.publishJobMetrics).toHaveBeenCalledWith(
+          expect.objectContaining({
+            event_type: 'job.metrics_recorded',
+            job_id: 'job-1',
+            cpu_usage_percent: 85,
+            memory_usage_mb: 4096,
+            execution_time_seconds: 3600,
+          }),
+          'job-1',
+        );
+      });
+
+      it('should handle metrics publish failure gracefully', async () => {
+        kafkaService.publishJobMetrics.mockRejectedValueOnce(
+          new Error('Schema registry unavailable'),
+        );
+
+        const metrics = {
+          executionTimeSeconds: 3600,
+          cpuUsagePercent: 85,
+          memoryUsageMb: 4096,
+        };
+
+        // Should not throw
+        await expect(
+          service.publishCompletedJobMetrics('job-1', metrics),
+        ).resolves.toBeUndefined();
+
+        expect(kafkaService.publishJobMetrics).toHaveBeenCalled();
+      });
+    });
+
+    describe('end-to-end integration', () => {
+      it('should create complete event pipeline: submitted → queuing → (completion/failure)', async () => {
+        const submission = {
+          agent: 'AlphaCal' as const,
+          dataset_id: 'dataset-1',
+          params: { rfi_strategy: 'medium' as const, gpu_count: 2 },
+        };
+
+        const result = await service.submitJob('user-1', submission);
+
+        // Verify all events were published in order
+        const kafkaCalls = kafkaService.publishJobLifecycleEvent.mock.calls;
+        const eventSequence = kafkaCalls.map((call) => call[0].event_type);
+
+        expect(eventSequence).toContain('job.submitted');
+        expect(eventSequence).toContain('job.status.changed');
+        expect(result.id).toBe('job-1');
+      });
     });
   });
 });

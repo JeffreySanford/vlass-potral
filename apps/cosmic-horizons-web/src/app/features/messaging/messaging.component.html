@@ -1,38 +1,49 @@
 <div class="messaging-container">
   <div class="header">
-    <h1>ngVLA Array Topology: Information Map</h1>
-    <div class="stats">
-      <div class="stat-item">
-        <span class="label">Sites:</span>
-        <span class="value">{{ sites.length }}</span>
+    <div class="header-top">
+      <div class="title-section">
+        <h1>ngVLA Array Topology</h1>
+        <p class="subtitle">Information Map</p>
       </div>
-      <div class="stat-item">
-        <span class="label">Total Elements:</span>
-        <span class="value">{{ elements.length }}</span>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-group primary">
+        <div class="stat-card">
+          <span class="stat-value">{{ sites.length }}</span>
+          <span class="stat-label">Sites</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">{{ elements.length }}</span>
+          <span class="stat-label">Total Elements</span>
+        </div>
+        <div class="stat-card highlight">
+          <span class="stat-value">{{ getActiveElementCount() }}</span>
+          <span class="stat-label">Active</span>
+        </div>
       </div>
-      <div class="stat-item">
-        <span class="label">Active:</span>
-        <span class="value active">{{ getActiveElementCount() }}</span>
+      <div class="stat-group secondary">
+        <div class="stat-card">
+          <span class="stat-label">Messaging</span>
+          <span class="stat-value msg-status">{{ getMessagingStatusLabel() }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Tx/sec</span>
+          <span class="stat-value">{{ liveStats?.packetsPerSecond ?? 0 }}</span>
+        </div>
       </div>
-      <div class="stat-item">
-        <span class="label">Messaging:</span>
-        <span class="value msg-ok">{{ getMessagingStatusLabel() }}</span>
-      </div>
-      <div class="stat-item">
-        <span class="label">Tx/sec:</span>
-        <span class="value">{{ liveStats?.packetsPerSecond ?? 0 }}</span>
-      </div>
-      <div class="stat-item">
-        <span class="label">Node→Hub:</span>
-        <span class="value">{{ liveStats?.nodeToHubPerSecond ?? 0 }}/s</span>
-      </div>
-      <div class="stat-item">
-        <span class="label">Hub→Hub:</span>
-        <span class="value">{{ liveStats?.hubToHubPerSecond ?? 0 }}/s</span>
-      </div>
-      <div class="stat-item">
-        <span class="label">Queue Depth:</span>
-        <span class="value">{{ liveStats?.infra?.rabbitmq?.queueDepth ?? 0 }}</span>
+      <div class="stat-group secondary">
+        <div class="stat-card">
+          <span class="stat-label">Node→Hub</span>
+          <span class="stat-value">{{ liveStats?.nodeToHubPerSecond ?? 0 }}/s</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Hub→Hub</span>
+          <span class="stat-value">{{ liveStats?.hubToHubPerSecond ?? 0 }}/s</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Queue Depth</span>
+          <span class="stat-value">{{ liveStats?.infra?.rabbitmq?.queueDepth ?? 0 }}</span>
+        </div>
       </div>
     </div>
   </div>

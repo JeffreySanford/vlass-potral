@@ -1,0 +1,63 @@
+{
+  "type": "record",
+  "namespace": "com.cosmic-horizons.events",
+  "name": "SystemHealthEvent",
+  "doc": "System health metrics for monitoring and alerting",
+  "fields": [
+    {
+      "name": "event_id",
+      "type": "string",
+      "doc": "Unique event identifier (UUID)"
+    },
+    {
+      "name": "event_type",
+      "type": "string",
+      "default": "system.health",
+      "doc": "Event type: system.health"
+    },
+    {
+      "name": "timestamp",
+      "type": "string",
+      "doc": "ISO 8601 timestamp when health check occurred"
+    },
+    {
+      "name": "correlation_id",
+      "type": "string",
+      "doc": "Correlation ID"
+    },
+    {
+      "name": "component_id",
+      "type": "string",
+      "doc": "ID of the component being monitored (broker, consumer group, topic)"
+    },
+    {
+      "name": "component_type",
+      "type": {
+        "type": "enum",
+        "name": "ComponentType",
+        "symbols": ["broker", "consumer_group", "topic", "producer", "api_server"]
+      },
+      "doc": "Type of component"
+    },
+    {
+      "name": "status",
+      "type": {
+        "type": "enum",
+        "name": "HealthStatus",
+        "symbols": ["healthy", "degraded", "unhealthy"]
+      },
+      "doc": "Overall health status"
+    },
+    {
+      "name": "schema_version",
+      "type": "int",
+      "default": 1,
+      "doc": "Schema version"
+    },
+    {
+      "name": "payload",
+      "type": "string",
+      "doc": "JSON-encoded health metrics: cpu%, memory%, disk%, lag, latency_ms, error_rate"
+    }
+  ]
+}

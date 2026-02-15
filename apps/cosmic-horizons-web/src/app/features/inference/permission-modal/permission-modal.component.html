@@ -1,0 +1,32 @@
+<div class="permission-modal">
+  <div class="modal-header">
+    <mat-icon class="header-icon">lock</mat-icon>
+    <h2>Access Autonomous Agent Dashboard</h2>
+  </div>
+
+  <div class="modal-content">
+    <p class="permission-text">
+      You are requesting access to the autonomous agent monitoring dashboard. This will allow you to:
+    </p>
+    <ul class="permission-list">
+      <li>Monitor AlphaCal calibration workflows</li>
+      <li>View Radio Image Reconstruction status</li>
+      <li>Track Anomaly Detection agent performance</li>
+      <li>Access real-time throughput metrics</li>
+    </ul>
+    <p class="permission-footer">
+      All agent data is encrypted and access is logged for audit purposes.
+    </p>
+  </div>
+
+  <div class="modal-actions">
+    <button mat-stroked-button (click)="onDeny()" class="deny-button">
+      <mat-icon>close</mat-icon>
+      Deny
+    </button>
+    <button mat-raised-button (click)="onAllow()" class="allow-button">
+      <mat-icon>check_circle</mat-icon>
+      Allow Access
+    </button>
+  </div>
+</div>

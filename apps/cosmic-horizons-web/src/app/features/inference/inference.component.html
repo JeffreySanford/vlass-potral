@@ -1,0 +1,140 @@
+<!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
+<div class="inference-container">
+  <!-- Main dashboard area -->
+  <div class="dashboard-content">
+    <div class="header">
+      <h1>AI Agent Inference Dashboard</h1>
+      <p class="subtitle">Real-time autonomous agent performance monitoring</p>
+    </div>
+
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Active Agents</span>
+          <span class="stat-badge running">{{ getRunningAgentsCount() }}</span>
+        </div>
+        <div class="stat-value">{{ agents.length }}</div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Active Sessions</span>
+          <span class="stat-badge">{{ activeSessions.length }}</span>
+        </div>
+        <div class="stat-value">{{ activeSessions.length }}</div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Peak Throughput</span>
+        </div>
+        <div class="stat-value">{{ formatThroughput(getPeakThroughput()) }}</div>
+      </mat-card>
+    </div>
+
+    <!-- Agents overview grid -->
+    <div class="agents-section">
+      <h2>Agent Status</h2>
+      <div class="agents-grid">
+        <mat-card *ngFor="let agent of agents" class="agent-card" [ngClass]="agent.status">
+          <div class="agent-header">
+            <div class="agent-name">{{ agent.name }}</div>
+            <div class="agent-status" [style.color]="getStatusColor(agent.status)">
+              {{ agent.status | uppercase }}
+            </div>
+          </div>
+
+          <div class="agent-metrics">
+            <div class="metric">
+              <span class="metric-label">Progress</span>
+              <mat-progress-bar [value]="agent.progress" mode="determinate"></mat-progress-bar>
+              <span class="metric-value">{{ agent.progress }}%</span>
+            </div>
+
+            <div class="metric">
+              <span class="metric-label">Throughput</span>
+              <span class="metric-value throughput">{{ formatThroughput(agent.throughput) }}</span>
+            </div>
+
+            <div class="metric">
+              <span class="metric-label">Last Update</span>
+              <span class="metric-value">{{ agent.lastUpdate | date: 'short' }}</span>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Active sessions -->
+    <div class="sessions-section" *ngIf="activeSessions.length > 0">
+      <h2>Active Sessions</h2>
+      <div class="sessions-list">
+        <mat-card *ngFor="let session of activeSessions" class="session-card">
+          <div class="session-header">
+            <span class="session-id">{{ session.id }}</span>
+            <span class="session-agent">{{ session.agentName }}</span>
+          </div>
+
+          <div class="session-details">
+            <div class="detail">
+              <span class="label">Current Phase:</span>
+              <span class="value">{{ session.currentPhase }}</span>
+            </div>
+            <div class="detail">
+              <span class="label">Started:</span>
+              <span class="value">{{ session.startTime | date: 'short' }}</span>
+            </div>
+            <div class="detail">
+              <span class="label">Est. Completion:</span>
+              <span class="value">{{ session.estimatedCompletion | date: 'short' }}</span>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right-side expandable panel -->
+  <div class="side-panel" [class.expanded]="isExpanded">
+    <button
+      class="toggle-button"
+      [class.expanded]="isExpanded"
+      (click)="toggleExpanded()"
+      mat-icon-button
+      [matTooltip]="isExpanded ? 'Collapse panel' : 'Expand panel'"
+    >
+      <mat-icon>{{ isExpanded ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+    </button>
+
+    <div class="panel-content" *ngIf="isExpanded">
+      <h3>Quick Stats</h3>
+      <div class="quick-stats">
+        <div class="quick-stat">
+          <span class="label">Total Runtime</span>
+          <span class="value">{{ activeSessions.length > 0 ? '1h 24m' : '-' }}</span>
+        </div>
+        <div class="quick-stat">
+          <span class="label">Data Processed</span>
+          <span class="value">240 PB</span>
+        </div>
+        <div class="quick-stat">
+          <span class="label">Success Rate</span>
+          <span class="value">99.8%</span>
+        </div>
+        <div class="quick-stat">
+          <span class="label">CPU Usage</span>
+          <span class="value">87%</span>
+        </div>
+      </div>
+
+      <div class="panel-info">
+        <p class="info-text">
+          Permission granted to monitor autonomous agent inference workflows. Data is encrypted and stored
+          securely.
+        </p>
+      </div>
+
+      <button mat-raised-button class="revoke-button">Revoke Permission</button>
+    </div>
+  </div>
+</div>
