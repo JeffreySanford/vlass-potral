@@ -27,7 +27,7 @@ By using local Ollama models (even small models like Mistral 7B), we can:
 
 ## Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Angular Frontend                         │
 │  (cosmic-horizons-web: Job Submission & Status Dashboard)   │
@@ -73,7 +73,7 @@ By using local Ollama models (even small models like Mistral 7B), we can:
 
 **Implementation**:
 
-```
+```text
 1. Create JobQueueService in cosmic-horizons-api
    - In-memory job store (Map<jobId, Job>)
    - Job state machine (QUEUED → RUNNING → COMPLETED/FAILED)
@@ -546,7 +546,7 @@ Update `jobs-console.component.ts` to display:
 
 ### 4. **Fallback Strategy**
 
-```
+```text
 If Ollama available:
   → Use LLM agents for validation, estimation, decisions
   → Realistic, intelligent responses

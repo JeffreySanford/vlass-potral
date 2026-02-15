@@ -53,7 +53,7 @@
 
 **Week 1 Tasks** (Feb 16-20):
 
-```
+```text
 Day 1-2: JobOrchestratorService integration (3 tests)
   [ ] Test: job.submitted event published with correlation ID
   [ ] Test: Headers include agent type, dataset ID, GPU count
@@ -248,7 +248,7 @@ Target: 20 publishing tests + 18 baseline = 38 total passing
 
 ### Critical Path to Symposium
 
-```
+```text
 [5.3: Job Events] (3 weeks) → [6.1: WebSocket] (3 weeks) → [6.2: Dashboards] (2 weeks)
                                    ↓
                             [LLM Enhancement] (optional, 2-3 weeks parallel)
